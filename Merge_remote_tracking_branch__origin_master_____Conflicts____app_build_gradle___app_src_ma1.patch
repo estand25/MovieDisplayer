@@ -1,0 +1,125 @@
+Index: app/src/main/java/com/example/andriod/popularmoviev2/Activity/DetailActivityFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/andriod/popularmoviev2/Activity/DetailActivityFragment.java	(revision 7f1b2e4c773ba6dbc433d089b8fecb8bab32c4d7)
++++ app/src/main/java/com/example/andriod/popularmoviev2/Activity/DetailActivityFragment.java	(revision )
+@@ -1,0 +1,0 @@
+Index: app/src/main/java/com/example/andriod/popularmoviev2/adapter/MovieAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/andriod/popularmoviev2/adapter/MovieAdapter.java	(revision )
++++ app/src/main/java/com/example/andriod/popularmoviev2/adapter/MovieAdapter.java	(revision )
+@@ -0,0 +1,46 @@
++package com.example.andriod.popularmoviev2.adapter;
++
++import android.app.Activity;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.ArrayAdapter;
++import android.widget.ImageView;
++
++import com.androidquery.AQuery;
++import com.example.andriod.popularmoviev2.model.Movie;
++import com.example.andriod.popularmoviev2.R;
++
++import java.util.List;
++
++/**
++ * Object that will take passed data and display it on the view
++ * Created by StandleyEugene on 6/30/2016.
++ */
++public class MovieAdapter extends ArrayAdapter<Movie> {
++    private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
++
++    public MovieAdapter(Activity context, List<Movie> movie){
++        super(context, 0,movie);
++    }
++
++    /*
++        Custom getview that handles the inflation of the movie item and
++        populate of the ImageView and TextView on the GridView
++     */
++    @Override
++    public View getView(int position, View converView, ViewGroup parent){
++        Movie movie = getItem(position);
++
++        if(converView == null){
++            converView = LayoutInflater.from(getContext()).inflate(
++                    R.layout.movie_item,parent,false);
++        }
++
++        ImageView posterView = (ImageView) converView.findViewById(R.id.moviePoster_image);
++        AQuery aq = new AQuery(posterView);
++        aq.id(R.id.moviePoster_image).image(movie.getPosterPath()).visible();
++
++        return converView;
++    }
++}
+Index: app/src/main/java/com/example/andriod/popularmoviev2/data/MovieDbHelper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/andriod/popularmoviev2/data/MovieDbHelper.java	(revision 7f1b2e4c773ba6dbc433d089b8fecb8bab32c4d7)
++++ app/src/main/java/com/example/andriod/popularmoviev2/data/MovieDbHelper.java	(revision )
+@@ -30,7 +30,7 @@
+     public void onCreate(SQLiteDatabase sqLiteDatabase){
+         // Create the create string for the individual table
+         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
+-                MovieEntry.COLUMN_ID + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
++                MovieEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                 MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                 MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                 MovieEntry.COLUMN_ADULT + " BLOB NOT NULL, " +
+\ No newline at end of file
+Index: app/src/main/java/com/example/andriod/popularmoviev2/other/Utility.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/andriod/popularmoviev2/other/Utility.java	(revision )
++++ app/src/main/java/com/example/andriod/popularmoviev2/other/Utility.java	(revision )
+@@ -0,0 +1,23 @@
++package com.example.andriod.popularmoviev2.other;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.preference.PreferenceManager;
++
++import com.example.andriod.popularmoviev2.R;
++
++/**
++ * Created by StandleyEugene on 7/11/2016.
++ */
++public class Utility {
++    public static String getPreferredLocation(Context context) {
++        // Get the current Shared Preferences for the app
++        SharedPreferences sharedPref =
++                PreferenceManager.getDefaultSharedPreferences(context);
++
++        // Popular the location field with the current sort option for the App
++        return sharedPref.getString(
++                context.getString(R.string.pref_sort_option_key),
++                context.getString(R.string.pref_sort_option_default));
++    }
++}
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision 7f1b2e4c773ba6dbc433d089b8fecb8bab32c4d7)
++++ app/build.gradle	(revision )
+@@ -19,6 +19,7 @@
+     }
+     buildTypes.each {
+         it.buildConfigField 'String', 'THE_MOVIE_DB_API', "\"d2919c2333e0f291ccf58c5e5ec88543\""
++
+     }
+     repositories {
+         mavenCentral()

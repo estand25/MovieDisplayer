@@ -1,0 +1,15 @@
+Index: app/src/main/java/com/example/andriod/popularmoviev2/Activity/DetailActivityFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/andriod/popularmoviev2/Activity/DetailActivityFragment.java	(date 1468289607000)
++++ app/src/main/java/com/example/andriod/popularmoviev2/Activity/DetailActivityFragment.java	(revision )
+@@ -38,6 +38,7 @@
+     // Local class Log tag variable
+     private final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+     HashMap<Integer,String> genreList = new HashMap<Integer, String>();
++
+     private String movieRoot = "http://api.themoviedb.org/3/";
+ 
+     public DetailActivityFragment() {}

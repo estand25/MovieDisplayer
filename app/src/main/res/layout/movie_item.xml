@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/movie_item_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Note: I had to get the center, padding, adjustViewbound, and layout_margin for a -->
+    <!-- form post link here (https://discussions.udacity.com/t/layout-with-space/166514) -->
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/moviePoster_image"
+        android:scaleType="centerCrop"
+        android:padding="0dp"
+        android:adjustViewBounds="true"
+        android:layout_margin="0dp"/>
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/movie_description"/>
+
+</FrameLayout>
