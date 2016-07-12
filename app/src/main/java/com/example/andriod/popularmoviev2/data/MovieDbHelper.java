@@ -29,7 +29,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase){
         // Create the create string for the individual table
-        final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
+        final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " ( " +
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
@@ -53,7 +53,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
 
 
-        final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME +" (" +
+        final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME +" ( " +
                 ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ReviewEntry.COLUMN_REVIEW_ID + " INTEGER NOT NULL, " +
                 ReviewEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
@@ -65,12 +65,12 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";
         sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
 
-        final String SQL_CREATE_GENRE_TABLE = "CREATE TABLE " + GenreEntry.TABLE_NAME + " (" +
+        final String SQL_CREATE_GENRE_TABLE = "CREATE TABLE " + GenreEntry.TABLE_NAME + " ( " +
                 GenreEntry.COLUMN_GENRE_ID + " INTEGER PRIMARY KEY, " +
                 GenreEntry.COLUMN_NAME + " TEXT NOT NULL); ";
         sqLiteDatabase.execSQL(SQL_CREATE_GENRE_TABLE);
 
-        final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerEntry.TABLE_NAME + " ("+
+        final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerEntry.TABLE_NAME + " ( "+
                 TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TrailerEntry.COLUMN_TRAILER_ID + " INTEGER NOT NULL, "+
                 TrailerEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
@@ -86,7 +86,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";
         sqLiteDatabase.execSQL(SQL_CREATE_TRAILER_TABLE);
 
-        final String SQL_CREATE_FAVORITE_MOVIE_TABLE = "CREATE TABLE " + FavoriteMovies.TABLE_NAME + " ("+
+        final String SQL_CREATE_FAVORITE_MOVIE_TABLE = "CREATE TABLE " + FavoriteMovies.TABLE_NAME + " ( "+
                 FavoriteMovies.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "+
                 FavoriteMovies._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 
