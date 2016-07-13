@@ -155,7 +155,7 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, mForecast + FORECAST_SHARE_HASHTAG);
         return shareIntent;
-    }    */
+    }    dd*/
 
     /*
         My first try at getting the name for the genres
