@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     public interface Callback {
         /**
-         * DetailFragmentCallback for when an item has been selected.
+         * DetailMovieFragmentCallback for when an item has been selected.
          */
         public void onItemSelected(Uri dateUri);
     }
@@ -97,8 +98,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         /*if (mPosition != GridView.INVALID_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
         }*/
-
-
         super.onSaveInstanceState(outState);
     }
 
@@ -106,11 +105,11 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Inflate all the items on the fragmen_main layout
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         // Initialize the custom movie adapter with necessary Curse adapter information
         movieAdapter = new MovieAdapter(getActivity(),null,0);
+
+        // Inflate all the items on the fragmen_main layout
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         //  Find the GridView on the fragment_main layout and set it to the
         // local representize
@@ -145,6 +144,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position
                 if(cursor != null){
+
+                    Log.v("Selected URI ",MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)).toString());
+
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
                 }

@@ -64,7 +64,7 @@ public class MovieProvider extends ContentProvider {
     }
 
     // Review.movie_id = ?
-    private static final String sMovieIdSettingSelection =
+    public static final String sMovieIdSettingSelection =
             MovieContract.MovieEntry.TABLE_NAME +
                     "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ";
 

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.data.MovieContract;
+import com.example.andriod.popularmoviev2.data.MovieProvider;
 import com.example.andriod.popularmoviev2.model.Movie;
 
 import java.util.HashMap;
@@ -33,7 +36,6 @@ import com.example.andriod.popularmoviev2.data.MovieContract.GenreEntry;
 public class DetailMovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     // Local class Log tag variable
     private final String LOG_TAG = DetailMovieFragment.class.getSimpleName();
-    HashMap<Integer,String> genreList = new HashMap<Integer, String>();
 
     // String constent for the MovieDetailFragment
     static final String MOVIE_DETAIL_URI = "URI";
@@ -126,7 +128,6 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
         mDetail_userRateingTextView = (TextView) rootView.findViewById(R.id.detail_UserRateingTextView);
         mDetail_releaseDateTextView = (TextView) rootView.findViewById(R.id.detail_releaseDateTextView);
         mDetail_genreTextView = (TextView) rootView.findViewById(R.id.detail_genreTextView);
-
         return rootView;
     }
 
@@ -179,16 +180,21 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
         if ( null != mUri ) {
             // Now create and return a CursorLoader that will take care of
             // creating a Cursor for the data being displayed.
+
+            Log.v("Content URI ",MovieContract.MovieEntry.CONTENT_URI.toString());
+            Log.v("URI ",mUri.toString());
+
             return new CursorLoader(
                     getActivity(),
-                    mUri,
+                    mUri,//mUri,
                     DETAIL_MOVIE_COLUMNS,
-                    null,
-                    null,
+                    MovieProvider.sMovieIdSettingSelection,
+                    new String[]{"movie_id"},
                     null
             );
-        }
-        return null;
+        }else {
+            return null;
+       }
     }
 
     @Override
