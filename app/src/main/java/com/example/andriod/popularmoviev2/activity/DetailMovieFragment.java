@@ -100,8 +100,6 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
     private TextView mDetail_releaseDateTextView;
     private TextView mDetail_genreTextView;
 
-    private String movieRoot = "http://api.themoviedb.org/3/";
-
     public DetailMovieFragment() {}
 
     @Override
@@ -128,6 +126,7 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
         mDetail_userRateingTextView = (TextView) rootView.findViewById(R.id.detail_UserRateingTextView);
         mDetail_releaseDateTextView = (TextView) rootView.findViewById(R.id.detail_releaseDateTextView);
         mDetail_genreTextView = (TextView) rootView.findViewById(R.id.detail_genreTextView);
+
         return rootView;
     }
 
@@ -181,20 +180,22 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
             // Now create and return a CursorLoader that will take care of
             // creating a Cursor for the data being displayed.
 
-            Log.v("Content URI ",MovieContract.MovieEntry.CONTENT_URI.toString());
-            Log.v("URI ",mUri.toString());
+            Log.v("Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
+            Log.v("URI ", mUri.toString());
 
-            return new CursorLoader(
+             CursorLoader cursorLoader = new CursorLoader(
                     getActivity(),
-                    mUri,//mUri,
+                    mUri,
                     DETAIL_MOVIE_COLUMNS,
-                    MovieProvider.sMovieIdSettingSelection,
-                    new String[]{"movie_id"},
-                    null
-            );
-        }else {
-            return null;
-       }
+                    null,//MovieProvider.sMovieIdSettingSelection,
+                    null,//new String[]{MovieEntry.COLUMN_MOVIE_ID},
+                    null);
+
+            cursorLoader.loadInBackground();
+
+            return cursorLoader;
+        }
+        return null;
     }
 
     @Override

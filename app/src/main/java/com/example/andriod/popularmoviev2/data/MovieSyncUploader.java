@@ -14,8 +14,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.andriod.popularmoviev2.BuildConfig;
+import com.example.andriod.popularmoviev2.model.Genre;
+import com.example.andriod.popularmoviev2.model.Genres;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.model.MovieColl;
+import com.example.andriod.popularmoviev2.model.Review;
+import com.example.andriod.popularmoviev2.model.ReviewColl;
+import com.example.andriod.popularmoviev2.model.Trailer;
+import com.example.andriod.popularmoviev2.model.TrailerColl;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.service.TheMovieDBAPIService;
 
@@ -143,9 +149,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO,movie.getVideo());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
-                        popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,Utility.getPreferredMovieType(getContext())); //short handle for popular movie
+                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,Utility.getPreferredMovieType(getContext())); //short handle for popular movie
 
-                    Log.v("Popular Movie"," "+(i+1)+") Details - " + movie.getTitle());
+                    //Log.v("Popular Movie"," "+(i+1)+") Details - " + movie.getTitle());
 
                     // Add movie details to the ContentValue array
                     bulkPopularMovies[i] = popularMovieContenter;
@@ -158,13 +164,13 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
             @Override
             public void onFailure(Call<MovieColl> call, Throwable t) {
-                Log.e(TAG,"Retrofit 2 failed to get popular Movie!!");
+                Log.e(TAG,"Retrofit 2 failed to populate movie table!!");
             }
         });
     }
 
     /*
-        Populated movie with top rated
+        Populated movie with top rated movie
      */
     public void getTopRateMovieColl(){
         // Create an instance of the framework that creates the Url and converter the json to gson
@@ -218,20 +224,199 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,"TR"); //short handle for Top Rated Movie
 
-                    Log.v("Top Rated Movie"," "+(i+1)+") Details - " + movie.getTitle());
-
                     // Add movie details to the ContentValue array
                     bulktopRatedMovies[i] = topRatedMovieContenter;
 
                     // Increment index
                     i++;
                 }
-                //mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulktopRatedMovies);
+                mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulktopRatedMovies);
             }
 
             @Override
             public void onFailure(Call<MovieColl> call, Throwable t) {
-                Log.e(TAG,"Retrofit 2 failed to get Top Rate Movie!!");
+                Log.e(TAG,"Retrofit 2 failed to populate movie table!!");
+            }
+        });
+    }
+
+    /*
+        Populated the Genre tables
+     */
+    public void getGenreInfo(){
+        // Create an instance of the framework that creates the Uri and converter the json to gson
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(movieRoot)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // Uses the framework services to connect to the API
+        TheMovieDBAPIService service = retrofit.create(TheMovieDBAPIService.class);
+
+        // Call the service for movie genre
+        Call<Genres> jsonGenres = service.getMovieGenres(BuildConfig.THE_MOVIE_DB_API);
+
+        // Start the connect up and see if it successed and you have a response
+        // or if you failure and you got nothing
+        jsonGenres.enqueue(new Callback<Genres>() {
+            @Override
+            public void onResponse(Call<Genres> call, Response<Genres> response) {
+                // Grab the response (the list of genres) from the API
+                // and put it in a local list variable
+                List<Genre> movieGenres = response.body().getGenres();
+
+                // Content Value Array that I will pass to bulk insert
+                ContentValues[] bulkMovieGenre = new ContentValues[movieGenres.size()];
+
+                // Index counter
+                int i = 0;
+
+                // Loop through added the individual genres details to the content
+                for(Genre genre : movieGenres){
+                    // Content that holds all the genres information
+                    // retrieved from the Movie DB API
+                    ContentValues genreContent = new ContentValues();
+
+                    // Set the value of each column and inserts the genre property
+                    genreContent.put(MovieContract.GenreEntry.COLUMN_GENRE_ID,genre.getId());
+                    genreContent.put(MovieContract.GenreEntry.COLUMN_NAME,genre.getName());
+
+                    // Add genre details to the contentValue array
+                    bulkMovieGenre[i] = genreContent;
+
+                    // Increment index
+                    i++;
+                }
+                mContentResolver.bulkInsert(MovieContract.GenreEntry.CONTENT_URI,bulkMovieGenre);
+            }
+
+            @Override
+            public void onFailure(Call<Genres> call, Throwable t) {
+                Log.e(TAG,"Retrofit 2 failed to get populate genre table!!");
+            }
+        });
+    }
+
+    /*
+        Populated the trailer table
+     */
+    public void getTrailerInfor(final int movie_id){
+        // Create an instance of the framework that created the Uri and converter the json to gson
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(movieRoot)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // Uses the framework services to connect to the API
+        TheMovieDBAPIService service = retrofit.create(TheMovieDBAPIService.class);
+
+        // Call the service for movie's trailer
+        Call<TrailerColl> jsonTrailerColl = service.getMovieTrailer(movie_id,BuildConfig.THE_MOVIE_DB_API);
+
+        // Start the connect up and see if it successed and you have a response
+        // or if you failure and you got nothing
+        jsonTrailerColl.enqueue(new Callback<TrailerColl>() {
+            @Override
+            public void onResponse(Call<TrailerColl> call, Response<TrailerColl> response) {
+                // Grab the response (the list of movie trailer) from the API
+                // and put it in a local list variable
+                List<Trailer> movieTrailer = response.body().getTrailers();
+
+                // ContentValue Array that I will past to bulkinsert
+                ContentValues[] bulkMovieTrailer = new ContentValues[movieTrailer.size()];
+
+                // Index counter
+                int i = 0;
+
+                // Loop through added the individual movie details to the ContentValue
+                for(Trailer trailer: movieTrailer){
+                     // Content that holds all the popular movie information
+                     // retrieved from the Movie DB API
+                    ContentValues trailerContanter = new ContentValues();
+
+                    // Set the value of each column and insert the movie property
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID,trailer.getId());
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID,movie_id);
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_ISO_6391,trailer.getIso6391());
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_ISO_31661,trailer.getIso31661());
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_KEY,trailer.getKey());
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_NAME,trailer.getName());
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_SITE,trailer.getSite());
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_SIZE,trailer.getSize());
+                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_TYPE,trailer.getType());
+
+                    // Add trailer details to the ContentValue array
+                    bulkMovieTrailer[i] = trailerContanter;
+
+                    // Increment index
+                    i++;
+                }
+                mContentResolver.bulkInsert(MovieContract.TrailerEntry.CONTENT_URI,bulkMovieTrailer);
+            }
+
+            @Override
+            public void onFailure(Call<TrailerColl> call, Throwable t) {
+                Log.e(TAG,"Retrofit 2 failed to populate movie trailer table!!");
+            }
+        });
+    }
+
+    /*
+        Populared the review table
+     */
+    public void getReviewInfor(final int movie_id){
+        // Create an instance of the framework that create the Uri and converter the json to gson
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(movieRoot)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // Uses the framework services to connect to the API
+        TheMovieDBAPIService service = retrofit.create(TheMovieDBAPIService.class);
+
+        // Call the service for movie's review
+        Call<ReviewColl> jsonReviewColl = service.getMovieReview(movie_id,BuildConfig.THE_MOVIE_DB_API);
+
+        // Start the connect up and see if it successed and you have a response
+        // or if you failure and you got nothing
+        jsonReviewColl.enqueue(new Callback<ReviewColl>() {
+            @Override
+            public void onResponse(Call<ReviewColl> call, Response<ReviewColl> response) {
+                // Grab the response (the list of movie review) from the API
+                // and put it in a local list variable
+                List<Review> movieReview = response.body().getReviews();
+
+                // ContentValue Array that I will past to bulkinsert
+                ContentValues[] bulkMovieReview = new ContentValues[movieReview.size()];
+
+                // Index counter
+                int i = 0;
+
+                // Loop through added the individual movie details to the ContentValue
+                for(Review review : movieReview){
+                    // Content that holds all the populated movie information
+                    // retrieved from the Movie DB API
+                    ContentValues reviewContanter = new ContentValues();
+
+                    // Set the value of each column and insert the movie property
+                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movie_id);
+                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID,review.getId());
+                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
+                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
+                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
+
+                    // Add review detail to the ContentValue aray
+                    bulkMovieReview[i] = reviewContanter;
+
+                    // Increment index
+                    i++;
+                }
+                mContentResolver.bulkInsert(MovieContract.ReviewEntry.CONTENT_URI,bulkMovieReview);
+            }
+
+            @Override
+            public void onFailure(Call<ReviewColl> call, Throwable t) {
+                Log.e(TAG,"Retrofit 2 failed to populate movie review table!!");
             }
         });
     }

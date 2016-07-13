@@ -52,6 +52,11 @@ public class MovieContract {
             return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
         }
 
+        // Uri for getting the movie id
+        public static String getMovieID(Uri uri){
+            return uri.getPathSegments().get(1);
+        }
+
         // String holds the table name
         public static final String TABLE_NAME = "movie";
 
