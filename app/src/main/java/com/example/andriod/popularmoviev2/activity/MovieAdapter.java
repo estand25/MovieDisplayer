@@ -1,4 +1,4 @@
-package com.example.andriod.popularmoviev2;
+package com.example.andriod.popularmoviev2.activity;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
+import com.example.andriod.popularmoviev2.R;
 
 /**
  * Object that will take passed data and display it on the view

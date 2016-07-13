@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,13 +17,15 @@ import android.view.MenuItem;
 
 import com.example.andriod.popularmoviev2.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieFragment.Callback{
     // Constants
     // The authority for the sync adapter's (MovieSyncUploader) content provider
     public static final String AUTHORITY = "com.example.andriod.popularmoviev2";
 
     // An account type, in the form of a domin name
     public static final String ACCOUNT_TYPE = "example.com";
+
+    private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
 
     // The account name
     public static final String ACCOUNT = "dummyaccount";
@@ -40,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Create the dummy account
         //mAccount = CreateMovieSyncAccount(this);
+        /*if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, new DetailMovieFragment(), MOVIEDETAILFRAGMENT_TAG)
+                    .commit();
+        }*/
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -102,5 +110,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    @Override
+    public void onItemSelected(Uri contentUri){
+        //if(mTwoPane){
+        //    // In two-pane mode, show the detail view in this activity by
+        //    // adding or replacing the detail fragment usig a
+        //    // fragment transaction.
+        //    Bundle args = new Bundle();
+        //    args.putParcelable(DetailMovieFragment.MOVIE_DETAIL_URI,contentUri);
+        //
+        //    DetailMovieFragment fragment = new DetailMovieFragment();
+        //        fragment.setArguments(args);
+
+        //    getSupportFragmentManager().beginTransaction()
+        //            .replace(R.id.fragment, fragment)
+        //            .commit();
+        //} else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(contentUri);
+            startActivity(intent);
+        //}
     }
 }

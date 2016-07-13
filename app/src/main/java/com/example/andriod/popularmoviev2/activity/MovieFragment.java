@@ -1,4 +1,4 @@
-package com.example.andriod.popularmoviev2;
+package com.example.andriod.popularmoviev2.activity;
 
 
 import android.database.Cursor;
@@ -8,12 +8,13 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.model.Movie;
@@ -31,26 +32,44 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     // Declare the following class level variables
     private MovieAdapter movieAdapter;
     private ArrayList<Movie> movieList;
+    //private int mPosition = gridView.INVALID_POSITION;
+    //private boolean mUseTodayLayout;
+
+    //private static final String SELECTED_KEY = "selected_position";
 
     // Unique identify for they specific load
     private static final int MOVIE_LOADER = 0;
 
     // String[] of movie columns
     private static final String[] MOVIE_COLUMNS ={
-            //MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
-            //MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-            //MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_MOVIE_TYPE
     };
 
     // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
-    static final int COL_MOVIE_ID = 0;
-    static final int COL_MOVIE_IDp = 1;
-    static final int COL_MOVIE_TYPE = 2;
-    static final int COL_MOVIE_POSTER_PATH = 3;
+    static final int COL_ID = 0;
+    static final int COL_MOVIE_ID = 1;
+    static final int COL_MOVIE_POSTER_PATH = 2;
+    static final int COL_MOVIE_TITLE = 3;
+    static final int COL_MOVIE_TYPE = 4;
 
     // Empty construction
     public MovieFragment() {}
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri dateUri);
+    }
 
     // OnCreate I will use the saveInstanceState to check
     // if saveInstanceState already has something or if we are starting
@@ -71,6 +90,15 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onSaveInstanceState(Bundle outState){
         outState.putParcelableArrayList("movies",movieList);
+
+        // When tablets rotate, the currently selected list item needs to be saved.
+        // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+        // so check for that before storing.
+        /*if (mPosition != GridView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }*/
+
+
         super.onSaveInstanceState(outState);
     }
 
@@ -106,24 +134,37 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // Set the number of columns
         gridView.setNumColumns(columns);
 
-        /*
         // When one of the view on the GridView is click the below will happen
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l){
                 // Set the local movie object to the item that was
                 // selected on the GridView screen
-                Movie onMovieClick  = movieAdapter.getItem(pos);
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(pos);
 
-                // Create a specific Intent that will go to the DetailActivity
-                // with the movie and string array of movie parts
-                Intent detailIntent = new Intent(getActivity(),DetailActivity.class)
-                        .putExtra("movie",onMovieClick);
-
-                // Start the new activity (and pass the information along)
-                startActivity(detailIntent);
+                // CursorAdapter returns a cursor at the correct position for getItem(), or null
+                // if it cannot seek to that position
+                if(cursor != null){
+                    ((Callback) getActivity())
+                            .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
+                }
+                //mPosition = pos;
             }
-        });*/
+        });
+        /*
+        // If there's instance state, mine it for useful information.
+        // The end-goal here is that the user never knows that turning their device sideways
+        // does crazy lifecycle related things.  It should feel like some stuff stretched out,
+        // or magically appeared to take advantage of room, but data or place in the app was never
+        // actually *lost*.
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            // The listview probably hasn't even been populated yet.  Actually perform the
+            // swapout in onLoadFinished.
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);*/
+
         return  rootView;
     }
 
@@ -149,8 +190,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 buildMovieList(Utility.getPreferredMovieType(getContext()));
 
         return new CursorLoader(getActivity(),
-                movieTypelistUri,
-                MOVIE_COLUMNS,
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
                 null,
                 null,
                 null);
@@ -158,21 +199,22 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        for(int i = 0; i<data.getColumnCount();i++) {
-            Log.v("Curse ", " _ID " + data.getColumnName(i));
-        }
-
         movieAdapter.swapCursor(data);
-        /*if (mPosition != ListView.INVALID_POSITION) {
+
+        /*if (mPosition != GridView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
-            mListView.smoothScrollToPosition(mPosition);
+            gridView.smoothScrollToPosition(mPosition);
         }*/
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        movieAdapter.swapCursor(null);
-    }
+    public void onLoaderReset(Loader<Cursor> loader) {movieAdapter.swapCursor(null);}
 
+    /*public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (movieAdapter != null) {
+            movieAdapter.setUseTodayLayout(mUseTodayLayout);
+        }
+    }*/
 }

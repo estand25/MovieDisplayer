@@ -3,7 +3,7 @@
     android:id="@+id/scrollView1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context=".DetailMovieFragment"
+    tools:context=".activity.DetailMovieFragment"
     android:fillViewport="true"
     android:background="@color/colorPrimary"
     tools:showIn="@layout/activity_detail">
@@ -40,15 +40,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2">
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        xmlns:tools="http://schemas.android.com/tools"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:background="@color/colorPrimary"
                         android:id="@+id/detail_Layout1">
                         <TextView
-                            android:id="@+id/detail_textView1"
+                            android:id="@+id/detail_titleTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:textColor="@color/colorBlack"
@@ -65,7 +64,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="2">
                             <TextView
-                                android:id="@+id/detail_textView3"
+                                android:id="@+id/detail_UserRateingTextView"
                                 android:layout_width="55dp"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorBlack"
@@ -82,7 +81,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="3">
                             <TextView
-                                android:id="@+id/detail_textView4"
+                                android:id="@+id/detail_releaseDateTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorBlack"
@@ -99,7 +98,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="3">
                             <TextView
-                                android:id="@+id/detail_textView5"
+                                android:id="@+id/detail_genreTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorBlack"
@@ -120,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="3">
             <TextView
-                android:id="@+id/detail_textView2"
+                android:id="@+id/detail_synopsisTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorBlack"
@@ -135,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="4">
             <TextView
-                android:id="@+id/detail_textView6"
+                android:id="@+id/detail_reviewTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorBlack"
@@ -150,7 +149,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="4">
             <TextView
-                android:id="@+id/detail_textView7"
+                android:id="@+id/detail_trailerTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorBlack"

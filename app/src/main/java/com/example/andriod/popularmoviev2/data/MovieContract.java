@@ -44,9 +44,13 @@ public class MovieContract {
         // Get a list of move based on type from the DB
         public static Uri buildMovieList(String movieType){
             return CONTENT_URI.buildUpon().
-                    appendQueryParameter(COLUMN_MOVIE_TYPE,movieType).build();
+                    appendPath(movieType).build();
         }
 
+        // Uri for the specific Movie ID in the movie table
+        public static Uri buildMovieIDUri(int MovieID){
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
+        }
 
         // String holds the table name
         public static final String TABLE_NAME = "movie";
