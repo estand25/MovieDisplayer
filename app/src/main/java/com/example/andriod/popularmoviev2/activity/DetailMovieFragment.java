@@ -183,17 +183,13 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
             Log.v("Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
             Log.v("URI ", mUri.toString());
 
-             CursorLoader cursorLoader = new CursorLoader(
+            return new CursorLoader(
                     getActivity(),
                     mUri,
                     DETAIL_MOVIE_COLUMNS,
-                    null,//MovieProvider.sMovieIdSettingSelection,
-                    null,//new String[]{MovieEntry.COLUMN_MOVIE_ID},
+                    null,
+                    null,
                     null);
-
-            cursorLoader.loadInBackground();
-
-            return cursorLoader;
         }
         return null;
     }

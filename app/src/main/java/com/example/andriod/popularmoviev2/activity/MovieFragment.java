@@ -145,8 +145,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // if it cannot seek to that position
                 if(cursor != null){
 
-                    Log.v("Selected URI ",MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)).toString());
-
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
                 }

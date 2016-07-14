@@ -147,15 +147,11 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             case MOVIE_WITH_MOVIE_ID: {
-                // Set the selection items and
-                selectionArgs[0] = MovieContract.MovieEntry.getMovieID(uri);
-                selection = MovieProvider.sMovieIdSettingSelection;
-
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,
-                        selection,
-                        selectionArgs,
+                        MovieProvider.sMovieIdSettingSelection,
+                        new String[]{MovieContract.MovieEntry.getMovieID(uri)},
                         null,
                         null,
                         sortOrder
