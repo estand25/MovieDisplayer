@@ -23,6 +23,7 @@ import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieProvider;
+import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.model.Movie;
 
 import java.util.HashMap;
@@ -183,6 +184,12 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
             Log.v("Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
             Log.v("URI ", mUri.toString());
 
+            MovieSyncUploader movieSyncUploader = new MovieSyncUploader(getContext(),false);
+
+            // Get the Review & Trailer Information for this movie
+            movieSyncUploader.getReviewInfor(Integer.parseInt(MovieContract.MovieEntry.getMovieID(mUri)));
+            movieSyncUploader.getTrailerInfor(Integer.parseInt(MovieContract.MovieEntry.getMovieID(mUri)));
+
             return new CursorLoader(
                     getActivity(),
                     mUri,
@@ -213,18 +220,10 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
             /// Get the TextView from the current layout and set the text
             // to what appears at position X in the column layout
             mDetail_titleTextView.setText(data.getString(COL_DETAIL_MOVIE_TITLE));
-
-            // Get the TextView from the current layout and set the text
-            // to what appears at position X in the column layout
             mDetail_synopsisTextView.setText(data.getString(COL_DETAIL_MOVIE_OVERVIEW));
-
-            // Get the TextView from the current layout and set the text
-            // to what appears at position X in the column layout
             mDetail_userRateingTextView.setText(data.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
-
-            // Get the TextView from the current layout and set the text
-            // to what appears at position X in the column layout
             mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
+            mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));
         }
     }
     @Override
