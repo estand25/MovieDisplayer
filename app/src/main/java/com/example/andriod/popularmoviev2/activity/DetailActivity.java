@@ -1,38 +1,75 @@
 package com.example.andriod.popularmoviev2.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.adapter.PageAdapter;
 
-public class DetailActivity extends AppCompatActivity {
+/**
+ * Note: Added fragment tab to DetailActivity I got it from here
+ * https://www.simplifiedcoding.net/android-tablayout-example-using-viewpager-fragments/
+ *
+ * DetailActivity that holds the tablayout for the three detail
+ * fragement
+ */
+public class DetailActivity extends AppCompatActivity
+        implements TabLayout.OnTabSelectedListener{
+
+    // This is our tablayout
+    private TabLayout tabLayout;
+
+    // This is our viewPager
+    private ViewPager viewPager;
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab){
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab){}
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab){}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        // Adding toolbar to the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if(savedInstanceState == null){
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
+        // Initializing the tabout
+        TabLayout detailTabLayout = (TabLayout) findViewById(R.id.detail_tab_layout);
 
-            Bundle arguments = new Bundle();
-            arguments.putParcelable(DetailMovieFragment.MOVIE_DETAIL_URI,getIntent().getData());
+        // Add the tabs using addTab() method
+        detailTabLayout.addTab(detailTabLayout.newTab().setText("Overview"));
+        detailTabLayout.addTab(detailTabLayout.newTab().setText("Trailers"));
+        detailTabLayout.addTab(detailTabLayout.newTab().setText("Reviews"));
+        detailTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-            DetailMovieFragment fragment = new DetailMovieFragment();
-            fragment.setArguments(arguments);
+        // Initializing viewPager
+        viewPager = (ViewPager) findViewById(R.id.pager);
 
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movie_detail_container,fragment)
-                    .commit();
-        }
+        // Creating out pager adapter
+        PageAdapter adapter  = new PageAdapter
+                (getSupportFragmentManager(),detailTabLayout.getTabCount());
 
+        // Adding adapter to pager
+        viewPager.setAdapter(adapter);
+
+        // Adding onTabSelectedListener to swipe views
+        detailTabLayout.setOnTabSelectedListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +85,7 @@ public class DetailActivity extends AppCompatActivity {
                 }
             }
         });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
 }

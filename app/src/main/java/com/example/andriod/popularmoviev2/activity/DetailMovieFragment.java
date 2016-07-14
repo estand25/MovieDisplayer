@@ -24,9 +24,12 @@ import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.data.MovieContract.MovieEntry;
 
 /**
- * A placeholder fragment containing a simple view.
+ * DetailMovieFragment (Detail Movie Fragment) shows general information
+ * about the movie (DETAIL_MOVIE_COLUMNS)
  */
-public class DetailMovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DetailMovieFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
+
     // Local class Log tag variable
     private final String LOG_TAG = DetailMovieFragment.class.getSimpleName();
 
@@ -140,19 +143,10 @@ public class DetailMovieFragment extends Fragment implements LoaderManager.Loade
         }*/
     }
 
-    /*
-    private Intent createShareForecastIntent() {
-
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mForecast + FORECAST_SHARE_HASHTAG);
-        return shareIntent;
-    }    dd*/
-
-    /*
-        My first try at getting the name for the genres
-        I need help here because I'm using a lot of memery
+    /**
+     * Remove first and end braskets
+     * @param line - String of genre id with brasket
+     * @return - String of genres id without braskets
      */
     public String getGenreName(String line){
         String result = "";

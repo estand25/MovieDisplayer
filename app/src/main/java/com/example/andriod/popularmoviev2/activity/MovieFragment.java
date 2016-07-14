@@ -152,6 +152,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 //mPosition = pos;
             }
         });
+
         /*
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways

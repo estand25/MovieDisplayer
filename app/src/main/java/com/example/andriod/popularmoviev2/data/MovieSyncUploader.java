@@ -93,19 +93,22 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
+        // Populate the Genre informatino
+        getGenreInfo();
+
+        // Populate the movie table with either Popular or Top Rate Movie
         if(Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
             getPopularMovieColl();
         }else{
             getTopRateMovieColl();
         }
-        getGenreInfo();
     }
 
     /*
         Populated movie with popular movie data
      */
     public void getPopularMovieColl(){
-        // Remove all the information before populate new data
+        // Remove all the information before populating new data
         deleteAllOtherTable();
 
         // Create an instance of the framework that creates the Url and converter the json to gson
@@ -180,7 +183,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         Populated movie with top rated movie
      */
     public void getTopRateMovieColl(){
-        // Remove all the information before populate new data
+        // Remove all the information before populating new data
         deleteAllOtherTable();
 
         // Create an instance of the framework that creates the Url and converter the json to gson
