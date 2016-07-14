@@ -10,6 +10,11 @@ import com.example.andriod.popularmoviev2.R;
  * Created by StandleyEugene on 7/11/2016.
  */
 public class Utility {
+    /**
+     * Get the current prefer for the app
+     * @param context
+     * @return
+     */
     public static String getPreferredMovieType(Context context) {
         // Get the current Shared Preferences for the app
         SharedPreferences sharedPref =

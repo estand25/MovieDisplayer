@@ -1,6 +1,7 @@
 package com.example.andriod.popularmoviev2.data;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -101,7 +102,5 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ReviewEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + GenreEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TrailerEntry.TABLE_NAME);
-        //sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FavoriteMovies.TABLE_NAME);
     }
-
 }

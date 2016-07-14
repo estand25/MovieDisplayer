@@ -1,6 +1,5 @@
 package com.example.andriod.popularmoviev2.activity;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,14 +20,8 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieProvider;
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
-import com.example.andriod.popularmoviev2.model.Movie;
-
-import java.util.HashMap;
-
 import com.example.andriod.popularmoviev2.data.MovieContract.MovieEntry;
-import com.example.andriod.popularmoviev2.data.MovieContract.GenreEntry;
 
 /**
  * A placeholder fragment containing a simple view.

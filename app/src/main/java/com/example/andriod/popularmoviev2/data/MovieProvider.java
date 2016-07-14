@@ -7,8 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
+import com.example.andriod.popularmoviev2.other.Utility;
 
 /**
  * Note: Base on SunShine App
@@ -40,8 +39,6 @@ public class MovieProvider extends ContentProvider {
 
         // This is an inner join which looks at
         // Review INNER JOIN Movie on Movie.id = Review.movie_id
-
-
         sMovieWithReview.setTables(
                 MovieContract.ReviewEntry.TABLE_NAME + " INNER JOIN " +
                         MovieContract.MovieEntry.TABLE_NAME +
@@ -64,17 +61,24 @@ public class MovieProvider extends ContentProvider {
         );
     }
 
-    // Movie.movie_id = ?
+    // movie.movie_id = ?
     public static final String sMovieIdSettingSelection =
             MovieContract.MovieEntry.TABLE_NAME +
                     "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ";
 
-    // Movie._ID = ?
+    // movie._ID = ?
     public static final String sIdSettingSelection =
             MovieContract.MovieEntry.TABLE_NAME +
                     "." + MovieContract.MovieEntry._ID + " = ? ";
 
+    // movie.movie_type = ?
+    public static final String sMovieTypeSettingSelection =
+            MovieContract.MovieEntry.TABLE_NAME +
+                    "." + MovieContract.MovieEntry.COLUMN_MOVIE_TYPE + " = ?";
 
+    /*
+        Uri Matcher that determine how the Uri is handling inputs
+     */
     static UriMatcher buildUriMatcher(){
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
@@ -98,6 +102,9 @@ public class MovieProvider extends ContentProvider {
         return true;
     }
 
+    /*
+        Determine the Uri type based on the Uri
+     */
     @Override
     public String getType(Uri uri){
 

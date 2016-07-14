@@ -17,6 +17,7 @@ import android.widget.GridView;
 
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
+import com.example.andriod.popularmoviev2.data.MovieProvider;
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.other.Utility;
@@ -33,10 +34,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     // Declare the following class level variables
     private MovieAdapter movieAdapter;
     private ArrayList<Movie> movieList;
-    //private int mPosition = gridView.INVALID_POSITION;
+    private int mPosition = gridView.INVALID_POSITION;
     //private boolean mUseTodayLayout;
 
-    //private static final String SELECTED_KEY = "selected_position";
+    private static final String SELECTED_KEY = "selected_position";
 
     // Unique identify for they specific load
     private static final int MOVIE_LOADER = 0;
@@ -177,16 +178,22 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onStart(){
-        MovieSyncUploader populateUpload = new MovieSyncUploader(getContext(),true);
+        // Instance of Movie Provide
+        //MovieProvider movieProvider = new MovieProvider();
 
-        // Check which display option is being used  and display the information
-        // and populate the database with the selections information
-        if(Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
-            populateUpload.getPopularMovieColl();
-        }else{
-            populateUpload.getTopRateMovieColl();
-        }
-        super.onStart();
+        // Check if movie are already populated
+        //if(!movieProvider.chkMovieExist()) {
+            MovieSyncUploader populateUpload = new MovieSyncUploader(getContext(), true);
+
+            // Check which display option is being used  and display the information
+            // and populate the database with the selections information
+            if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
+                populateUpload.getPopularMovieColl();
+            } else {
+                populateUpload.getTopRateMovieColl();
+            }
+            super.onStart();
+        //}
     }
 
     @Override
