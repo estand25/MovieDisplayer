@@ -93,13 +93,21 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
-        getPopularMovieColl();
+        if(Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
+            getPopularMovieColl();
+        }else{
+            getTopRateMovieColl();
+        }
+        getGenreInfo();
     }
 
     /*
         Populated movie with popular movie data
      */
     public void getPopularMovieColl(){
+        // Remove all the information before populate new data
+        deleteAllOtherTable();
+
         // Create an instance of the framework that creates the Url and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(movieRoot)
@@ -151,14 +159,13 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,Utility.getPreferredMovieType(getContext())); //short handle for popular movie
 
-                    //Log.v("Popular Movie"," "+(i+1)+") Details - " + movie.getTitle());
-
                     // Add movie details to the ContentValue array
                     bulkPopularMovies[i] = popularMovieContenter;
 
                     // Increment index
                     i++;
                 }
+                // Bulk insert all the new content information
                 mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulkPopularMovies);
             }
 
@@ -173,6 +180,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         Populated movie with top rated movie
      */
     public void getTopRateMovieColl(){
+        // Remove all the information before populate new data
+        deleteAllOtherTable();
+
         // Create an instance of the framework that creates the Url and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(movieRoot)
@@ -190,6 +200,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         jsonMovieColl.enqueue(new Callback<MovieColl>() {
             @Override
             public void onResponse(Call<MovieColl> call, Response<MovieColl> response) {
+
                 // Grab the response (the List of movies) from the API
                 // and put it in a local list variable
                 List<Movie> topRatedMovies = response.body().getMovies();
@@ -208,7 +219,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     ContentValues topRatedMovieContenter = new ContentValues();
 
                     // Set the value of each column and inserts the movie property
-                    //topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
+                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_ADULT, movie.getAdult());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
@@ -222,7 +233,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO,movie.getVideo());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
-                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,"TR"); //short handle for Top Rated Movie
+                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,Utility.getPreferredMovieType(getContext())); //short handle for Top Rated Movie
 
                     // Add movie details to the ContentValue array
                     bulktopRatedMovies[i] = topRatedMovieContenter;
@@ -230,6 +241,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     // Increment index
                     i++;
                 }
+                // Bulk insert all the new content information
                 mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulktopRatedMovies);
             }
 
@@ -419,5 +431,14 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 Log.e(TAG,"Retrofit 2 failed to populate movie review table!!");
             }
         });
+    }
+
+    /*
+        Delete all the other tables associated to the correct gridview display
+     */
+    public void deleteAllOtherTable(){
+        mContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,"", new String[]{});
+        mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
+        mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"", new String[]{});
     }
 }

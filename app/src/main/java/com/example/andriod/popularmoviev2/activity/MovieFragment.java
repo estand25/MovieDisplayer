@@ -177,9 +177,15 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onStart(){
-        MovieSyncUploader popularUpload = new MovieSyncUploader(getContext(),true);
-        popularUpload.getPopularMovieColl();
+        MovieSyncUploader populateUpload = new MovieSyncUploader(getContext(),true);
 
+        // Check which display option is being used  and display the information
+        // and populate the database with the selections information
+        if(Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
+            populateUpload.getPopularMovieColl();
+        }else{
+            populateUpload.getTopRateMovieColl();
+        }
         super.onStart();
     }
 
