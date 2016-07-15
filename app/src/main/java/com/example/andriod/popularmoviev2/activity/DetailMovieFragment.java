@@ -159,7 +159,6 @@ public class DetailMovieFragment extends Fragment
         return result;
     }
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
@@ -175,6 +174,9 @@ public class DetailMovieFragment extends Fragment
             Log.v("Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
             Log.v("URI ", mUri.toString());
 
+
+            // Below code populations Review and Trailer, but continually to populate move then
+            // Once. I going to need to look at this.
             MovieSyncUploader movieSyncUploader = new MovieSyncUploader(getContext(),false);
 
             // Get the Review & Trailer Information for this movie
@@ -224,30 +226,6 @@ public class DetailMovieFragment extends Fragment
                 value = (double) i;
                 Log.v("Value ",Double.toString(value));
             }
-
-            /*
-            Drawable star = getResources().getDrawable(R.drawable.ic_full_star);
-            Bitmap bitmap = ((BitmapDrawable)star).getBitmap();
-
-            Double dRemain = (data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE) - value);
-            int remain = (int) Math.round(100.0/bitmap.getHeight()*dRemain);
-
-
-            String SRemain = Double.toString(dRemain);
-            SRemain = SRemain.substring(SRemain.,2);
-
-            Log.v("Column Value ",Double.toString(data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE)));
-            Log.v("Value ",Double.toString(value));
-            Log.v("Remain Value ",Double.toString(dRemain));
-            Log.v("Int Value ",Integer.toBinaryString(remain));
-            Log.v("String Value ",SRemain);
-
-
-            bitmap = bitmap.createBitmap(bitmap,
-                    bitmap.getWidth(),
-                    bitmap.getHeight(),
-                    bitmap.getWidth(),
-                    bitmap.getHeight());*/
 
             mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
             mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));

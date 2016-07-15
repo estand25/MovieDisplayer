@@ -96,10 +96,7 @@ public class DetailTrailerFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_detail_trailer, container, false);
 
         // Local Variable for trailer screen elements
-        mMovie_trailer_image = (ImageView) rootView.findViewById(R.id.movie_trailer_image);
-        mMovie_trailer_title = (TextView) rootView.findViewById(R.id.movie_trailer_title);
         mTrailerLayout = (LinearLayout) rootView.findViewById(R.id.trailerLayout);
-        mTrailer_button = (Button) rootView.findViewById(R.id.trailer_button);
 
         return rootView;
     }
@@ -137,7 +134,9 @@ public class DetailTrailerFragment extends Fragment
 
             Log.v("Row Count ", Integer.toString(data.getCount()));
 
-            if (mTrailerLayout.getChildCount() <= data.getCount()) {
+            Log.v("Trailer Count ", Integer.toString(mTrailerLayout.getChildCount()));
+
+            if (data.getCount() >= mTrailerLayout.getChildCount()) {
 
                 data.moveToPosition(-1);
 
@@ -146,27 +145,6 @@ public class DetailTrailerFragment extends Fragment
                     String trailerLabel = data.getString(COL_MOVIE_TITLE) + " " + data.getString(COL_TRAILER_NAME);
 
                     final String video_id = data.getString(COL_TRAILER_KEY);
-                /*
-                mMovie_trailer_image = new ImageView(getContext());
-                mMovie_trailer_image.setImageResource(R.drawable.ic_entypo);
-
-                mMovie_trailer_title = new TextView(getContext());
-                mMovie_trailer_title.setText(trailerLabel);
-
-                mTrailerLayout.addView(mMovie_trailer_title);
-                mTrailerLayout.addView(mMovie_trailer_image);
-
-                // Note: I got the hint on how to make this work from this post
-                // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
-                mMovie_trailer_image.setOnClickListener(new View.OnCreateContextMenuListener(){
-                    public void onClick(View v){
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+video_id));
-                        //intent.setAction(Intent.ACTION_VIEW);
-                        //intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                        //intent.setData(Uri.parse("http://casidiablo.net"));
-                        startActivity(intent);
-                    }
-                }); */
 
                     mTrailer_button = new Button(getContext());
                     mTrailer_button.setBackgroundResource(R.drawable.ic_entypo);
