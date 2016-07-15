@@ -133,17 +133,19 @@ public class DetailTrailerFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data != null && data.moveToFirst()){
+        if(data != null && data.moveToFirst()) {
 
-            Log.v("Row Count ",Integer.toString(data.getCount()));
+            Log.v("Row Count ", Integer.toString(data.getCount()));
 
-            data.moveToPosition(-1);
+            if (mTrailerLayout.getChildCount() <= data.getCount()) {
 
-            // Loop throught adding new trailers
-            while (data.moveToNext()){
-                String trailerLabel = data.getString(COL_MOVIE_TITLE) + " " + data.getString(COL_TRAILER_NAME);
+                data.moveToPosition(-1);
 
-                final String video_id = data.getString(COL_TRAILER_KEY);
+                // Loop throught adding new trailers
+                while (data.moveToNext()) {
+                    String trailerLabel = data.getString(COL_MOVIE_TITLE) + " " + data.getString(COL_TRAILER_NAME);
+
+                    final String video_id = data.getString(COL_TRAILER_KEY);
                 /*
                 mMovie_trailer_image = new ImageView(getContext());
                 mMovie_trailer_image.setImageResource(R.drawable.ic_entypo);
@@ -166,19 +168,20 @@ public class DetailTrailerFragment extends Fragment
                     }
                 }); */
 
-                mTrailer_button = new Button(getContext());
-                mTrailer_button.setBackgroundResource(R.drawable.ic_entypo);
-                mTrailer_button.setText(trailerLabel);
-                mTrailer_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+video_id));
-                        startActivity(intent);
-                    }
-                });
+                    mTrailer_button = new Button(getContext());
+                    mTrailer_button.setBackgroundResource(R.drawable.ic_entypo);
+                    mTrailer_button.setText(trailerLabel);
+                    mTrailer_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
+                            startActivity(intent);
+                        }
+                    });
 
-                mTrailerLayout.addView(mTrailer_button);
+                    mTrailerLayout.addView(mTrailer_button);
 
+                }
             }
         }
     }
