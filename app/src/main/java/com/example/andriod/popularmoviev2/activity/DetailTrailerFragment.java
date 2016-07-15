@@ -1,5 +1,6 @@
 package com.example.andriod.popularmoviev2.activity;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,15 +34,15 @@ public class DetailTrailerFragment extends Fragment
     private final String LOG_TAG = DetailTrailerFragment.class.getSimpleName();
 
     // String constant for the MovieTrailerFragment
-    static final String TRAILER_DETAILER_URI = "TRAILER_DETAILS_URI";
+    static final String TRAILER_DETAILS_URI = "TRAILER_DETAILS_URI";
 
-    // Local Uri indentify
+    // Local Uri identify
     private Uri mUri;
 
     // Trailer Loader for DetailTrailerFragment
     private static final int TRAILER_MOVIE_LOADER = 1;
 
-    // LinearLayout for User Rating for Star
+    // LinearLayout for Trailer dynamically create elements
     LinearLayout mTrailerLayout;
 
     // Trailer String[] for Detail Trailer Fragment
@@ -72,49 +73,64 @@ public class DetailTrailerFragment extends Fragment
     static final int COL_TRAILER_SIZE = 9;
     static final int COL_TRAILER_TYPE = 10;
 
-    // Set the local Trailer Detail elements
-    private ImageView mMovie_trailer_image;
-    private TextView mMovie_trailer_title;
+    // Set the local Trailer Detail element
     private Button mTrailer_button;
 
+    // DetailTrailerFragment Construction
     public DetailTrailerFragment() {}
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
+    /**
+     * When the View is created I get the Bundle argument with the movie Uri
+     *
+     * I inflate the fragment layout
+     *
+     * @param inflater - inflater the declare layout elements
+     * @param container - Get the container for the inflater
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     * @return - Return the populate movie view to the app
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Bundle arguments = getArguments();
         if(arguments != null){
-            mUri = arguments.getParcelable(DetailTrailerFragment.TRAILER_DETAILER_URI);
+            mUri = arguments.getParcelable(DetailTrailerFragment.TRAILER_DETAILS_URI);
         }
 
         // Get the current DetailTrailerFragment view layout
         View rootView = inflater.inflate(R.layout.fragment_detail_trailer, container, false);
 
-        // Local Variable for trailer screen elements
+        // Local variable for trailer Layout
         mTrailerLayout = (LinearLayout) rootView.findViewById(R.id.trailerLayout);
 
+        // Return newly set view
         return rootView;
     }
 
+    /**
+     * Start the loading on the movie trailer records
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * Get the Cursor from the loader
+     * @param id -
+     * @param args - Bundle for fragment
+     * @return - Retrun a loader specific cursor
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args){
         if ( null != mUri ) {
             // Now create and return a CursorLoader that will take care of
             // creating a Cursor for the data being displayed.
 
-            Log.v("Content URI ", TrailerEntry.CONTENT_URI.toString());
-            Log.v("URI ", mUri.toString());
+            Log.v("Trailer Content URI ", TrailerEntry.CONTENT_URI.toString());
+            Log.v("Trailer URI ", mUri.toString());
 
             return new CursorLoader(
                     getActivity(),
@@ -127,7 +143,12 @@ public class DetailTrailerFragment extends Fragment
         return null;
     }
 
-
+    /**
+     * When the retrieving of the movie trailers are finished updating
+     * the XML layout with the movie trailers information
+     * @param loader - The loader the queries the movie content resolver
+     * @param data - The cursor that is retrun from the loader and content resolver
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(data != null && data.moveToFirst()) {
@@ -136,27 +157,54 @@ public class DetailTrailerFragment extends Fragment
 
             Log.v("Trailer Count ", Integer.toString(mTrailerLayout.getChildCount()));
 
+            // Check if cursor data records is greater then or equal too
+            // the number of trailer child elements
             if (data.getCount() >= mTrailerLayout.getChildCount()) {
 
+                // Set the record local in table is less then zero
+                // Note: So when we go into the loop we start at the
+                //       top of the tables
                 data.moveToPosition(-1);
 
-                // Loop throught adding new trailers
+                // Loop through adding new trailers
                 while (data.moveToNext()) {
+                    // Set the button label text
                     String trailerLabel = data.getString(COL_MOVIE_TITLE) + " " + data.getString(COL_TRAILER_NAME);
 
+                    // Set the video key to pass to YouTube
                     final String video_id = data.getString(COL_TRAILER_KEY);
 
+                    // Initize the class level button to a new button
                     mTrailer_button = new Button(getContext());
+
+                    // Set the background image for the button
                     mTrailer_button.setBackgroundResource(R.drawable.ic_entypo);
+
+                    // Set the text for the button
                     mTrailer_button.setText(trailerLabel);
+
+                    // Set-up the onClickListener for the button push key to
+                    // trigger youtube
                     mTrailer_button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
-                            startActivity(intent);
+                            // Try to open up youtube with trailer video directly, but if not able
+                            // I open an internet browser
+                            // Note: I embedded this code section based on the stackoverflow post
+                            // it was a lot better then what I was thinking of doing
+                            // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
+                                startActivity(intent);
+                            }catch (ActivityNotFoundException ex){
+                                Intent intent = new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse("http://www.youtube.com/watch?v=" + video_id));
+                                startActivity(intent);
+                            }
                         }
                     });
 
+                    // Add the new button to my trailer Layout
                     mTrailerLayout.addView(mTrailer_button);
 
                 }
@@ -164,6 +212,10 @@ public class DetailTrailerFragment extends Fragment
         }
     }
 
+    /**
+     * Reset the loader cursor (I do not with it)
+     * @param loader - The loader the queries the movie content resolver
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {}
 
@@ -171,8 +223,8 @@ public class DetailTrailerFragment extends Fragment
      * Get the movie trailer detail fragments Bundle string identiry
      * @return - Return the string used to find Uri information in bundle
      */
-    public static String getTRAILER_DETAILER_URI(){
-        return TRAILER_DETAILER_URI;
+    public static String getTRAILER_DETAILS_URI(){
+        return TRAILER_DETAILS_URI;
     }
 
 }

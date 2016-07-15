@@ -7,13 +7,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import com.example.andriod.popularmoviev2.other.Utility;
 
 /**
  * Note: Base on SunShine App
  * MovieViewerProvider handle the SQLite query create
  * insertion, deletion, and updates)
- * Created by StandleyEugene on 7/10/2016.
+ * Created by Standley Eugene on 7/10/2016.
  */
 public class MovieProvider extends ContentProvider {
 
@@ -96,7 +95,7 @@ public class MovieProvider extends ContentProvider {
      */
     private Cursor getMovieReview(Uri uri){
         return sMovieWithReview.query(mOpenHelper.getReadableDatabase(),
-                new String[]{"review_id","author","content","url"},
+                new String[]{"review._ID,review_id","movie.movie_id","author","content","url"},
                 sMovieIdSettingSelection,
                 new String[]{MovieContract.MovieEntry.getMovieID(uri)},
                 null,

@@ -411,17 +411,17 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 for(Review review : movieReview){
                     // Content that holds all the populated movie information
                     // retrieved from the Movie DB API
-                    ContentValues reviewContanter = new ContentValues();
+                    ContentValues reviewContenter = new ContentValues();
 
                     // Set the value of each column and insert the movie property
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movie_id);
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID,review.getId());
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
+                    reviewContenter.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID,review.getId());
+                    reviewContenter.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movie_id);
+                    reviewContenter.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
+                    reviewContenter.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
+                    reviewContenter.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
 
                     // Add review detail to the ContentValue aray
-                    bulkMovieReview[i] = reviewContanter;
+                    bulkMovieReview[i] = reviewContenter;
 
                     // Increment index
                     i++;

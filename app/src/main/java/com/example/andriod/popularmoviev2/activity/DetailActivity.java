@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.adapter.PageAdapter;
+import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 
 import java.net.URI;
 
@@ -33,6 +34,8 @@ public class DetailActivity extends AppCompatActivity
 
     private Uri mUri;
 
+    MovieSyncUploader movieSyncUploader;
+
     /**
      * On Tab Selected I popluation the detail fragment
      * (DetailMovieFragment, DetailTrailerFragment, or DetailReviewFragment)
@@ -49,6 +52,10 @@ public class DetailActivity extends AppCompatActivity
     @Override
     public void onTabReselected(TabLayout.Tab tab){}
 
+    /**
+     * OnCreate set-up the TabLayout with individual tab names and floating action button for mail
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +79,7 @@ public class DetailActivity extends AppCompatActivity
 
         // Creating out pager adapter
         PageAdapter adapter  = new PageAdapter
-                (getSupportFragmentManager(),detailTabLayout.getTabCount(),getIntent().getData());
+                (getSupportFragmentManager(),detailTabLayout.getTabCount(),getIntent().getData(),getApplicationContext());
 
         // Adding adapter to pager
         viewPager.setAdapter(adapter);

@@ -95,6 +95,11 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI,id);
         }
 
+        // Uri all review for a Movie in the movie table
+        public static Uri buildReviewMovieIDUri(int MovieID){
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
+        }
+
         // String holding the table name
         public static final String TABLE_NAME = "review";
 
@@ -149,7 +154,7 @@ public class MovieContract {
         }
 
         // Uri all trailer for a Movie in the movie table
-        public static Uri buildTrailerUri(int MovieID){
+        public static Uri buildTrailerMovieIDUri(int MovieID){
             return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
         }
 

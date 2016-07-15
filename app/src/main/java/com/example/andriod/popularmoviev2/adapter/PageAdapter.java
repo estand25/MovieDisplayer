@@ -1,15 +1,46 @@
 package com.example.andriod.popularmoviev2.adapter;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.UserHandle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.Display;
 
 import com.example.andriod.popularmoviev2.activity.DetailMovieFragment;
 import com.example.andriod.popularmoviev2.activity.DetailReviewFragment;
 import com.example.andriod.popularmoviev2.activity.DetailTrailerFragment;
 import com.example.andriod.popularmoviev2.data.MovieContract;
+import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Note: I'm using the example of mulitply tabs for the individual movie
@@ -22,16 +53,21 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
 public class PageAdapter extends FragmentStatePagerAdapter {
     int mNumOftabs;
     Uri mUri;
+    MovieSyncUploader movieSyncUploader;
 
     /**
      * Constructions the PageAdapter class
      * @param fm - FragmentManager for the tab layout
      * @param NumOfTabs - Number of tabs in tab layout
      */
-    public PageAdapter(FragmentManager fm, int NumOfTabs, Uri uri){
+    public PageAdapter(FragmentManager fm, int NumOfTabs, Uri uri, Context context){
         super(fm);
+
+        // Set the class variable to the passed in parmeters
         this.mNumOftabs = NumOfTabs;
         this.mUri = uri;
+
+        movieSyncUploader = new MovieSyncUploader(context, false);
     }
 
     /**
@@ -41,23 +77,70 @@ public class PageAdapter extends FragmentStatePagerAdapter {
      */
     @Override
     public Fragment getItem(int position){
-
+        // Create a new instance of Bundle
         Bundle arguments = new Bundle();
 
+        // Switch to different fragment based on pasted in position
+        // from the Detail Activity or Main Activity depending on App Layout (one penal or two Penals)
         switch (position){
             case 0:
+                // Get the Uri value in the Bundle based on the String value identify
                 arguments.putParcelable(DetailMovieFragment.getMOVIE_DETAIL_URI(), mUri);
+
+                // Create a new instance of a fragment
                 DetailMovieFragment detailMovieFragment = new DetailMovieFragment();
+
+                // Add an argument to the new fragment
                 detailMovieFragment.setArguments(arguments);
+
+                // Return the fragment to the TabLayout
                 return detailMovieFragment;
+
             case 1:
-                arguments.putParcelable(DetailTrailerFragment.getTRAILER_DETAILER_URI(), MovieContract.TrailerEntry.buildTrailerUri(Integer.parseInt(mUri.getPathSegments().get(1))));
+                // Populate the trailer table for this specific movie
+                movieSyncUploader.getTrailerInfor(Integer.parseInt(mUri.getPathSegments().get(1)));
+
+                // Get the Uri value in the Bundle based on the String value identify
+                arguments.putParcelable(DetailTrailerFragment.getTRAILER_DETAILS_URI(), MovieContract.TrailerEntry.buildTrailerMovieIDUri(Integer.parseInt(mUri.getPathSegments().get(1))));
+
+                // Create a new instance of a fragment
                 DetailTrailerFragment detailTrailerFragment = new DetailTrailerFragment();
+
+                // Add an argument to the new fragment
                 detailTrailerFragment.setArguments(arguments);
+
+                // Return the fragment to the TabLayout
                 return detailTrailerFragment;
+
             case 2:
+                // Populate the Review table for this specific movie
+                movieSyncUploader.getReviewInfor(Integer.parseInt(mUri.getPathSegments().get(1)));
+
+                // Get the Uri value in the Bundle based on the String value identify
+                arguments.putParcelable(DetailReviewFragment.getREVIEW_DETAILS_URI(), MovieContract.ReviewEntry.buildReviewMovieIDUri(Integer.parseInt(mUri.getPathSegments().get(1))));
+
+                // Create a new instance of a fragment
                 DetailReviewFragment detailReviewFragment = new DetailReviewFragment();
+
+                // Add an argument to the new fragment
+                detailReviewFragment.setArguments(arguments);
+
+                // Return the fragment to the TabLayout
                 return detailReviewFragment;
+
+                //movieSyncUploader.getTrailerInfor(Integer.parseInt(mUri.getPathSegments().get(1)));
+
+                // Get the Uri value in the Bundle based on the String value identify
+                /*arguments.putParcelable(DetailTrailerFragment.getTRAILER_DETAILS_URI(), MovieContract.TrailerEntry.buildTrailerMovieIDUri(Integer.parseInt(mUri.getPathSegments().get(1))));
+
+                // Create a new instance of a fragment
+                DetailTrailerFragment detailTrailerFragment1 = new DetailTrailerFragment();
+
+                // Add an argument to the new fragment
+                detailTrailerFragment1.setArguments(arguments);
+
+                // Return the fragment to the TabLayout
+                return detailTrailerFragment1;*/
             default:
                 return null;
         }

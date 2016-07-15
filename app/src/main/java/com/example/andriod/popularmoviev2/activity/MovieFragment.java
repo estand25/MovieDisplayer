@@ -25,7 +25,8 @@ import com.example.andriod.popularmoviev2.other.Utility;
 import java.util.ArrayList;
 
 /**
- * A placeholder fragment containing a simple view.
+ * MovieFragment (Movie Fragment) shows individual movie poster
+ * on gridView
  */
 public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     protected final String TAG = getClass().getSimpleName();
@@ -35,6 +36,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private MovieAdapter movieAdapter;
     private ArrayList<Movie> movieList;
     private int mPosition = gridView.INVALID_POSITION;
+    MovieSyncUploader movieSyncUploader;
     //private boolean mUseTodayLayout;
 
     private static final String SELECTED_KEY = "selected_position";
@@ -73,9 +75,11 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         public void onItemSelected(Uri dateUri);
     }
 
-    // OnCreate I will use the saveInstanceState to check
-    // if saveInstanceState already has something or if we are starting
-    // anew
+    /**
+     * OnCreate I will use the saveInstanceState to check
+     * if saveInstanceState already has something or if we are starting anew
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +92,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
-    // Sets the onSaveInstanceState with the movieList
+    /**
+     * Sets the onSaveInstanceState with the movieList
+     * @param outState  - outState Bundle that live for the lifetime of activity
+     */
     @Override
     public void onSaveInstanceState(Bundle outState){
         outState.putParcelableArrayList("movies",movieList);
@@ -96,12 +103,22 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // When tablets rotate, the currently selected list item needs to be saved.
         // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
         // so check for that before storing.
-        /*if (mPosition != GridView.INVALID_POSITION) {
+        // Note: Adapted from SunShine app
+        if (mPosition != GridView.INVALID_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
-        }*/
+        }
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * Initiaze the gridView with the movieAdapter then update column number based on
+     * size of the screen, and finally add onClickListner for individual gridView.
+     * Also inflated main fragment layout
+     * @param inflater - flater the declare layout elements
+     * @param container - Get the container for the inflater
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     * @return - Return the populate movie view to the app
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -144,59 +161,61 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position
-                if(cursor != null){
+                if(cursor != null) {
 
+                    // Uri information for selected movie
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
                 }
-                //mPosition = pos;
+                mPosition = pos;
             }
         });
 
-        /*
-        // If there's instance state, mine it for useful information.
-        // The end-goal here is that the user never knows that turning their device sideways
-        // does crazy lifecycle related things.  It should feel like some stuff stretched out,
-        // or magically appeared to take advantage of room, but data or place in the app was never
-        // actually *lost*.
+        // Add from Sunshine to help maintain gridView position when going from Detail
+        // activity and fragments back to main activity/ movieFragment
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
-            // The listview probably hasn't even been populated yet.  Actually perform the
+            // The gridView probably hasn't even been populated yet.  Actually perform the
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
 
-        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);*/
+        /*mForecastAdapter.setUseTodayLayout(mUseTodayLayout);*/
 
         return  rootView;
     }
 
+    /**
+     * Populate the movie table with either the populor or top rate movie from
+     * The Movie DB API after the activity has been created
+     *
+     * Start the loading of movie items
+     *
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        movieSyncUploader = new MovieSyncUploader(getContext(), true);
+
+        // Check which display option is being used  and display the information
+        // and populate the database with the selections information
+        if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
+            movieSyncUploader.getPopularMovieColl();
+        } else {
+            movieSyncUploader.getTopRateMovieColl();
+        }
+
+        //movieSyncUploader.getGenreInfo();
+
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
-
-    @Override
-    public void onStart(){
-        // Instance of Movie Provide
-        //MovieProvider movieProvider = new MovieProvider();
-
-        // Check if movie are already populated
-        //if(!movieProvider.chkMovieExist()) {
-            MovieSyncUploader populateUpload = new MovieSyncUploader(getContext(), true);
-
-            // Check which display option is being used  and display the information
-            // and populate the database with the selections information
-            if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
-                populateUpload.getPopularMovieColl();
-            } else {
-                populateUpload.getTopRateMovieColl();
-            }
-            super.onStart();
-        //}
-    }
-
+    /**
+     * Get the Cursor from the loader
+     * @param i -
+     * @param bundle - Bundle for fragment
+     * @return - Retrun a loader specific cursor
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Get an Uri for the current app setting either Popular Movie or Top Rate Movies
@@ -211,17 +230,27 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 null);
     }
 
+    /**
+     * When the retrieving of the movie is finished updating
+     * the XML layout with the information
+     * @param loader - The loader the queries the movie content resolver
+     * @param data - The cursor that is retrun from the loader and content resolver
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         movieAdapter.swapCursor(data);
 
-        /*if (mPosition != GridView.INVALID_POSITION) {
+        if (mPosition != GridView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
             gridView.smoothScrollToPosition(mPosition);
-        }*/
+        }
     }
 
+    /**
+     * When the Loader is reset the movieAdapter with populate null
+     * @param loader - the Cursor specific loader
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {movieAdapter.swapCursor(null);}
 

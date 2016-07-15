@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.data.MovieContract.MovieEntry;
 
 /**
@@ -35,7 +34,7 @@ public class DetailMovieFragment extends Fragment
     private final String LOG_TAG = DetailMovieFragment.class.getSimpleName();
 
     // String constent for the MovieDetailFragment
-    static final String MOVIE_DETAIL_URI = "MOVIE_DETAILS_URI";
+    static final String MOVIE_DETAILS_URI = "MOVIE_DETAILS_URI";
 
     // String constent for movie share hashtag
     private static final String MOVIE_SHARE_HASHTAG = " #MovieDisplayerApp";
@@ -100,20 +99,26 @@ public class DetailMovieFragment extends Fragment
     private TextView mDetail_releaseDateTextView;
     private TextView mDetail_genreTextView;
 
+    // DetailMovieFragment Construction
     public DetailMovieFragment() {}
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
+    /**
+     * When the View is created I get the Bundle argument with the movie Uri
+     *
+     * I inflate the fragment layout and bind local layout elements to the fragment elements
+     *
+     * @param inflater - inflater the declare layout elements
+     * @param container - Get the container for the inflater
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     * @return - Return the populate movie view to the app
+     */
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         Bundle arguments = getArguments();
         if(arguments != null){
-            mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
+            mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAILS_URI);
         }
 
         // Get the current DetailActivityFragment view layout
@@ -128,6 +133,7 @@ public class DetailMovieFragment extends Fragment
         mDetail_genreTextView = (TextView) rootView.findViewById(R.id.detail_genreTextView);
         mUserRatingLayout = (LinearLayout) rootView.findViewById(R.id.detail_UserRateingLayout);
 
+        // Return newly set view
         return rootView;
     }
 
@@ -159,29 +165,30 @@ public class DetailMovieFragment extends Fragment
         return result;
     }
 
+    /**
+     * Start the loading on the Movie Detail records
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * Get the Cursor from the loader
+     * @param id -
+     * @param args - Bundle for fragment
+     * @return - Retrun a loader specific cursor
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if ( null != mUri ) {
             // Now create and return a CursorLoader that will take care of
             // creating a Cursor for the data being displayed.
 
-            Log.v("Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
-            Log.v("URI ", mUri.toString());
-
-
-            // Below code populations Review and Trailer, but continually to populate move then
-            // Once. I going to need to look at this.
-            MovieSyncUploader movieSyncUploader = new MovieSyncUploader(getContext(),false);
-
-            // Get the Review & Trailer Information for this movie
-            movieSyncUploader.getReviewInfor(Integer.parseInt(MovieContract.MovieEntry.getMovieID(mUri)));
-            movieSyncUploader.getTrailerInfor(Integer.parseInt(MovieContract.MovieEntry.getMovieID(mUri)));
+            Log.v("Movie Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
+            Log.v("Movie URI ", mUri.toString());
 
             return new CursorLoader(
                     getActivity(),
@@ -194,6 +201,12 @@ public class DetailMovieFragment extends Fragment
         return null;
     }
 
+    /**
+     * When the retrieving of the movie details are finished updating
+     * the XML layout with the movie detailed information
+     * @param loader - The loader the queries the movie content resolver
+     * @param data - The cursor that is retrun from the loader and content resolver
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
@@ -215,23 +228,21 @@ public class DetailMovieFragment extends Fragment
             mDetail_titleTextView.setText(data.getString(COL_DETAIL_MOVIE_TITLE));
             mDetail_synopsisTextView.setText(data.getString(COL_DETAIL_MOVIE_OVERVIEW));
             mDetail_userRateingTextView.setText(data.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
-
-            double value = 0;
-
             // Loop through and populate the start images
             for(int i = 0; i < data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
                 ImageView starImages = new ImageView(getContext());
                 starImages.setImageResource(R.drawable.ic_full_star);
                 mUserRatingLayout.addView(starImages);
-                value = (double) i;
-                Log.v("Value ",Double.toString(value));
             }
-
             mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
             mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));
         }
     }
 
+    /**
+     * Reset the loader cursor (I do not with it)
+     * @param loader - The loader the queries the movie content resolver
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {}
 
@@ -240,6 +251,6 @@ public class DetailMovieFragment extends Fragment
      * @return - Return the string used to find Uri information in bundle
      */
     public static String getMOVIE_DETAIL_URI(){
-        return MOVIE_DETAIL_URI;
+        return MOVIE_DETAILS_URI;
     }
 }

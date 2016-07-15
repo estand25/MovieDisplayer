@@ -39,6 +39,15 @@ package="com.example.andriod.popularmoviev2">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".activity.MainActivity" />
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <!-- Include the host attribute if you want your app to respond
+                 only to URLs with your app's domain. -->
+            <data android:scheme="http" android:host="www.example.com" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <!-- The BROWSABLE category is required to get links from web pages. -->
+            <category android:name="android.intent.category.BROWSABLE" />
+        </intent-filter>
     </activity>
     <provider
         android:authorities = "com.example.andriod.popularmoviev2"
