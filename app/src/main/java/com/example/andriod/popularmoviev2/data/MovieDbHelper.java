@@ -23,10 +23,18 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     static final String DATABASE_NAME = "movieviewer.db";
 
+    /**
+     * Construction for MovieDbHelper
+     * @param context
+     */
     public MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * Create all the tables in the database on class creation
+     * @param sqLiteDatabase
+     */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase){
         // Create the create string for the individual table
@@ -96,6 +104,12 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_FAVORITE_MOVIE_TABLE);
     }
 
+    /**
+     * When new database is create Old database will be deleted
+     * @param sqLiteDatabase - Database object
+     * @param oldVersion - old Database version
+     * @param newVersion - new Database version
+     */
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);

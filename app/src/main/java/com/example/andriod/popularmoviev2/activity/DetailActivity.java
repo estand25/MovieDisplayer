@@ -13,6 +13,8 @@ import android.view.View;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.adapter.PageAdapter;
 
+import java.net.URI;
+
 /**
  * Note: Added fragment tab to DetailActivity I got it from here
  * https://www.simplifiedcoding.net/android-tablayout-example-using-viewpager-fragments/
@@ -29,6 +31,13 @@ public class DetailActivity extends AppCompatActivity
     // This is our viewPager
     private ViewPager viewPager;
 
+    private Uri mUri;
+
+    /**
+     * On Tab Selected I popluation the detail fragment
+     * (DetailMovieFragment, DetailTrailerFragment, or DetailReviewFragment)
+     * @param tab
+     */
     @Override
     public void onTabSelected(TabLayout.Tab tab){
         viewPager.setCurrentItem(tab.getPosition());
@@ -63,7 +72,7 @@ public class DetailActivity extends AppCompatActivity
 
         // Creating out pager adapter
         PageAdapter adapter  = new PageAdapter
-                (getSupportFragmentManager(),detailTabLayout.getTabCount());
+                (getSupportFragmentManager(),detailTabLayout.getTabCount(),getIntent().getData());
 
         // Adding adapter to pager
         viewPager.setAdapter(adapter);
@@ -71,6 +80,7 @@ public class DetailActivity extends AppCompatActivity
         // Adding onTabSelectedListener to swipe views
         detailTabLayout.setOnTabSelectedListener(this);
 
+        // Action button for Emails
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

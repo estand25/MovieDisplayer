@@ -1,13 +1,11 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context=".activity.DetailMovieFragment"
     android:fillViewport="true"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_detail">
 
     <TableLayout
@@ -54,20 +52,24 @@
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:layout_weight="1"
-                            android:textColor="@color/colorIco"
                             android:fontFamily="sans-serif-condensed"/>
-                        <TextView
-                            android:id="@+id/detail_UserRateingTextView"
-                            android:layout_width="55dp"
-                            android:layout_height="wrap_content"
-                            android:padding="0dp"
-                            android:adjustViewBounds="true"
-                            android:layout_margin="0dp"
-                            android:gravity="left"
-                            android:textSize="15sp"
-                            android:layout_gravity="left"
-                            android:textColor="@color/colorIco"
-                            android:fontFamily="sans-serif-condensed"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:id="@+id/detail_UserRateingLayout">
+                                <TextView
+                                    android:id="@+id/detail_UserRateingTextView"
+                                    android:layout_width="55dp"
+                                    android:layout_height="wrap_content"
+                                    android:padding="0dp"
+                                    android:adjustViewBounds="true"
+                                    android:layout_margin="0dp"
+                                    android:gravity="left"
+                                    android:textSize="15sp"
+                                    android:layout_gravity="left"
+                                    android:fontFamily="sans-serif-condensed"/>
+                            </LinearLayout>
                         <TextView
                             android:id="@+id/detail_releaseDateTextView"
                             android:layout_width="wrap_content"
@@ -78,7 +80,6 @@
                             android:gravity="left"
                             android:textSize="15sp"
                             android:layout_gravity="left"
-                            android:textColor="@color/colorIco"
                             android:fontFamily="sans-serif-condensed"/>
                         <TextView
                             android:id="@+id/detail_genreTextView"
@@ -90,7 +91,6 @@
                             android:gravity="left"
                             android:textSize="15sp"
                             android:layout_gravity="left"
-                            android:textColor="@color/colorIco"
                             android:fontFamily="sans-serif-condensed"/>
                     </LinearLayout>
                 </TableRow>
@@ -104,7 +104,6 @@
             android:layout_margin="0dp"
             android:gravity="left"
             android:textSize="15sp"
-            android:textColor="@color/colorIco"
             android:fontFamily="sans-serif-condensed"/>
         <TextView
             android:id="@+id/detail_reviewTextView"

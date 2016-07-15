@@ -1,6 +1,10 @@
 package com.example.andriod.popularmoviev2.activity;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -14,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
@@ -34,7 +39,7 @@ public class DetailMovieFragment extends Fragment
     private final String LOG_TAG = DetailMovieFragment.class.getSimpleName();
 
     // String constent for the MovieDetailFragment
-    static final String MOVIE_DETAIL_URI = "URI";
+    static final String MOVIE_DETAIL_URI = "MOVIE_DETAILS_URI";
 
     // String constent for movie share hashtag
     private static final String MOVIE_SHARE_HASHTAG = " #MovieDisplayerApp";
@@ -50,6 +55,9 @@ public class DetailMovieFragment extends Fragment
 
     // Movie Detail Loader for DetailMovieFragment
     private static final int DETAIL_MOVIE_LOADER = 0;
+
+    // LinearLayout for User Rating for Star
+    LinearLayout mUserRatingLayout;
 
     // Movie String[] for Detail Fragment
     private static final String[] DETAIL_MOVIE_COLUMNS = {
@@ -122,6 +130,7 @@ public class DetailMovieFragment extends Fragment
         mDetail_userRateingTextView = (TextView) rootView.findViewById(R.id.detail_UserRateingTextView);
         mDetail_releaseDateTextView = (TextView) rootView.findViewById(R.id.detail_releaseDateTextView);
         mDetail_genreTextView = (TextView) rootView.findViewById(R.id.detail_genreTextView);
+        mUserRatingLayout = (LinearLayout) rootView.findViewById(R.id.detail_UserRateingLayout);
 
         return rootView;
     }
@@ -203,15 +212,60 @@ public class DetailMovieFragment extends Fragment
             //so I looked and found a soluation (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
             aq.id(mDetail_imageView).image(poster).visible();
 
-            /// Get the TextView from the current layout and set the text
+            // Get the TextView from the current layout and set the text
             // to what appears at position X in the column layout
             mDetail_titleTextView.setText(data.getString(COL_DETAIL_MOVIE_TITLE));
             mDetail_synopsisTextView.setText(data.getString(COL_DETAIL_MOVIE_OVERVIEW));
             mDetail_userRateingTextView.setText(data.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+
+            double value = 0;
+
+            // Loop through and populate the start images
+            for(int i = 0; i < data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
+                ImageView starImages = new ImageView(getContext());
+                starImages.setImageResource(R.drawable.ic_full_star);
+                mUserRatingLayout.addView(starImages);
+                value = (double) i;
+                Log.v("Value ",Double.toString(value));
+            }
+
+            /*
+            Drawable star = getResources().getDrawable(R.drawable.ic_full_star);
+            Bitmap bitmap = ((BitmapDrawable)star).getBitmap();
+
+            Double dRemain = (data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE) - value);
+            int remain = (int) Math.round(100.0/bitmap.getHeight()*dRemain);
+
+
+            String SRemain = Double.toString(dRemain);
+            SRemain = SRemain.substring(SRemain.,2);
+
+            Log.v("Column Value ",Double.toString(data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE)));
+            Log.v("Value ",Double.toString(value));
+            Log.v("Remain Value ",Double.toString(dRemain));
+            Log.v("Int Value ",Integer.toBinaryString(remain));
+            Log.v("String Value ",SRemain);
+
+
+            bitmap = bitmap.createBitmap(bitmap,
+                    bitmap.getWidth(),
+                    bitmap.getHeight(),
+                    bitmap.getWidth(),
+                    bitmap.getHeight());*/
+
             mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
             mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));
         }
     }
+
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) { }
+    public void onLoaderReset(Loader<Cursor> loader) {}
+
+    /**
+     * Get the movie detail fragments Bundle string identiry
+     * @return - Return the string used to find Uri information in bundle
+     */
+    public static String getMOVIE_DETAIL_URI(){
+        return MOVIE_DETAIL_URI;
+    }
 }

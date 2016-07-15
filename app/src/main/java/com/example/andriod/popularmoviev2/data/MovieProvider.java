@@ -26,19 +26,22 @@ public class MovieProvider extends ContentProvider {
     static final int GENRE = 102;
     static final int REVIEW = 103;
     static final int TRAILER = 104;
-    static final int REVIEW_FOR_MOVIE = 105;
-    static final int TRAILER_FOR_MOVIE = 106;
-    static final int FAVORITE_MOVIES = 107;
+    static final int GENRE_FOR_MOVIE = 105;
+    static final int REVIEW_FOR_MOVIE = 106;
+    static final int TRAILER_FOR_MOVIE = 107;
+    static final int FAVORITE_MOVIES = 108;
 
     private static final SQLiteQueryBuilder sMovieWithReview;
     private static final SQLiteQueryBuilder sMovieWithTrailer;
+    private static final SQLiteQueryBuilder sFavoriteMovie;
 
     static{
         sMovieWithReview = new SQLiteQueryBuilder();
         sMovieWithTrailer = new SQLiteQueryBuilder();
+        sFavoriteMovie = new SQLiteQueryBuilder();
 
         // This is an inner join which looks at
-        // Review INNER JOIN Movie on Movie.id = Review.movie_id
+        // review INNER JOIN movie on movie.movie_id = review.movie_id
         sMovieWithReview.setTables(
                 MovieContract.ReviewEntry.TABLE_NAME + " INNER JOIN " +
                         MovieContract.MovieEntry.TABLE_NAME +
@@ -49,8 +52,7 @@ public class MovieProvider extends ContentProvider {
         );
 
         // This is an inner join which looks at
-        // movie INNER JOIN Trailer on Trailer.movie_id = Review.movie_id
-        // Trailer INNER JOIN Movie on Movie.id = Trailer.Movie_id
+        // trailer INNER JOIN movie on movie.movie_id = trailer.movie_id
         sMovieWithTrailer.setTables(
                 MovieContract.TrailerEntry.TABLE_NAME + " INNER JOIN " +
                         MovieContract.MovieEntry.TABLE_NAME +
@@ -58,6 +60,17 @@ public class MovieProvider extends ContentProvider {
                         "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID +
                         " = " + MovieContract.TrailerEntry.TABLE_NAME +
                         "." + MovieContract.TrailerEntry.COLUMN_MOVIE_ID
+        );
+
+        // This is an inner join which looks a
+        // favorite_movie INNER JOIN movie on movie_id = favorite_movie.movie_id
+        sFavoriteMovie.setTables(
+                MovieContract.FavoriteMovies.TABLE_NAME + " INNER JOIN " +
+                        MovieContract.MovieEntry.TABLE_NAME +
+                        " ON " + MovieContract.MovieEntry.TABLE_NAME +
+                        "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID +
+                        " = " + MovieContract.FavoriteMovies.TABLE_NAME +
+                        "." + MovieContract.FavoriteMovies.COLUMN_MOVIE_ID
         );
     }
 
@@ -76,6 +89,53 @@ public class MovieProvider extends ContentProvider {
             MovieContract.MovieEntry.TABLE_NAME +
                     "." + MovieContract.MovieEntry.COLUMN_MOVIE_TYPE + " = ?";
 
+    /**
+     * Get a Cursor using SQLiteQueryBuilder for a join between Review and movie
+     * @param uri - The Uri location for Review
+     * @return - Returns a Cursor with review trailer
+     */
+    private Cursor getMovieReview(Uri uri){
+        return sMovieWithReview.query(mOpenHelper.getReadableDatabase(),
+                new String[]{"review_id","author","content","url"},
+                sMovieIdSettingSelection,
+                new String[]{MovieContract.MovieEntry.getMovieID(uri)},
+                null,
+                null,
+                null);
+    }
+
+    /**
+     * Get a Cursor using SQLiteQueryBuilder for a join between Trailer and movie
+     * @param uri - The Uri location for Trailer
+     * @return - Returns a Cursor with movie trailer
+     */
+    private Cursor getMovieTrailer(Uri uri){
+        return sMovieWithTrailer.query(
+                mOpenHelper.getReadableDatabase(),
+                new String[]{"trailer._ID","trailer_id","movie.movie_id","movie.title","iso_6391","iso_3166_1","key","name","site","size","type"},
+                sMovieIdSettingSelection,
+                new String[]{MovieContract.MovieEntry.getMovieID(uri)},
+                null,
+                null,
+                null);
+    }
+
+    /**
+     * Get a Cusor using SQLiteQueryBuilder for a join between Favorite and movie
+     * @param uri - The Uri location for Favorite
+     * @return - Returns a Cursor with favorite movie
+     */
+    private Cursor getFavoriteMovie(Uri uri){
+        return sFavoriteMovie.query(
+                mOpenHelper.getReadableDatabase(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
     /*
         Uri Matcher that determine how the Uri is handling inputs
      */
@@ -89,7 +149,8 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, MovieContract.PATH_GENRE, GENRE);
         matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
         matcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEW);
-        matcher.addURI(authority, MovieContract.PATH_FAVORITE_MOVIES, FAVORITE_MOVIES);
+        matcher.addURI(authority, MovieContract.PATH_GENRE + "/*",GENRE_FOR_MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_FAVORITE_MOVIES + "/*", FAVORITE_MOVIES);
         matcher.addURI(authority, MovieContract.PATH_REVIEW + "/*",REVIEW_FOR_MOVIE);
         matcher.addURI(authority, MovieContract.PATH_TRAILER + "/*",TRAILER_FOR_MOVIE);
 
@@ -123,11 +184,11 @@ public class MovieProvider extends ContentProvider {
             case TRAILER:
                 return MovieContract.TrailerEntry.CONTENT_TYPE;
             case REVIEW_FOR_MOVIE:
-                return MovieContract.ReviewEntry.CONTENT_TYPE;
+                return MovieContract.ReviewEntry.CONTENT_ITEM_TYPE;
             case TRAILER_FOR_MOVIE:
-                return MovieContract.TrailerEntry.CONTENT_TYPE;
+                return MovieContract.TrailerEntry.CONTENT_ITEM_TYPE;
             case FAVORITE_MOVIES:
-                return MovieContract.FavoriteMovies.CONTENT_TYPE;
+                return MovieContract.FavoriteMovies.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknow uri: " + uri );
         }
@@ -201,40 +262,28 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
-            case REVIEW_FOR_MOVIE: {
+            case GENRE_FOR_MOVIE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.ReviewEntry.TABLE_NAME,
-                        new String[]{"review_id","author","content","URL"},
+                        MovieContract.GenreEntry.TABLE_NAME,
+                        new String[]{"genre_id","name"},
                         sMovieIdSettingSelection,
-                        new String[]{"movie_id"},
+                        new String[]{"movie.genre_ids"},
                         null,
                         null,
                         sortOrder
                 );
+
+            }
+            case REVIEW_FOR_MOVIE: {
+                retCursor = getMovieReview(uri);
                 break;
             }
             case TRAILER_FOR_MOVIE:{
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.TrailerEntry.TABLE_NAME,
-                        new String[]{"trailer_id","iso_6391","iso_3166_1","key","name","site","size","type"},
-                        sMovieIdSettingSelection,
-                        new String[]{"movie_id"},
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getMovieTrailer(uri);
                 break;
             }
             case FAVORITE_MOVIES:{
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.TrailerEntry.TABLE_NAME,
-                        new String[]{"movie_id"},
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getFavoriteMovie(uri);
                 break;
             }
         }

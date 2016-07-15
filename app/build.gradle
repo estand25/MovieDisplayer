@@ -18,7 +18,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'THE_MOVIE_DB_API', "\"You Own Movie DB API Key\""
+        it.buildConfigField 'String', 'THE_MOVIE_DB_API', "\"d2919c2333e0f291ccf58c5e5ec88543\""
 
     }
     repositories {
@@ -38,4 +38,5 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.android.support:recyclerview-v7:24.0.0'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }

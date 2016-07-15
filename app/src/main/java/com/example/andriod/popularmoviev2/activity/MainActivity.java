@@ -41,14 +41,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create the dummy account
-        //mAccount = CreateMovieSyncAccount(this);
-        /*if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movie_detail_container, new DetailMovieFragment(), MOVIEDETAILFRAGMENT_TAG)
-                    .commit();
-        }*/
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
