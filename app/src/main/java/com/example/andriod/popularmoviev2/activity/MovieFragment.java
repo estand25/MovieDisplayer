@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import android.widget.GridView;
 
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieProvider;
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.other.Utility;
@@ -123,11 +121,11 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Initialize the custom movie adapter with necessary Curse adapter information
-        movieAdapter = new MovieAdapter(getActivity(),null,0);
-
         // Inflate all the items on the fragmen_main layout
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // Initialize the custom movie adapter with necessary Curse adapter information
+        movieAdapter = new MovieAdapter(getActivity(),null,0);
 
         //  Find the GridView on the fragment_main layout and set it to the
         // local representize
@@ -162,6 +160,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position
                 if(cursor != null) {
+
+                    // Below code populations Review and Trailer, but continually to populate move then
+                    // Once. I going to need to look at this.
+                    movieSyncUploader = new MovieSyncUploader(getContext(), false);
+
+                    // Get the Review & Trailer Information for this movie
+                    movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
+                    //movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
 
                     // Uri information for selected movie
                     ((Callback) getActivity())

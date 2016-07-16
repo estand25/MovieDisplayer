@@ -38,6 +38,7 @@ public class DetailTrailerFragment extends Fragment
 
     // Local Uri identify
     private Uri mUri;
+    private Uri mTri;
 
     // Trailer Loader for DetailTrailerFragment
     private static final int TRAILER_MOVIE_LOADER = 1;
@@ -76,6 +77,8 @@ public class DetailTrailerFragment extends Fragment
     // Set the local Trailer Detail element
     private Button mTrailer_button;
 
+    MovieSyncUploader movieSyncUploader;
+
     // DetailTrailerFragment Construction
     public DetailTrailerFragment() {}
 
@@ -105,6 +108,19 @@ public class DetailTrailerFragment extends Fragment
 
         // Return newly set view
         return rootView;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+
+        Bundle arguments = getArguments();
+        if(arguments != null){
+            mTri = arguments.getParcelable(DetailReviewFragment.REVIEW_DETAIL_URI);
+        }
+
+        movieSyncUploader = new MovieSyncUploader(getContext(), false);
+        movieSyncUploader.getReviewInfor(Integer.parseInt(mTri.getPathSegments().get(1)));
     }
 
     /**

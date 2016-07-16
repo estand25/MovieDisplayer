@@ -70,8 +70,8 @@ public class DetailActivity extends AppCompatActivity
 
         // Add the tabs using addTab() method
         detailTabLayout.addTab(detailTabLayout.newTab().setText("Overview"));
-        detailTabLayout.addTab(detailTabLayout.newTab().setText("Trailers"));
         detailTabLayout.addTab(detailTabLayout.newTab().setText("Reviews"));
+        detailTabLayout.addTab(detailTabLayout.newTab().setText("Trailers"));
         detailTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         // Initializing viewPager
@@ -79,7 +79,7 @@ public class DetailActivity extends AppCompatActivity
 
         // Creating out pager adapter
         PageAdapter adapter  = new PageAdapter
-                (getSupportFragmentManager(),detailTabLayout.getTabCount(),getIntent().getData(),getApplicationContext());
+                (getSupportFragmentManager(),detailTabLayout.getTabCount(),getIntent().getData());
 
         // Adding adapter to pager
         viewPager.setAdapter(adapter);

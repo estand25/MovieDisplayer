@@ -23,8 +23,6 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_detail" />
-
     <android.support.design.widget.TabLayout
         android:id="@+id/detail_tab_layout"
         android:layout_width="match_parent"
