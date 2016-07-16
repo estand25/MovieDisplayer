@@ -163,10 +163,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
                     // Below code populations Review and Trailer, but continually to populate move then
                     // Once. I going to need to look at this.
-                    movieSyncUploader = new MovieSyncUploader(getContext(), false);
+                    //movieSyncUploader = new MovieSyncUploader(getContext(), false);
 
                     // Get the Review & Trailer Information for this movie
-                    movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
+                    //movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
                     //movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
 
                     // Uri information for selected movie

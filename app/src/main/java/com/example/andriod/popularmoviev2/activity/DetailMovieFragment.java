@@ -48,6 +48,8 @@ public class DetailMovieFragment extends Fragment
     // Local Uri identify
     private Uri mUri;
 
+    private DetailMovieAdapter detailMovieAdapter;
+
     // Movie Detail Loader for DetailMovieFragment
     private static final int DETAIL_MOVIE_LOADER = 0;
 
@@ -124,15 +126,7 @@ public class DetailMovieFragment extends Fragment
         // Get the current DetailActivityFragment view layout
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        // Local variable for detail screen elements
-        mDetail_imageView = (ImageView) rootView.findViewById(R.id.detail_imageView);
-        mDetail_titleTextView = (TextView) rootView.findViewById(R.id.detail_titleTextView);
-        mDetail_synopsisTextView = (TextView) rootView.findViewById(R.id.detail_synopsisTextView);
-        mDetail_userRateingTextView = (TextView) rootView.findViewById(R.id.detail_UserRateingTextView);
-        mDetail_releaseDateTextView = (TextView) rootView.findViewById(R.id.detail_releaseDateTextView);
-        mDetail_genreTextView = (TextView) rootView.findViewById(R.id.detail_genreTextView);
-        mUserRatingLayout = (LinearLayout) rootView.findViewById(R.id.detail_UserRateingLayout);
-
+        //
         // Return newly set view
         return rootView;
     }
@@ -154,16 +148,6 @@ public class DetailMovieFragment extends Fragment
         }*/
     }
 
-    /**
-     * Remove first and end braskets
-     * @param line - String of genre id with brasket
-     * @return - String of genres id without braskets
-     */
-    public String getGenreName(String line){
-        String result = "";
-        result = line.substring(1, line.length()-1);
-        return result;
-    }
 
     /**
      * Start the loading on the Movie Detail records
@@ -209,34 +193,7 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.moveToFirst()) {
-            // Create an instance of AQuery and set it to the movieView item
-            AQuery aq = new AQuery(mDetail_imageView);
 
-            // Get the post information from the curse (get the row/column of information
-            // from the db)
-            String poster = data.getString(COL_DETAIL_MOVIE_POSTER_PATH);
-
-            // Take the ImageView and add an Image from the post location and
-            // make it visible too
-            // Replaced Picassa with AQery per the below form post. The image were loading to slow
-            //so I looked and found a soluation (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
-            aq.id(mDetail_imageView).image(poster).visible();
-
-            // Get the TextView from the current layout and set the text
-            // to what appears at position X in the column layout
-            mDetail_titleTextView.setText(data.getString(COL_DETAIL_MOVIE_TITLE));
-            mDetail_synopsisTextView.setText(data.getString(COL_DETAIL_MOVIE_OVERVIEW));
-            mDetail_userRateingTextView.setText(data.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
-            // Loop through and populate the start images
-            for(int i = 0; i < data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
-                ImageView starImages = new ImageView(getContext());
-                starImages.setImageResource(R.drawable.ic_full_star);
-                mUserRatingLayout.addView(starImages);
-            }
-            mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
-            mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));
-        }
     }
 
     /**

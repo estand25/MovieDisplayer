@@ -23,34 +23,7 @@ import java.net.URI;
  * DetailActivity that holds the tablayout for the three detail
  * fragement
  */
-public class DetailActivity extends AppCompatActivity
-        implements TabLayout.OnTabSelectedListener{
-
-    // This is our tablayout
-    private TabLayout tabLayout;
-
-    // This is our viewPager
-    private ViewPager viewPager;
-
-    private Uri mUri;
-
-    MovieSyncUploader movieSyncUploader;
-
-    /**
-     * On Tab Selected I popluation the detail fragment
-     * (DetailMovieFragment, DetailTrailerFragment, or DetailReviewFragment)
-     * @param tab
-     */
-    @Override
-    public void onTabSelected(TabLayout.Tab tab){
-        viewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab){}
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab){}
+public class DetailActivity extends AppCompatActivity{
 
     /**
      * OnCreate set-up the TabLayout with individual tab names and floating action button for mail
@@ -65,27 +38,20 @@ public class DetailActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Initializing the tabout
-        TabLayout detailTabLayout = (TabLayout) findViewById(R.id.detail_tab_layout);
+        if (savedInstanceState == null) {
+            // Create the detail fragment and add it to the activity
+            // using a fragment transaction.
 
-        // Add the tabs using addTab() method
-        detailTabLayout.addTab(detailTabLayout.newTab().setText("Overview"));
-        detailTabLayout.addTab(detailTabLayout.newTab().setText("Reviews"));
-        detailTabLayout.addTab(detailTabLayout.newTab().setText("Trailers"));
-        detailTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(DetailMovieFragment.MOVIE_DETAILS_URI, getIntent().getData());
 
-        // Initializing viewPager
-        viewPager = (ViewPager) findViewById(R.id.pager);
+            DetailMovieFragment fragment = new DetailMovieFragment();
+            fragment.setArguments(arguments);
 
-        // Creating out pager adapter
-        PageAdapter adapter  = new PageAdapter
-                (getSupportFragmentManager(),detailTabLayout.getTabCount(),getIntent().getData());
-
-        // Adding adapter to pager
-        viewPager.setAdapter(adapter);
-
-        // Adding onTabSelectedListener to swipe views
-        detailTabLayout.setOnTabSelectedListener(this);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.movie_detail_container, fragment)
+                    .commit();
+        }
 
         // Action button for Emails
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

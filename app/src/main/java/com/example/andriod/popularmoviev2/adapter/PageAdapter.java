@@ -1,6 +1,5 @@
 package com.example.andriod.popularmoviev2.adapter;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,11 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.andriod.popularmoviev2.activity.DetailMovieFragment;
-import com.example.andriod.popularmoviev2.activity.DetailRFragment;
-import com.example.andriod.popularmoviev2.activity.DetailReviewFragment;
 import com.example.andriod.popularmoviev2.activity.DetailTrailerFragment;
 import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 
 /**
  * Note: I'm using the example of mulitply tabs for the individual movie
@@ -76,7 +72,7 @@ public class PageAdapter extends FragmentStatePagerAdapter {
                 detailReviewFragment.setArguments(arguments);
 
                 // Return the fragment to the TabLayout
-                return detailReviewFragment;*/
+                return detailReviewFragment;
 
                 arguments.putParcelable(DetailRFragment.getREVIEW_DETAILS_URI(), MovieContract.ReviewEntry.buildReviewMovieIDUri(Integer.parseInt(mUri.getPathSegments().get(1))));
 
@@ -84,8 +80,7 @@ public class PageAdapter extends FragmentStatePagerAdapter {
 
                 detailRFragment.setArguments(arguments);
 
-                return detailRFragment;
-
+                return detailRFragment;*/
 
             case 2:
                 // Populate the trailer table for this specific movie
