@@ -87,10 +87,17 @@ public class MovieContract {
         // The type of data I will be sending if retrieved
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
 
         // Uri for the specific Review row in the review table
         public static Uri buildReviewUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
+        }
+
+        // Uri all review for a Movie in the movie table
+        public static Uri buildReviewMovieIDUri(int MovieID){
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
         }
 
         // String holding the table name
@@ -138,10 +145,17 @@ public class MovieContract {
         // The type of data I will be sending if retrieved
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +PATH_TRAILER;
 
         // Uri for the specific Trailer row in the trailer Table
         public static Uri buildTrailerUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
+        }
+
+        // Uri all trailer for a Movie in the movie table
+        public static Uri buildTrailerMovieIDUri(int MovieID){
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
         }
 
         // String holding the table name
@@ -168,6 +182,8 @@ public class MovieContract {
         // The type of data I will be sending if retrieved
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE_MOVIES;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE_MOVIES;
 
         // Uri for the specific favorite movie row in the favoritemovie table
         public static Uri buildFavoriteMovieUri(long id){
