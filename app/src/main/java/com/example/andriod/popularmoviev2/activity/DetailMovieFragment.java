@@ -161,6 +161,9 @@ public class DetailMovieFragment extends Fragment
 
     @Override
     public void onCreate(Bundle savedInstanceState){
+        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
+        getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
+        getLoaderManager().initLoader(REVIEW_MOVIE_LOADER, null, this);
         super.onCreate(savedInstanceState);
     }
     /**
@@ -206,9 +209,6 @@ public class DetailMovieFragment extends Fragment
         return rootView;
     }
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
-        getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
-        getLoaderManager().initLoader(REVIEW_MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
     @Override
