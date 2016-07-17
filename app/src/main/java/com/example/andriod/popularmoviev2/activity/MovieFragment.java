@@ -163,12 +163,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // if it cannot seek to that position
                 if(cursor != null){
 
-                    movieSyncUploader = new MovieSyncUploader(getContext(),false);
-
-                    // Get the Review & Trailer Information for this movie
-                    movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
-                    movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
-
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
                 }
