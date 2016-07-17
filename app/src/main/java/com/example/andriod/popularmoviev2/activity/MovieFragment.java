@@ -25,7 +25,8 @@ import com.example.andriod.popularmoviev2.other.Utility;
 import java.util.ArrayList;
 
 /**
- * A placeholder fragment containing a simple view.
+ * MovieFragment (Movie Fragment) shows individual movie poster
+ * on gridView
  */
 public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     protected final String TAG = getClass().getSimpleName();

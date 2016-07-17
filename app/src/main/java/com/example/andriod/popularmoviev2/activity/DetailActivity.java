@@ -20,8 +20,7 @@ import com.example.andriod.popularmoviev2.adapter.PageAdapter;
  * DetailActivity that holds the tablayout for the three detail
  * fragement
  */
-public class DetailActivity extends AppCompatActivity
-        implements TabLayout.OnTabSelectedListener{
+public class DetailActivity extends AppCompatActivity{
 
     // This is our tablayout
     private TabLayout tabLayout;
@@ -31,17 +30,6 @@ public class DetailActivity extends AppCompatActivity
 
 
     private Uri mUri;
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab){
-        viewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab){}
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab){}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

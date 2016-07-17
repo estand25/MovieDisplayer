@@ -56,18 +56,23 @@
                             android:layout_weight="1"
                             android:textColor="@color/colorIco"
                             android:fontFamily="sans-serif-condensed"/>
-                        <TextView
-                            android:id="@+id/detail_UserRateingTextView"
-                            android:layout_width="55dp"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="0dp"
-                            android:adjustViewBounds="true"
-                            android:layout_margin="0dp"
-                            android:gravity="left"
-                            android:textSize="15sp"
-                            android:layout_gravity="left"
-                            android:textColor="@color/colorIco"
-                            android:fontFamily="sans-serif-condensed"/>
+                            android:orientation="horizontal"
+                            android:id="@+id/detail_UserRateingLayout">
+                            <TextView
+                                android:id="@+id/detail_UserRateingTextView"
+                                android:layout_width="55dp"
+                                android:layout_height="wrap_content"
+                                android:padding="0dp"
+                                android:adjustViewBounds="true"
+                                android:layout_margin="0dp"
+                                android:gravity="left"
+                                android:textSize="15sp"
+                                android:layout_gravity="left"
+                                android:textColor="@color/colorIco"/>
+                        </LinearLayout>
                         <TextView
                             android:id="@+id/detail_releaseDateTextView"
                             android:layout_width="wrap_content"

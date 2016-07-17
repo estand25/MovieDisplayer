@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
@@ -96,13 +97,21 @@ public class DetailMovieFragment extends Fragment
     private TextView mDetail_releaseDateTextView;
     private TextView mDetail_genreTextView;
 
+    // LinearLayout for User Rating for Star
+    LinearLayout mUserRatingLayout;
+
     public DetailMovieFragment() {}
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
+    /**
+     * When the View is created I get the Bundle argument with the movie Uri
+     *
+     * I inflate the fragment layout and bind local layout elements to the fragment elements
+     *
+     * @param inflater - inflater the declare layout elements
+     * @param container - Get the container for the inflater
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     * @return - Return the populate movie view to the app
+     */
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -122,6 +131,7 @@ public class DetailMovieFragment extends Fragment
         mDetail_userRateingTextView = (TextView) rootView.findViewById(R.id.detail_UserRateingTextView);
         mDetail_releaseDateTextView = (TextView) rootView.findViewById(R.id.detail_releaseDateTextView);
         mDetail_genreTextView = (TextView) rootView.findViewById(R.id.detail_genreTextView);
+        mUserRatingLayout = (LinearLayout) rootView.findViewById(R.id.detail_UserRateingLayout);
 
         return rootView;
     }
@@ -155,12 +165,22 @@ public class DetailMovieFragment extends Fragment
     }
 
 
+    /**
+     * Start the loading on the Movie Detail records
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * Get the Cursor from the loader
+     * @param id -
+     * @param args - Bundle for fragment
+     * @return - Retrun a loader specific cursor
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if ( null != mUri ) {
@@ -181,6 +201,12 @@ public class DetailMovieFragment extends Fragment
         return null;
     }
 
+    /**
+     * When the retrieving of the movie details are finished updating
+     * the XML layout with the movie detailed information
+     * @param loader - The loader the queries the movie content resolver
+     * @param data - The cursor that is retrun from the loader and content resolver
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
@@ -202,6 +228,13 @@ public class DetailMovieFragment extends Fragment
             mDetail_titleTextView.setText(data.getString(COL_DETAIL_MOVIE_TITLE));
             mDetail_synopsisTextView.setText(data.getString(COL_DETAIL_MOVIE_OVERVIEW));
             mDetail_userRateingTextView.setText(data.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+
+            // Loop through and populate the start images
+            for(int i = 0; i < data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
+                ImageView starImages = new ImageView(getContext());
+                starImages.setImageResource(R.drawable.ic_full_star);
+                mUserRatingLayout.addView(starImages);
+            }
             mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
             mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));
         }
