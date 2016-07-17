@@ -27,12 +27,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
 
     private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
 
-    // The account name
-    public static final String ACCOUNT = "dummyaccount";
-
-    // Instance fields
-    Account mAccount;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,30 +72,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public static Account CreateMovieSyncAccount(Context context){
-        // Create the account type and default account
-        Account newAccount = new Account(
-                ACCOUNT, ACCOUNT_TYPE);
-
-        // Get an instace of the Android account manager
-        AccountManager accountManager =
-                (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
-
-        /*
-            Add the account and account type, no password and user data
-            If successful, return the account object, otherwise report an error
-         */
-        if(accountManager.addAccountExplicitly(newAccount,null,null)){
-            ContentResolver.setIsSyncable(newAccount,AUTHORITY,1);
-
-            return newAccount;
-        }else {
-            Log.e("Error"," User dummy data not successfully created");
-        }
-
-        return null;
     }
 
     @Override
