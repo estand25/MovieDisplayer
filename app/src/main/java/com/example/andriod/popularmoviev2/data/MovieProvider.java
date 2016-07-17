@@ -135,6 +135,7 @@ public class MovieProvider extends ContentProvider {
                 null);
     }
 
+
     /*
         Uri Matcher that determine how the Uri is handling inputs
      */

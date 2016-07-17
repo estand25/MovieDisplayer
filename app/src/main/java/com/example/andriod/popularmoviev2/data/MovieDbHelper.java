@@ -2,6 +2,7 @@ package com.example.andriod.popularmoviev2.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -22,6 +23,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     static final String DATABASE_NAME = "movieviewer.db";
+
+    static final String DB_PATH = "/data/data/com.example.android.popularmovie2/databases";
 
     /**
      * Construction for MovieDbHelper
@@ -102,6 +105,32 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY (" + FavoriteMovies.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";
         sqLiteDatabase.execSQL(SQL_CREATE_FAVORITE_MOVIE_TABLE);
+    }
+
+
+
+    /**
+     * Return Cursor with Genre name
+     * Note: Final a example that error checks inital SQLiteDatabase before
+     * doing anything so I used it.
+     * https://gist.github.com/mikeplate/9173040
+     * @param genreid
+     * @return
+     */
+    public Cursor getIndGenre(String genreid){
+        // Set a local SQLiteDatabase to use the rawQuery against
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Check if local db has anything in there if it does not return null
+        if(db == null){
+            return null;
+        }
+
+        // Set-up query string to pass to local cursor
+        String rawQuery = "SELECT name FROM genre WHERE genre_id = " +genreid;
+
+        // Return the cursor with the results of the query
+        return db.rawQuery(rawQuery,null);
     }
 
     /**

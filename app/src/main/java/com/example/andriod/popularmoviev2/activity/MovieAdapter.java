@@ -64,6 +64,5 @@ public class MovieAdapter extends CursorAdapter {
         // Take the ImageView and add an Image from the post location and
         // make it visible too
         aq.id(viewHolder.movieView).image(poster).visible();
-
     }
 }

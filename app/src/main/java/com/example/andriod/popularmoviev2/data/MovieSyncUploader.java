@@ -93,9 +93,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
-        // Populate the Genre informatino
-        getGenreInfo();
-
         // Populate the movie table with either Popular or Top Rate Movie
         if(Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
             getPopularMovieColl();
@@ -259,6 +256,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         Populated the Genre tables
      */
     public void getGenreInfo(){
+        // Remove all the information before populating new data
+        deleteAllGenre();
+
         // Create an instance of the framework that creates the Uri and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(movieRoot)
@@ -443,5 +443,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         mContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,"", new String[]{});
         mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
         mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"", new String[]{});
+    }
+
+    public void deleteAllGenre(){
+        mContentResolver.delete(MovieContract.GenreEntry.CONTENT_URI,"",new String[]{});
     }
 }

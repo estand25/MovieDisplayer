@@ -2,6 +2,7 @@ package com.example.andriod.popularmoviev2.activity;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -15,14 +16,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
+import com.example.andriod.popularmoviev2.data.MovieDbHelper;
+import com.example.andriod.popularmoviev2.data.MovieProvider;
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.data.MovieContract.MovieEntry;
+import com.example.andriod.popularmoviev2.data.MovieContract.TrailerEntry;
+import com.example.andriod.popularmoviev2.data.MovieContract.ReviewEntry;
 
 /**
  * DetailMovieFragment (Detail Movie Fragment) shows general information
@@ -49,8 +55,24 @@ public class DetailMovieFragment extends Fragment
     // Local Uri identify
     private Uri mUri;
 
+    // Three detail adapters (Movie details, Trailers, and Reviews)
+    private DetailMovieAdapter detailMovieAdapter;
+    private DetailTrailerAdapter detailTrailerAdapter;
+    private DetailReviewAdapter detailReviewAdapter;
+
+    // Three detail ListViews
+    private ListView movieListView;
+    private ListView trailListView;
+    private ListView reviewListView;
+
     // Movie Detail Loader for DetailMovieFragment
     private static final int DETAIL_MOVIE_LOADER = 0;
+
+    // Trailer Loader for Detail Trailer
+    private static final int TRAILER_MOVIE_LOADER = 1;
+
+    // Review Loader for Detail Review
+    private static final int REVIEW_MOVIE_LOADER = 2;
 
     // Movie String[] for Detail Fragment
     private static final String[] DETAIL_MOVIE_COLUMNS = {
@@ -71,6 +93,30 @@ public class DetailMovieFragment extends Fragment
             MovieEntry.COLUMN_VOTE_AVERAGE
     };
 
+    // Trailer String[] for Detail Trailer Fragment
+    private static final String[] TRAILER_MOVIE_COLUMNS = {
+            TrailerEntry.TABLE_NAME + "." + TrailerEntry._ID,
+            TrailerEntry.COLUMN_TRAILER_ID,
+            TrailerEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            TrailerEntry.COLUMN_ISO_6391,
+            TrailerEntry.COLUMN_ISO_31661,
+            TrailerEntry.COLUMN_KEY,
+            TrailerEntry.COLUMN_NAME,
+            TrailerEntry.COLUMN_SITE,
+            TrailerEntry.COLUMN_SIZE,
+            TrailerEntry.COLUMN_TYPE
+    };
+    // Review String[] for Detail Review Fragment
+    private static final String[] REVIEW_MOVIE_COLUMNS = {
+            ReviewEntry.TABLE_NAME + "." + ReviewEntry._ID,
+            ReviewEntry.COLUMN_REVIEW_ID,
+            ReviewEntry.COLUMN_MOVIE_ID,
+            ReviewEntry.COLUMN_AUTHOR,
+            ReviewEntry.COLUMN_CONTENT,
+            ReviewEntry.COLUMN_URL
+    };
+
     // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
     static final int COL_DETAIL_ID = 0;
     static final int COL_DETAIL_MOVIE_ID = 1;
@@ -89,23 +135,39 @@ public class DetailMovieFragment extends Fragment
     static final int COL_DETAIL_MOVIE_VOTE_AVERAGE = 14;
     static final int COL_DETAIL_MOVIE_TYPE = 15;
 
-    // Set the local Movie Detail elements
-    private ImageView mDetail_imageView;
-    private TextView mDetail_titleTextView;
-    private TextView mDetail_synopsisTextView;
-    private TextView mDetail_userRateingTextView;
-    private TextView mDetail_releaseDateTextView;
-    private TextView mDetail_genreTextView;
+    // There indices are tied to TRAILER_COLUMNS. If TRAILER_COLUMNS change, these need change too
+    static final int COL_TRAILER__ID = 16;
+    static final int COL_TRAILER_ID = 17;
+    static final int COL_TRAILER_MOVIE_ID = 18;
+    static final int COL_MOVIE_TITLE = 19;
+    static final int COL_TRAILER_ISO_6391 = 20;
+    static final int COL_TRAILER_ISO_31661 = 21;
+    static final int COL_TRAILER_KEY = 22;
+    static final int COL_TRAILER_NAME = 23;
+    static final int COL_TRAILER_SITE = 24;
+    static final int COL_TRAILER_SIZE = 25;
+    static final int COL_TRAILER_TYPE = 26;
 
-    // LinearLayout for User Rating for Star
-    LinearLayout mUserRatingLayout;
+    // There indices are tied to REVIEW_COLUMNS. If REVIEW_COLUMNS change, these need change too
+    static final int COL_REVIEW__ID = 27;
+    static final int COL_REVIEW_ID = 28;
+    static final int COL_REVIEW_MOVIE_ID = 29;
+    static final int COL_REVIEW_AUTHOR = 30;
+    static final int COL_REVIEW_CONTENT = 31;
+    static final int COL_REVIEW_URL = 32;
 
     public DetailMovieFragment() {}
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+    }
     /**
      * When the View is created I get the Bundle argument with the movie Uri
      *
      * I inflate the fragment layout and bind local layout elements to the fragment elements
+     * also set the ListView elements to there adapters
      *
      * @param inflater - inflater the declare layout elements
      * @param container - Get the container for the inflater
@@ -121,25 +183,34 @@ public class DetailMovieFragment extends Fragment
             mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
         }
 
+        // Initializing the curstom movie detail, review, and trailer adapters
+        // Got the reference for this post:
+        // http://stackoverflow.com/questions/22888233/set-multiple-cursor-loaders-with-multiple-adapters-android
+        detailMovieAdapter = new DetailMovieAdapter(getActivity(),null,0);
+        detailReviewAdapter = new DetailReviewAdapter(getActivity(),null,0);
+        detailTrailerAdapter = new DetailTrailerAdapter(getActivity(),null,0);
+
         // Get the current DetailActivityFragment view layout
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        // Local variable for detail screen elements
-        mDetail_imageView = (ImageView) rootView.findViewById(R.id.detail_imageView);
-        mDetail_titleTextView = (TextView) rootView.findViewById(R.id.detail_titleTextView);
-        mDetail_synopsisTextView = (TextView) rootView.findViewById(R.id.detail_synopsisTextView);
-        mDetail_userRateingTextView = (TextView) rootView.findViewById(R.id.detail_UserRateingTextView);
-        mDetail_releaseDateTextView = (TextView) rootView.findViewById(R.id.detail_releaseDateTextView);
-        mDetail_genreTextView = (TextView) rootView.findViewById(R.id.detail_genreTextView);
-        mUserRatingLayout = (LinearLayout) rootView.findViewById(R.id.detail_UserRateingLayout);
+        // Find the ListViews on the fragment_detail layout
+        movieListView = (ListView) rootView.findViewById(R.id.detail_MovieDetaiListView);
+        trailListView = (ListView) rootView.findViewById(R.id.detail_trailerListView);
+        reviewListView = (ListView) rootView.findViewById(R.id.detail_reviewListView);
 
-        // Initiaze the two adapters (ReviewAdapter & TrailerAdapter)
-        // Set-up the two ListView (detail_reviewListView & detail_trailerListView)
+        // Set the ListView to there specific adapters
+        movieListView.setAdapter(detailMovieAdapter);
+        trailListView.setAdapter(detailTrailerAdapter);
+        reviewListView.setAdapter(detailReviewAdapter);
 
-        // Set adapters to ListView either here or onFinish
         return rootView;
     }
-
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
+        getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
+        getLoaderManager().initLoader(REVIEW_MOVIE_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -168,86 +239,93 @@ public class DetailMovieFragment extends Fragment
         return result;
     }
 
-
-    /**
-     * Start the loading on the Movie Detail records
-     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
-     */
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    /**
-     * Get the Cursor from the loader
-     * @param id -
-     * @param args - Bundle for fragment
-     * @return - Retrun a loader specific cursor
-     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if ( null != mUri ) {
-            // Now create and return a CursorLoader that will take care of
-            // creating a Cursor for the data being displayed.
+        switch (id){
+            case DETAIL_MOVIE_LOADER:{
+                Log.v("Movie Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
+                Log.v("Movie URI ", mUri.toString());
 
-            Log.v("Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
-            Log.v("URI ", mUri.toString());
+                return new CursorLoader(
+                        getActivity(),
+                        mUri,
+                        DETAIL_MOVIE_COLUMNS,
+                        null,
+                        null,
+                        null);
+            }
+            case TRAILER_MOVIE_LOADER:{
+                Log.v("Trailer Content URI ", TrailerEntry.CONTENT_URI.toString());
+                Log.v("Trailer URI ", mUri.toString());
 
-            return new CursorLoader(
-                    getActivity(),
-                    mUri,
-                    DETAIL_MOVIE_COLUMNS,
-                    null,
-                    null,
-                    null);
+                return new CursorLoader(
+                        getActivity(),
+                        mUri,
+                        TRAILER_MOVIE_COLUMNS,
+                        null,
+                        null,
+                        null);
+
+            }
+            case REVIEW_MOVIE_LOADER:{
+                Log.v("Review Content URI ", MovieContract.ReviewEntry.CONTENT_URI.toString());
+                Log.v("Review URI ", mUri.toString());
+
+                return new CursorLoader(
+                        getActivity(),
+                        mUri,
+                        REVIEW_MOVIE_COLUMNS,
+                        null,
+                        null,
+                        null);
+
+            }
         }
         return null;
     }
 
-    /**
-     * When the retrieving of the movie details are finished updating
-     * the XML layout with the movie detailed information
-     * @param loader - The loader the queries the movie content resolver
-     * @param data - The cursor that is retrun from the loader and content resolver
-     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.moveToFirst()) {
-            // Create an instance of AQuery and set it to the movieView item
-            AQuery aq = new AQuery(mDetail_imageView);
-
-            // Get the post information from the curse (get the row/column of information
-            // from the db)
-            String poster = data.getString(COL_DETAIL_MOVIE_POSTER_PATH);
-
-            // Take the ImageView and add an Image from the post location and
-            // make it visible too
-            // Replaced Picassa with AQery per the below form post. The image were loading to slow
-            //so I looked and found a soluation (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
-            aq.id(mDetail_imageView).image(poster).visible();
-
-            /// Get the TextView from the current layout and set the text
-            // to what appears at position X in the column layout
-            mDetail_titleTextView.setText(data.getString(COL_DETAIL_MOVIE_TITLE));
-            mDetail_synopsisTextView.setText(data.getString(COL_DETAIL_MOVIE_OVERVIEW));
-            mDetail_userRateingTextView.setText(data.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
-
-            // Loop through and populate the start images
-            for(int i = 0; i < data.getDouble(COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
-                ImageView starImages = new ImageView(getContext());
-                starImages.setImageResource(R.drawable.ic_full_star);
-                mUserRatingLayout.addView(starImages);
+        switch (loader.getId()){
+            case DETAIL_MOVIE_LOADER:{
+                Log.v("Movie Content ", " populate");
+                detailMovieAdapter.swapCursor(data);
             }
+            break;
+            case TRAILER_MOVIE_LOADER:{
+                Log.v("Trailer Content ", " populate");
+                detailTrailerAdapter.swapCursor(data);
 
-            mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
-            mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));
-
-            // Set adapters to ListView
+            }
+            break;
+            case REVIEW_MOVIE_LOADER:{
+                Log.v("Review Content ", " populate");
+                detailReviewAdapter.swapCursor(data);
+            }
+            break;
         }
     }
+
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) { }
+    public void onLoaderReset(Loader<Cursor> loader) {
+        switch (loader.getId()){
+            case DETAIL_MOVIE_LOADER:{
+                Log.v("Movie Content ", " populate");
+                detailMovieAdapter.swapCursor(null);
+            }
+            break;
+            case TRAILER_MOVIE_LOADER:{
+                Log.v("Trailer Content ", " populate");
+                detailTrailerAdapter.swapCursor(null);
+            }
+            break;
+            case REVIEW_MOVIE_LOADER:{
+                Log.v("Review Content ", " populate");
+                detailReviewAdapter.swapCursor(null);
+            }
+            break;
+        }
+    }
 
     public String getMovieDetailUri(){
         return MOVIE_DETAIL_URI;

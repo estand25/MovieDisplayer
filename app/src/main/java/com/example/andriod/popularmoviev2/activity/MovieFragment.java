@@ -151,6 +151,18 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // Set the number of columns
         gridView.setNumColumns(columns);
 
+        movieSyncUploader = new MovieSyncUploader(getContext(), true);
+
+        // Check which display option is being used  and display the information
+        // and populate the database with the selections information
+        if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
+            movieSyncUploader.getPopularMovieColl();
+        } else {
+            movieSyncUploader.getTopRateMovieColl();
+        }
+
+        movieSyncUploader.getGenreInfo();
+
         // When one of the view on the GridView is click the below will happen
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -162,6 +174,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position
                 if(cursor != null){
+                    movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
+                    movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
 
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
@@ -170,14 +184,13 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
-
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways
         // does crazy lifecycle related things.  It should feel like some stuff stretched out,
         // or magically appeared to take advantage of room, but data or place in the app was never
         // actually *lost*.
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
-            // The listview probably hasn't even been populated yet.  Actually perform the
+            // The gradView probably hasn't even been populated yet.  Actually perform the
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
@@ -197,18 +210,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        movieSyncUploader = new MovieSyncUploader(getContext(), true);
-
-        // Check which display option is being used  and display the information
-        // and populate the database with the selections information
-        if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
-            movieSyncUploader.getPopularMovieColl();
-        } else {
-            movieSyncUploader.getTopRateMovieColl();
-        }
-
-        //movieSyncUploader.getGenreInfo();
-
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }

@@ -9,108 +9,17 @@
     tools:context=".activity.DetailMovieFragment"
     android:fillViewport="true"
     tools:showIn="@layout/activity_detail">
-
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/detail_imageView"
-                    android:scaleType="centerCrop"
-                    android:minHeight="150dp"
-                    android:padding="5dp"
-                    android:adjustViewBounds="true"
-                    android:layout_margin="0dp"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"
-                    android:contentDescription="Moview Poster"/>
-                <TableRow
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/detail_titleTextView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:padding="0dp"
-                            android:adjustViewBounds="true"
-                            android:layout_margin="0dp"
-                            android:gravity="left|top"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:layout_weight="1"
-                            android:textColor="@color/colorIco"
-                            android:fontFamily="sans-serif-condensed"/>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:id="@+id/detail_UserRateingLayout">
-                            <TextView
-                                android:id="@+id/detail_UserRateingTextView"
-                                android:layout_width="55dp"
-                                android:layout_height="wrap_content"
-                                android:padding="0dp"
-                                android:adjustViewBounds="true"
-                                android:layout_margin="0dp"
-                                android:gravity="left"
-                                android:textSize="15sp"
-                                android:layout_gravity="left"
-                                android:textColor="@color/colorIco"/>
-                        </LinearLayout>
-                        <TextView
-                            android:id="@+id/detail_releaseDateTextView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="0dp"
-                            android:adjustViewBounds="true"
-                            android:layout_margin="0dp"
-                            android:gravity="left"
-                            android:textSize="15sp"
-                            android:layout_gravity="left"
-                            android:textColor="@color/colorIco"
-                            android:fontFamily="sans-serif-condensed"/>
-                        <TextView
-                            android:id="@+id/detail_genreTextView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="0dp"
-                            android:adjustViewBounds="true"
-                            android:layout_margin="0dp"
-                            android:gravity="left"
-                            android:textSize="15sp"
-                            android:layout_gravity="left"
-                            android:textColor="@color/colorIco"
-                            android:fontFamily="sans-serif-condensed"/>
-                    </LinearLayout>
-                </TableRow>
-            </TableRow>
-        </TableLayout>
-        <TextView
-            android:id="@+id/detail_synopsisTextView"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/detail_MovieDetaiListView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:layout_margin="0dp"
             android:gravity="left"
-            android:textSize="15sp"
-            android:textColor="@color/colorIco"
-            android:fontFamily="sans-serif-condensed"/>
+            android:textSize="15sp"/>
         <ListView
             android:id="@+id/detail_reviewListView"
             android:layout_width="wrap_content"
@@ -127,5 +36,5 @@
             android:layout_margin="0dp"
             android:gravity="left"
             android:textSize="15sp"/>
-    </TableLayout>
+    </LinearLayout>
 </ScrollView>
