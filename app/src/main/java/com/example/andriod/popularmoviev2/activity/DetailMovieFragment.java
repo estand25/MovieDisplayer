@@ -235,6 +235,7 @@ public class DetailMovieFragment extends Fragment
                 starImages.setImageResource(R.drawable.ic_full_star);
                 mUserRatingLayout.addView(starImages);
             }
+
             mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
             mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));
         }

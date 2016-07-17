@@ -111,16 +111,16 @@
             android:textSize="15sp"
             android:textColor="@color/colorIco"
             android:fontFamily="sans-serif-condensed"/>
-        <TextView
-            android:id="@+id/detail_reviewTextView"
+        <ListView
+            android:id="@+id/detail_reviewListView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:layout_margin="0dp"
             android:gravity="left"
             android:textSize="15sp"/>
-        <TextView
-            android:id="@+id/detail_trailerTextView"
+        <ListView
+            android:id="@+id/detail_trailerListView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"

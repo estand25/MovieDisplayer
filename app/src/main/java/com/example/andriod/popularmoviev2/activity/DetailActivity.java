@@ -1,35 +1,19 @@
 package com.example.andriod.popularmoviev2.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.example.andriod.popularmoviev2.R;
-import com.example.andriod.popularmoviev2.adapter.PageAdapter;
 
 /**
- * Note: Added fragment tab to DetailActivity I got it from here
- * https://www.simplifiedcoding.net/android-tablayout-example-using-viewpager-fragments/
- *
  * DetailActivity that holds the tablayout for the three detail
  * fragement
  */
 public class DetailActivity extends AppCompatActivity{
-
-    // This is our tablayout
-    private TabLayout tabLayout;
-
-    // This is our viewPager
-    private ViewPager viewPager;
-
-
-    private Uri mUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +28,6 @@ public class DetailActivity extends AppCompatActivity{
         if(savedInstanceState == null){
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-
             Bundle arguments = new Bundle();
             arguments.putParcelable(DetailMovieFragment.MOVIE_DETAIL_URI,getIntent().getData());
 
