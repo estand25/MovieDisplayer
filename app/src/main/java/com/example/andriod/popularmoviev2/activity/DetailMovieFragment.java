@@ -133,6 +133,10 @@ public class DetailMovieFragment extends Fragment
         mDetail_genreTextView = (TextView) rootView.findViewById(R.id.detail_genreTextView);
         mUserRatingLayout = (LinearLayout) rootView.findViewById(R.id.detail_UserRateingLayout);
 
+        // Initiaze the two adapters (ReviewAdapter & TrailerAdapter)
+        // Set-up the two ListView (detail_reviewListView & detail_trailerListView)
+
+        // Set adapters to ListView either here or onFinish
         return rootView;
     }
 
@@ -238,6 +242,8 @@ public class DetailMovieFragment extends Fragment
 
             mDetail_releaseDateTextView.setText(data.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
             mDetail_genreTextView.setText(getGenreName(data.getString(COL_DETAIL_MOVIE_GENRE_IDS)));
+
+            // Set adapters to ListView
         }
     }
     @Override
