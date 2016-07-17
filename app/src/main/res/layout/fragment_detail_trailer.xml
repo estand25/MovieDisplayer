@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     tools:context="com.example.andriod.popularmoviev2.activity.DetailTrailerFragment">
 
-    <TextView
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="-- Tab 2 --" />
+        android:layout_height="wrap_content"
+        android:text="-- Tab 2 --"/>
 
 </ScrollView >
