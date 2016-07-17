@@ -9,7 +9,7 @@ package="com.example.andriod.popularmoviev2">
 
 <application
     android:allowBackup="true"
-    android:icon="@mipmap/material_icons"
+    android:icon="@mipmap/movieapp"
     android:label="@string/app_name"
     android:supportsRtl="true"
     android:theme="@style/AppTheme">

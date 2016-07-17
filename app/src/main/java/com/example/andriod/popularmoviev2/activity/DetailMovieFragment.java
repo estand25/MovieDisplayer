@@ -48,7 +48,7 @@ public class DetailMovieFragment extends Fragment
     // Local Uri identify
     private Uri mUri;
 
-    private DetailMovieAdapter detailMovieAdapter;
+    //private DetailMovieAdapter detailMovieAdapter;
 
     // Movie Detail Loader for DetailMovieFragment
     private static final int DETAIL_MOVIE_LOADER = 0;
