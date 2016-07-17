@@ -170,12 +170,6 @@ public class DetailMovieFragment extends Fragment
             Log.v("Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
             Log.v("URI ", mUri.toString());
 
-            MovieSyncUploader movieSyncUploader = new MovieSyncUploader(getContext(),false);
-
-            // Get the Review & Trailer Information for this movie
-            movieSyncUploader.getReviewInfor(Integer.parseInt(MovieContract.MovieEntry.getMovieID(mUri)));
-            movieSyncUploader.getTrailerInfor(Integer.parseInt(MovieContract.MovieEntry.getMovieID(mUri)));
-
             return new CursorLoader(
                     getActivity(),
                     mUri,
@@ -214,4 +208,8 @@ public class DetailMovieFragment extends Fragment
     }
     @Override
     public void onLoaderReset(Loader<Cursor> loader) { }
+
+    public String getMovieDetailUri(){
+        return MOVIE_DETAIL_URI;
+    }
 }

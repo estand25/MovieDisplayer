@@ -29,6 +29,9 @@ public class DetailActivity extends AppCompatActivity
     // This is our viewPager
     private ViewPager viewPager;
 
+
+    private Uri mUri;
+
     @Override
     public void onTabSelected(TabLayout.Tab tab){
         viewPager.setCurrentItem(tab.getPosition());
@@ -49,27 +52,21 @@ public class DetailActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Initializing the tabout
-        TabLayout detailTabLayout = (TabLayout) findViewById(R.id.detail_tab_layout);
 
-        // Add the tabs using addTab() method
-        detailTabLayout.addTab(detailTabLayout.newTab().setText("Overview"));
-        detailTabLayout.addTab(detailTabLayout.newTab().setText("Trailers"));
-        detailTabLayout.addTab(detailTabLayout.newTab().setText("Reviews"));
-        detailTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        if(savedInstanceState == null){
+            // Create the detail fragment and add it to the activity
+            // using a fragment transaction.
 
-        // Initializing viewPager
-        viewPager = (ViewPager) findViewById(R.id.pager);
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(DetailMovieFragment.MOVIE_DETAIL_URI,getIntent().getData());
 
-        // Creating out pager adapter
-        PageAdapter adapter  = new PageAdapter
-                (getSupportFragmentManager(),detailTabLayout.getTabCount());
+            DetailMovieFragment fragment = new DetailMovieFragment();
+            fragment.setArguments(arguments);
 
-        // Adding adapter to pager
-        viewPager.setAdapter(adapter);
-
-        // Adding onTabSelectedListener to swipe views
-        detailTabLayout.setOnTabSelectedListener(this);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.movie_detail_container,fragment)
+                    .commit();
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

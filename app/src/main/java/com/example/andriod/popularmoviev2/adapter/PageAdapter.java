@@ -1,5 +1,7 @@
 package com.example.andriod.popularmoviev2.adapter;
 
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -18,15 +20,17 @@ import com.example.andriod.popularmoviev2.activity.DetailTrailerFragment;
  */
 public class PageAdapter extends FragmentStatePagerAdapter {
     int mNumOftabs;
+    Uri passUri;
 
     /**
      * Constructions the PageAdapter class
      * @param fm - FragmentManager for the tab layout
      * @param NumOfTabs - Number of tabs in tab layout
      */
-    public PageAdapter(FragmentManager fm, int NumOfTabs){
+    public PageAdapter(FragmentManager fm, int NumOfTabs, Uri pUri){
         super(fm);
         this.mNumOftabs = NumOfTabs;
+        this.passUri = pUri;
     }
 
     /**
@@ -36,9 +40,13 @@ public class PageAdapter extends FragmentStatePagerAdapter {
      */
     @Override
     public Fragment getItem(int position){
+        Bundle args = new Bundle();
         switch (position){
             case 0:
                 DetailMovieFragment detailMovieFragment = new DetailMovieFragment();
+                args.putParcelable(detailMovieFragment.getMovieDetailUri(),passUri);
+
+                detailMovieFragment.setArguments(args);
                 return detailMovieFragment;
             case 1:
                 DetailTrailerFragment detailTrailerFragment = new DetailTrailerFragment();
