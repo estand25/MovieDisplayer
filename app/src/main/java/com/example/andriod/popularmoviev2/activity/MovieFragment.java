@@ -36,7 +36,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private MovieAdapter movieAdapter;
     private ArrayList<Movie> movieList;
     private int mPosition = gridView.INVALID_POSITION;
-    //private boolean mUseTodayLayout;
+    private boolean mUseTodayLayout;
 
     private static final String SELECTED_KEY = "selected_position";
 
@@ -199,7 +199,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
 
-        /*mForecastAdapter.setUseTodayLayout(mUseTodayLayout);*/
+        movieAdapter.setUseTodayLayout(mUseTodayLayout);
 
         return  rootView;
     }
@@ -261,10 +261,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         movieAdapter.swapCursor(null);
     }
 
-    /*public void setUseTodayLayout(boolean useTodayLayout) {
+    public void setUseTodayLayout(boolean useTodayLayout) {
         mUseTodayLayout = useTodayLayout;
         if (movieAdapter != null) {
             movieAdapter.setUseTodayLayout(mUseTodayLayout);
         }
-    }*/
+    }
 }

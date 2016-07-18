@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
 
     private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
 
+    public boolean mTwoPane;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,30 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
                 }
             }
         });
+
+        if (findViewById(R.id.content_detail) != null) {
+            // The detail container view will be present only in the large-screen layouts
+            // (res/layout-sw600dp). If this view is present, then the activity should be
+            // in two-pane mode.
+            mTwoPane = true;
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_detail, new DetailMovieFragment(), MOVIEDETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+            getSupportActionBar().setElevation(0f);
+        }
+
+        MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.container));
+
+        movieFragment.setUseTodayLayout(!mTwoPane);
+
     }
 
     @Override
@@ -76,27 +102,27 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
 
     @Override
     public void onItemSelected(Uri contentUri){
-        //if(mTwoPane){
-        //    // In two-pane mode, show the detail view in this activity by
-        //    // adding or replacing the detail fragment usig a
-        //    // fragment transaction.
-        //    Bundle args = new Bundle();
-        //    args.putParcelable(DetailMovieFragment.MOVIE_DETAIL_URI,contentUri);
-        //
-        //    DetailMovieFragment fragment = new DetailMovieFragment();
-        //        fragment.setArguments(args);
+        if(mTwoPane){
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment usig a
+            // fragment transaction.
+            Bundle args = new Bundle();
+            args.putParcelable(DetailMovieFragment.MOVIE_DETAIL_URI,contentUri);
 
-        //    getSupportFragmentManager().beginTransaction()
-        //            .replace(R.id.fragment, fragment)
-        //            .commit();
-        //} else {
+            DetailMovieFragment fragment = new DetailMovieFragment();
+                fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment, fragment)
+                    .commit();
+        } else {
 
             Log.v("Intent Name "," Before Intent");
-            Intent intent = new Intent(this, DetailActivity.class)
-                    .setData(contentUri);
-            startActivity(intent);
+                Intent intent = new Intent(this, DetailActivity.class)
+                        .setData(contentUri);
+                startActivity(intent);
 
-        Log.v("Intent Name "," After Intent");
-        //}
+            Log.v("Intent Name "," After Intent");
+        }
     }
 }

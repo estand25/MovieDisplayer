@@ -18,6 +18,8 @@ import com.example.andriod.popularmoviev2.R;
  */
 public class MovieAdapter extends CursorAdapter {
     private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
+    // Flag to determine if we want to use a separate view for "today".
+    private boolean mUseTodayLayout = true;
 
     public MovieAdapter(Context context, Cursor cursor, int flags){
         super(context,cursor,flags);
@@ -77,5 +79,9 @@ public class MovieAdapter extends CursorAdapter {
         // Take the ImageView and add an Image from the post location and
         // make it visible too
         aq.id(viewHolder.movieView).image(poster).visible();
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
     }
 }

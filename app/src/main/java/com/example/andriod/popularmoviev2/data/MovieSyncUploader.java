@@ -312,7 +312,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     // Increment index
                     i++;
 
-                    Log.v("Genre Name ",genre.getName());
+                    //Log.v("Genre Name ",genre.getName());
                 }
                 mContentResolver.bulkInsert(MovieContract.GenreEntry.CONTENT_URI,bulkMovieGenre);
             }

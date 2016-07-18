@@ -113,6 +113,16 @@ public class DetailMovieFragment extends Fragment
     public DetailMovieFragment() {}
 
 
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        Bundle arguments = getArguments();
+        if(arguments != null){
+            mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
+        }
+        Log.v("DMF Name ",mUri.toString());
+
+        super.onCreate(savedInstanceState);
+    }
     /**
      * When the View is created I get the Bundle argument with the movie Uri
      *
@@ -127,13 +137,6 @@ public class DetailMovieFragment extends Fragment
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        Bundle arguments = getArguments();
-        if(arguments != null){
-            mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
-        }
-        Log.v("DMF Name ",mUri.toString());
-
         // Initializing the curstom movie detail, review, and trailer adapters
         // Got the reference for this post:
         // http://stackoverflow.com/questions/22888233/set-multiple-cursor-loaders-with-multiple-adapters-android
@@ -242,6 +245,8 @@ public class DetailMovieFragment extends Fragment
                 Log.v("Review URI ", mUri.toString());
 
                 Uri reviewUri = MovieContract.ReviewEntry.buildReviewMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
+
+                Log.v("Review after URI ", reviewUri.toString());
 
                 return new CursorLoader(
                         getActivity(),

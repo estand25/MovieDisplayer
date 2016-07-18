@@ -100,7 +100,7 @@ public class DetailTrailerAdapter extends CursorAdapter {
                 // Create new instance of TextView for trailer link
                 mTrailer_link = new TextView(context);
 
-                mTrailer_link.setLinkTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+                mTrailer_link.setLinkTextColor(context.getResources().getColor(R.color.colorPrimary));
 
                 // Set the link text
                 mTrailer_link.setText(trailerLabel);
