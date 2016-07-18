@@ -2,7 +2,6 @@ package com.example.andriod.popularmoviev2.activity;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -14,18 +13,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
-import android.widget.TextView;
-
-import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieDbHelper;
-import com.example.andriod.popularmoviev2.data.MovieProvider;
-import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.data.MovieContract.MovieEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.TrailerEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.ReviewEntry;
@@ -122,10 +113,6 @@ public class DetailMovieFragment extends Fragment
     public DetailMovieFragment() {}
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-    }
     /**
      * When the View is created I get the Bundle argument with the movie Uri
      *
@@ -169,6 +156,11 @@ public class DetailMovieFragment extends Fragment
 
         return rootView;
     }
+
+    /**
+     * Set the individual loader managers for the detail elements
+     * @param savedInstanceState - Fragment for the bundle
+     */
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
         Log.v("Loader Name "," Detail Movie");
@@ -178,6 +170,7 @@ public class DetailMovieFragment extends Fragment
         Log.v("Loader Name "," Detail Movie Reviews");
         super.onActivityCreated(savedInstanceState);
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -206,6 +199,12 @@ public class DetailMovieFragment extends Fragment
         return result;
     }
 
+    /**
+     * Get the table data information from the content provider
+     * @param id - Loader number for the individual movie detail elements
+     * @param args - Bundle elements
+     * @return - Data for the individual cursors in loader
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id){
@@ -257,6 +256,12 @@ public class DetailMovieFragment extends Fragment
         return null;
     }
 
+    /**
+     * Populates the individual movie adapter (movie details, trailer, and review) from
+     * the table cursor data
+     * @param loader - Current crsor loader
+     * @param data - Retrieved table data in the cursor
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()){
@@ -279,6 +284,10 @@ public class DetailMovieFragment extends Fragment
         }
     }
 
+    /**
+     * Reset the movie adapter for the individual adapter elements
+     * @param loader - Current cursor loader
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()){
@@ -298,9 +307,5 @@ public class DetailMovieFragment extends Fragment
             }
             break;
         }
-    }
-
-    public String getMovieDetailUri(){
-        return MOVIE_DETAIL_URI;
     }
 }

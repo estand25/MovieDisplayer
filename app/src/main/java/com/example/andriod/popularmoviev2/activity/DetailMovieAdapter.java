@@ -42,6 +42,9 @@ public class DetailMovieAdapter extends CursorAdapter {
         super(context,cursor,flags);
     }
 
+    /**
+     * Class the holds the View elements
+     */
     public static class ViewHolder{
         // Set the local Movie Detail elements
         public final ImageView mDetail_imageView;
@@ -64,6 +67,13 @@ public class DetailMovieAdapter extends CursorAdapter {
         }
     }
 
+    /**
+     * Inflators the movie_item layout and setting the viewHolder to the current view tags
+     * @param context - Current context for view
+     * @param cursor - Current cursor information
+     * @param parent - ViewGroup of the view
+     * @return = Inflated view with viewholder tags
+     */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent){
         // Inflate the movie_item (view in the grid
@@ -77,6 +87,12 @@ public class DetailMovieAdapter extends CursorAdapter {
         return view;
     }
 
+    /**
+     * Populate the view with Cursor retrieved data
+     * @param view - Current view information
+     * @param context - Current context for view
+     * @param cursor - Current cursor information
+     */
     @Override
     public void bindView(View view, Context context, Cursor cursor){
         ViewHolder viewHolder = (ViewHolder) view.getTag();
@@ -119,7 +135,5 @@ public class DetailMovieAdapter extends CursorAdapter {
 
         viewHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
         viewHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
-
-        //viewHolder.mDetail_genreTextView.setText(getGenreName(cursor.getString(DetailMovieFragment.COL_DETAIL_MOVIE_GENRE_IDS)));
     }
 }
