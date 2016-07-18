@@ -90,9 +90,13 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         //            .replace(R.id.fragment, fragment)
         //            .commit();
         //} else {
+
+            Log.v("Intent Name "," Before Intent");
             Intent intent = new Intent(this, DetailActivity.class)
                     .setData(contentUri);
             startActivity(intent);
+
+        Log.v("Intent Name "," After Intent");
         //}
     }
 }

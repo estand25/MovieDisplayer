@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.example.andriod.popularmoviev2.R;
@@ -24,6 +25,7 @@ public class DetailActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Log.v("Detail Name "," Before Triggered");
 
         if(savedInstanceState == null){
             // Create the detail fragment and add it to the activity
@@ -38,6 +40,8 @@ public class DetailActivity extends AppCompatActivity{
                     .add(R.id.movie_detail_container,fragment)
                     .commit();
         }
+
+        Log.v("Detail Name "," Triggered");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

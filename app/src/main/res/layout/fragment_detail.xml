@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView1"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".activity.DetailMovieFragment"
     android:fillViewport="true"
     tools:showIn="@layout/activity_detail">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <ListView
             android:id="@+id/detail_MovieDetaiListView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:layout_margin="0dp"
@@ -22,7 +22,7 @@
             android:textSize="15sp"/>
         <ListView
             android:id="@+id/detail_reviewListView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:layout_margin="0dp"
@@ -30,7 +30,7 @@
             android:textSize="15sp"/>
         <ListView
             android:id="@+id/detail_trailerListView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:layout_margin="0dp"

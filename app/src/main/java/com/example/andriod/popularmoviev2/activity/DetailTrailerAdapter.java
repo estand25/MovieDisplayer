@@ -4,7 +4,9 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,19 @@ import com.example.andriod.popularmoviev2.R;
  */
 public class DetailTrailerAdapter extends CursorAdapter {
     private static final String LOG_TAG = DetailTrailerAdapter.class.getSimpleName();
+
+    // There indices are tied to TRAILER_COLUMNS. If TRAILER_COLUMNS change, these need change too
+    static final int COL_TRAILER__ID = 0;
+    static final int COL_TRAILER_ID = 1;
+    static final int COL_TRAILER_MOVIE_ID = 2;
+    static final int COL_MOVIE_TITLE = 3;
+    static final int COL_TRAILER_ISO_6391 = 4;
+    static final int COL_TRAILER_ISO_31661 = 5;
+    static final int COL_TRAILER_KEY = 6;
+    static final int COL_TRAILER_NAME = 7;
+    static final int COL_TRAILER_SITE = 8;
+    static final int COL_TRAILER_SIZE = 9;
+    static final int COL_TRAILER_TYPE = 10;
 
     // Set the local Trailer Detail elements
     private TextView mTrailer_link;
@@ -53,53 +68,55 @@ public class DetailTrailerAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-        // Set the record local in table is less then zero
-        // Note: So when we go into the loop we start at the
-        //       top of the tables
-        cursor.moveToPosition(-1);
+        if(cursor != null && cursor.moveToFirst()) {
+            ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        // Loop through adding new reviews
-        while(cursor.moveToNext()){
+            // Set the record local in table is less then zero
+            // Note: So when we go into the loop we start at the
+            //       top of the tables
+            cursor.moveToPosition(-1);
 
-            // Set the button label text
-            String trailerLabel = cursor.getString(DetailMovieFragment.COL_MOVIE_TITLE) + " " + cursor.getString(DetailMovieFragment.COL_TRAILER_NAME);
+            // Loop through adding new reviews
+            while (cursor.moveToNext()) {
 
-            // Create new instance of TextView for trailer link
-            mTrailer_link = new TextView(context);
+                // Set the button label text
+                String trailerLabel = cursor.getString(COL_MOVIE_TITLE) + " " + cursor.getString(COL_TRAILER_NAME);
 
-            // Set background image
-            mTrailer_link.setBackgroundResource(R.drawable.ic_entypo);
+                // Create new instance of TextView for trailer link
+                mTrailer_link = new TextView(context);
 
-            // Set the link text
-            mTrailer_link.setText(trailerLabel);
+                mTrailer_link.setLinkTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
 
-            // Set the video key to pass to YouTube
-            final String video_id = cursor.getString(DetailMovieFragment.COL_TRAILER_KEY);
+                // Set the link text
+                mTrailer_link.setText(trailerLabel);
 
-            // Set-up the onClickListener for the button push key to
-            // trigger youtube
-            mTrailer_link.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Try to open up youtube with trailer video directly, but if not able
-                    // I open an internet browser
-                    // Note: I embedded this code section based on the stackoverflow post
-                    // it was a lot better then what I was thinking of doing
-                    // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
-                        context.startActivity(intent);
-                    }catch (ActivityNotFoundException ex){
-                        Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://www.youtube.com/watch?v=" + video_id));
-                        context.startActivity(intent);
+                // Set the video key to pass to YouTube
+                final String video_id = cursor.getString(COL_TRAILER_KEY);
+
+                // Set-up the onClickListener for the TextView push key to
+                // trigger youtube
+                mTrailer_link.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // Try to open up youtube with trailer video directly, but if not able
+                        // I open an internet browser
+                        // Note: I embedded this code section based on the stackoverflow post
+                        // it was a lot better then what I was thinking of doing
+                        // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
+                            context.startActivity(intent);
+                        } catch (ActivityNotFoundException ex) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse("http://www.youtube.com/watch?v=" + video_id));
+                            context.startActivity(intent);
+                        }
                     }
-                }
-            });
+                });
 
-            // added the link to the layout
-            viewHolder.mTrailerLayout.addView(mTrailer_link);
+                // added the link to the layout
+                viewHolder.mTrailerLayout.addView(mTrailer_link);
+            }
         }
     }
 }

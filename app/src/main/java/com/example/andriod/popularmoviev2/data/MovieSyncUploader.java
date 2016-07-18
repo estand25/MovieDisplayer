@@ -59,8 +59,10 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
     ContentResolver mContentResolver;
     Uri mUri;
 
-    /*
-        Set up the sync adatper
+    /**
+     * Set up the sync adatper
+     * @param context - Get the current Context
+     * @param autoInitialize - Boolean from auto initialize
      */
     public MovieSyncUploader(Context context, boolean autoInitialize){
         super(context,autoInitialize);
@@ -68,9 +70,13 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         mContentResolver = context.getContentResolver();
     }
 
-    /*
-        Set up the sync adatper. This form of the constructor
-        maintains compatibility with Android 3.0 and later platform
+    /**
+     * Set up the sync adatper. This form of the constructor
+     * maintains compatibility with Android 3.0 and later platform
+     *
+     * @param context - Get the current Context
+     * @param autoInitialize - Boolean from auto initialize
+     * @param allowParallelSyncs - Boolean from allow paralle sync
      */
     public MovieSyncUploader(Context context,
                              boolean autoInitialize,
@@ -101,8 +107,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         }
     }
 
-    /*
-        Populated movie with popular movie data
+    /**
+     * Populated movie with popular movie data
      */
     public void getPopularMovieColl(){
         // Remove all the information before populating new data
@@ -164,6 +170,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
+
+                    //Log.v("Movie Name ",movie.getTitle());
                 }
                 // Bulk insert all the new content information
                 mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulkPopularMovies);
@@ -176,8 +184,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         });
     }
 
-    /*
-        Populated movie with top rated movie
+    /**
+     * Populated movie with top rated movie
      */
     public void getTopRateMovieColl(){
         // Remove all the information before populating new data
@@ -240,6 +248,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
+
+                    //Log.v("Movie Name ",movie.getTitle());
                 }
                 // Bulk insert all the new content information
                 mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulktopRatedMovies);
@@ -252,8 +262,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         });
     }
 
-    /*
-        Populated the Genre tables
+    /**
+     *  Populated the Genre tables
      */
     public void getGenreInfo(){
         // Remove all the information before populating new data
@@ -301,6 +311,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
+
+                    Log.v("Genre Name ",genre.getName());
                 }
                 mContentResolver.bulkInsert(MovieContract.GenreEntry.CONTENT_URI,bulkMovieGenre);
             }
@@ -312,8 +324,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         });
     }
 
-    /*
-        Populated the trailer table
+    /**
+     * Populate the trailer table
+     * @param movie_id - Movie id for the specific trailers
      */
     public void getTrailerInfor(final int movie_id){
         // Create an instance of the framework that created the Uri and converter the json to gson
@@ -365,6 +378,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
+
+                    Log.v("Trailer Name ",trailer.getName());
                 }
                 mContentResolver.bulkInsert(MovieContract.TrailerEntry.CONTENT_URI,bulkMovieTrailer);
             }
@@ -376,8 +391,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         });
     }
 
-    /*
-        Populared the review table
+    /**
+     * Populate the reivew table
+     * @param movie_id - Movie id for the specific reviews
      */
     public void getReviewInfor(final int movie_id){
         // Create an instance of the framework that create the Uri and converter the json to gson
@@ -425,6 +441,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
+
+                    Log.v("Review Name ",review.getAuthor());
                 }
                 mContentResolver.bulkInsert(MovieContract.ReviewEntry.CONTENT_URI,bulkMovieReview);
             }
@@ -436,8 +454,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         });
     }
 
-    /*
-        Delete all the other tables associated to the correct gridview display
+     /**
+     * Delete all the other tables associated to the correct GridView display
      */
     public void deleteAllOtherTable(){
         mContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,"", new String[]{});
@@ -445,6 +463,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"", new String[]{});
     }
 
+    /**
+     * Delete Genre before populate the table
+     */
     public void deleteAllGenre(){
         mContentResolver.delete(MovieContract.GenreEntry.CONTENT_URI,"",new String[]{});
     }

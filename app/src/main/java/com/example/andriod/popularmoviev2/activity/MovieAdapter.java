@@ -13,7 +13,7 @@ import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 
 /**
- * Object that will take passed data and display it on the view
+ * Object that will take passing data and display it on the view
  * Created by StandleyEugene on 6/30/2016.
  */
 public class MovieAdapter extends CursorAdapter {
@@ -23,8 +23,8 @@ public class MovieAdapter extends CursorAdapter {
         super(context,cursor,flags);
     }
 
-    /*
-        Cache of the childer views on the movie grid moviePoster_image movie_description
+    /**
+     * Cache of the childern views on the movie grid moviePoster_image movie_description
      */
     public static class ViewHolder{
         public final ImageView movieView;

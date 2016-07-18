@@ -1,7 +1,9 @@
 package com.example.andriod.popularmoviev2.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,14 @@ import com.example.andriod.popularmoviev2.R;
  */
 public class DetailReviewAdapter extends CursorAdapter{
     private static final String LOG_TAG = DetailReviewAdapter.class.getSimpleName();
+
+    // There indices are tied to REVIEW_COLUMNS. If REVIEW_COLUMNS change, these need change too
+    static final int COL_REVIEW__ID = 0;
+    static final int COL_REVIEW_ID = 1;
+    static final int COL_REVIEW_MOVIE_ID = 2;
+    static final int COL_REVIEW_AUTHOR = 3;
+    static final int COL_REVIEW_CONTENT = 4;
+    static final int COL_REVIEW_URL = 5;
 
     // Set the local Review Detail elements
     private Button mReview_button;
@@ -51,7 +61,7 @@ public class DetailReviewAdapter extends CursorAdapter{
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor){
+    public void bindView(View view, final Context context, Cursor cursor){
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         Log.v("Row Count ", Integer.toString(cursor.getCount()));
@@ -68,23 +78,33 @@ public class DetailReviewAdapter extends CursorAdapter{
             // Create new instance of TextView for author infor
             mReview_Author = new TextView(context);
             // Set the text label for author
-            mReview_Author.setText(cursor.getString(DetailMovieFragment.COL_REVIEW_AUTHOR));
-            mReview_Author.setBackgroundResource(R.drawable.ic_entypo);
-            // Adding the Author name to the reviewColumnLayout
-            //mReviewColumnLayout.addView(mReview_Author);
+            mReview_Author.setText(cursor.getString(COL_REVIEW_AUTHOR));
 
             // Create new instance of TextView for content infor
             mReview_Content = new TextView(context);
             // Set the text label for content
-            mReview_Content.setText(cursor.getString(DetailMovieFragment.COL_REVIEW_CONTENT));
-            // Adding the Content to the reviewColumnLayout
-            //mReviewColumnLayout.addView(mReview_Content);
+            mReview_Content.setText(cursor.getString(COL_REVIEW_CONTENT));
 
             // Create new instance of TextView for URL infor
             mReview_URL = new TextView(context);
 
             // Set the text label for content
-            mReview_URL.setText(cursor.getString(DetailMovieFragment.COL_REVIEW_URL));
+            mReview_URL.setText(cursor.getString(COL_REVIEW_URL));
+            mReview_URL.setLinkTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+
+            // Set local variable with Uri link for review
+            final String reviewUri = cursor.getString(COL_REVIEW_URL);
+
+            // Set-up the onClickListener for the TextView push key to
+            // trigger internet browser
+            mReview_URL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(reviewUri));
+                    context.startActivity(intent);
+                }
+            });
 
             // Add the new review entry into the outter layout reviewLayout
             viewHolder.reviewLinearLayout.addView(mReview_Author);

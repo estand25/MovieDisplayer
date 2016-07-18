@@ -177,8 +177,12 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                     movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
 
+                    Log.v("Selection Name "," Movie before selecting");
+
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
+
+                    Log.v("Selection Name "," Movie after selecting");
                 }
                 mPosition = pos;
             }
@@ -222,10 +226,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // Get an Uri for the current app setting either Popular Movie or Top Rate Movies
-        Uri movieTypelistUri = MovieContract.MovieEntry.
-                buildMovieList(Utility.getPreferredMovieType(getContext()));
-
+        // return Cursor loader with all th movie poster images
         return new CursorLoader(getActivity(),
                 MovieContract.MovieEntry.CONTENT_URI,
                 null,
@@ -256,7 +257,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      * @param loader - the Cursor specific loader
      */
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {movieAdapter.swapCursor(null);}
+    public void onLoaderReset(Loader<Cursor> loader) {
+        movieAdapter.swapCursor(null);
+    }
 
     /*public void setUseTodayLayout(boolean useTodayLayout) {
         mUseTodayLayout = useTodayLayout;

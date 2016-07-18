@@ -57,6 +57,11 @@ public class MovieContract {
             return uri.getPathSegments().get(1);
         }
 
+        // Uri for getting the movie id
+        public static int getIntegerMovieID(Uri uri){
+            return Integer.parseInt(uri.getPathSegments().get(1));
+        }
+
         // String holds the table name
         public static final String TABLE_NAME = "movie";
 

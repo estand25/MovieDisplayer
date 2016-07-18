@@ -90,15 +90,16 @@ public class DetailMovieFragment extends Fragment
             MovieEntry.COLUMN_POPULARITY,
             MovieEntry.COLUMN_VOTE_COUNT,
             MovieEntry.COLUMN_VIDEO,
-            MovieEntry.COLUMN_VOTE_AVERAGE
+            MovieEntry.COLUMN_VOTE_AVERAGE,
+            MovieEntry.COLUMN_MOVIE_TYPE
     };
 
     // Trailer String[] for Detail Trailer Fragment
     private static final String[] TRAILER_MOVIE_COLUMNS = {
             TrailerEntry.TABLE_NAME + "." + TrailerEntry._ID,
             TrailerEntry.COLUMN_TRAILER_ID,
-            TrailerEntry.COLUMN_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_MOVIE_ID,
+            MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_TITLE,
             TrailerEntry.COLUMN_ISO_6391,
             TrailerEntry.COLUMN_ISO_31661,
             TrailerEntry.COLUMN_KEY,
@@ -107,6 +108,7 @@ public class DetailMovieFragment extends Fragment
             TrailerEntry.COLUMN_SIZE,
             TrailerEntry.COLUMN_TYPE
     };
+
     // Review String[] for Detail Review Fragment
     private static final String[] REVIEW_MOVIE_COLUMNS = {
             ReviewEntry.TABLE_NAME + "." + ReviewEntry._ID,
@@ -117,53 +119,11 @@ public class DetailMovieFragment extends Fragment
             ReviewEntry.COLUMN_URL
     };
 
-    // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
-    static final int COL_DETAIL_ID = 0;
-    static final int COL_DETAIL_MOVIE_ID = 1;
-    static final int COL_DETAIL_MOVIE_POSTER_PATH = 2;
-    static final int COL_DETAIL_MOVIE_ADULT = 3;
-    static final int COL_DETAIL_MOVIE_OVERVIEW = 4;
-    static final int COL_DETAIL_MOVIE_RELEASE_DATE = 5;
-    static final int COL_DETAIL_MOVIE_GENRE_IDS = 6;
-    static final int COL_DETAIL_MOVIE_ORIG_TITLE = 7;
-    static final int COL_DETAIL_MOVIE_ORIG_LANGUAGE = 8;
-    static final int COL_DETAIL_MOVIE_TITLE = 9;
-    static final int COL_DETAIL_MOVIE_BACKDROP_PATH = 10;
-    static final int COL_DETAIL_MOVIE_POPULARITY = 11;
-    static final int COL_DETAIL_MOVIE_VOTE_COUNT = 12;
-    static final int COL_DETAIL_MOVIE_VIDEO = 13;
-    static final int COL_DETAIL_MOVIE_VOTE_AVERAGE = 14;
-    static final int COL_DETAIL_MOVIE_TYPE = 15;
-
-    // There indices are tied to TRAILER_COLUMNS. If TRAILER_COLUMNS change, these need change too
-    static final int COL_TRAILER__ID = 16;
-    static final int COL_TRAILER_ID = 17;
-    static final int COL_TRAILER_MOVIE_ID = 18;
-    static final int COL_MOVIE_TITLE = 19;
-    static final int COL_TRAILER_ISO_6391 = 20;
-    static final int COL_TRAILER_ISO_31661 = 21;
-    static final int COL_TRAILER_KEY = 22;
-    static final int COL_TRAILER_NAME = 23;
-    static final int COL_TRAILER_SITE = 24;
-    static final int COL_TRAILER_SIZE = 25;
-    static final int COL_TRAILER_TYPE = 26;
-
-    // There indices are tied to REVIEW_COLUMNS. If REVIEW_COLUMNS change, these need change too
-    static final int COL_REVIEW__ID = 27;
-    static final int COL_REVIEW_ID = 28;
-    static final int COL_REVIEW_MOVIE_ID = 29;
-    static final int COL_REVIEW_AUTHOR = 30;
-    static final int COL_REVIEW_CONTENT = 31;
-    static final int COL_REVIEW_URL = 32;
-
     public DetailMovieFragment() {}
 
 
     @Override
     public void onCreate(Bundle savedInstanceState){
-        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
-        getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
-        getLoaderManager().initLoader(REVIEW_MOVIE_LOADER, null, this);
         super.onCreate(savedInstanceState);
     }
     /**
@@ -185,6 +145,7 @@ public class DetailMovieFragment extends Fragment
         if(arguments != null){
             mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
         }
+        Log.v("DMF Name ",mUri.toString());
 
         // Initializing the curstom movie detail, review, and trailer adapters
         // Got the reference for this post:
@@ -209,6 +170,12 @@ public class DetailMovieFragment extends Fragment
         return rootView;
     }
     public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
+        Log.v("Loader Name "," Detail Movie");
+        getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
+        Log.v("Loader Name "," Detail Movie Trailers");
+        getLoaderManager().initLoader(REVIEW_MOVIE_LOADER, null, this);
+        Log.v("Loader Name "," Detail Movie Reviews");
         super.onActivityCreated(savedInstanceState);
     }
     @Override
@@ -243,7 +210,7 @@ public class DetailMovieFragment extends Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id){
             case DETAIL_MOVIE_LOADER:{
-                Log.v("Movie Content URI ", MovieContract.MovieEntry.CONTENT_URI.toString());
+                Log.v("DetailMovieFragment ", MovieContract.MovieEntry.CONTENT_URI.toString());
                 Log.v("Movie URI ", mUri.toString());
 
                 return new CursorLoader(
@@ -255,12 +222,16 @@ public class DetailMovieFragment extends Fragment
                         null);
             }
             case TRAILER_MOVIE_LOADER:{
-                Log.v("Trailer Content URI ", TrailerEntry.CONTENT_URI.toString());
+                Log.v("Trailer before URI ", TrailerEntry.CONTENT_URI.toString());
                 Log.v("Trailer URI ", mUri.toString());
+
+                Uri trailerUri = MovieContract.TrailerEntry.buildTrailerMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
+
+                Log.v("Trailer after URI ", trailerUri.toString());
 
                 return new CursorLoader(
                         getActivity(),
-                        mUri,
+                        trailerUri,
                         TRAILER_MOVIE_COLUMNS,
                         null,
                         null,
@@ -271,9 +242,11 @@ public class DetailMovieFragment extends Fragment
                 Log.v("Review Content URI ", MovieContract.ReviewEntry.CONTENT_URI.toString());
                 Log.v("Review URI ", mUri.toString());
 
+                Uri reviewUri = MovieContract.ReviewEntry.buildReviewMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
+
                 return new CursorLoader(
                         getActivity(),
-                        mUri,
+                        reviewUri,
                         REVIEW_MOVIE_COLUMNS,
                         null,
                         null,
@@ -288,18 +261,18 @@ public class DetailMovieFragment extends Fragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()){
             case DETAIL_MOVIE_LOADER:{
-                Log.v("Movie Content ", " populate");
+                Log.v("Movie onLoadFinished ", " populate");
                 detailMovieAdapter.swapCursor(data);
             }
             break;
             case TRAILER_MOVIE_LOADER:{
-                Log.v("Trailer Content ", " populate");
+                Log.v("Trailer onLoadFinished ", " populate");
                 detailTrailerAdapter.swapCursor(data);
 
             }
             break;
             case REVIEW_MOVIE_LOADER:{
-                Log.v("Review Content ", " populate");
+                Log.v("Review onLoadFinished ", " populate");
                 detailReviewAdapter.swapCursor(data);
             }
             break;
@@ -310,17 +283,17 @@ public class DetailMovieFragment extends Fragment
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()){
             case DETAIL_MOVIE_LOADER:{
-                Log.v("Movie Content ", " populate");
+                Log.v("Movie Reset ", " populate");
                 detailMovieAdapter.swapCursor(null);
             }
             break;
             case TRAILER_MOVIE_LOADER:{
-                Log.v("Trailer Content ", " populate");
+                Log.v("Trailer Reset ", " populate");
                 detailTrailerAdapter.swapCursor(null);
             }
             break;
             case REVIEW_MOVIE_LOADER:{
-                Log.v("Review Content ", " populate");
+                Log.v("Review Reset ", " populate");
                 detailReviewAdapter.swapCursor(null);
             }
             break;

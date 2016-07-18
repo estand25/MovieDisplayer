@@ -2,6 +2,7 @@ package com.example.andriod.popularmoviev2.activity;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,24 @@ import com.example.andriod.popularmoviev2.R;
  */
 public class DetailMovieAdapter extends CursorAdapter {
     private static final String LOG_TAG = DetailMovieAdapter.class.getSimpleName();
+
+    // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
+    static final int COL_DETAIL_ID = 0;
+    static final int COL_DETAIL_MOVIE_ID = 1;
+    static final int COL_DETAIL_MOVIE_POSTER_PATH = 2;
+    static final int COL_DETAIL_MOVIE_ADULT = 3;
+    static final int COL_DETAIL_MOVIE_OVERVIEW = 4;
+    static final int COL_DETAIL_MOVIE_RELEASE_DATE = 5;
+    static final int COL_DETAIL_MOVIE_GENRE_IDS = 6;
+    static final int COL_DETAIL_MOVIE_ORIG_TITLE = 7;
+    static final int COL_DETAIL_MOVIE_ORIG_LANGUAGE = 8;
+    static final int COL_DETAIL_MOVIE_TITLE = 9;
+    static final int COL_DETAIL_MOVIE_BACKDROP_PATH = 10;
+    static final int COL_DETAIL_MOVIE_POPULARITY = 11;
+    static final int COL_DETAIL_MOVIE_VOTE_COUNT = 12;
+    static final int COL_DETAIL_MOVIE_VIDEO = 13;
+    static final int COL_DETAIL_MOVIE_VOTE_AVERAGE = 14;
+    static final int COL_DETAIL_MOVIE_TYPE = 15;
 
     public DetailMovieAdapter(Context context, Cursor cursor, int flags){
         super(context,cursor,flags);
@@ -66,7 +85,7 @@ public class DetailMovieAdapter extends CursorAdapter {
 
         // Get the post information from the curse (get the row/column of information
         // from the db)
-        String poster = cursor.getString(DetailMovieFragment.COL_DETAIL_MOVIE_POSTER_PATH);
+        String poster = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
 
         // Take the ImageView and add an Image from the post location and
         // make it visible too
@@ -76,19 +95,30 @@ public class DetailMovieAdapter extends CursorAdapter {
 
         /// Get the TextView from the current layout and set the text
         // to what appears at position X in the column layout
-        viewHolder.mDetail_titleTextView.setText(cursor.getString(DetailMovieFragment.COL_DETAIL_MOVIE_TITLE));
-        viewHolder.mDetail_synopsisTextView.setText(cursor.getString(DetailMovieFragment.COL_DETAIL_MOVIE_OVERVIEW));
-        viewHolder.mDetail_userRateingTextView.setText(cursor.getString(DetailMovieFragment.COL_DETAIL_MOVIE_VOTE_AVERAGE));
+        viewHolder.mDetail_titleTextView.setText(cursor.getString(COL_DETAIL_MOVIE_TITLE));
+        viewHolder.mDetail_synopsisTextView.setText(cursor.getString(COL_DETAIL_MOVIE_OVERVIEW));
+
+        Log.v("Stars ",cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+
+        // Create previous star display then add new rating number then stars
+        viewHolder.mUserRatingLayout.removeAllViews();
+
+        // Add the user rating scores to Textview element
+        viewHolder.mDetail_userRateingTextView.setText(cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+
+        // Add the user rating TextView to the user rating layout
+        viewHolder.mUserRatingLayout.addView(viewHolder.mDetail_userRateingTextView);
 
         // Loop through and populate the start images
-        for(int i = 0; i < cursor.getDouble(DetailMovieFragment.COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
+        for(int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
             ImageView starImages = new ImageView(context);
             starImages.setImageResource(R.drawable.ic_full_star);
             viewHolder.mUserRatingLayout.addView(starImages);
+            Log.v("Stars created ",Integer.toString(i));
         }
 
-        viewHolder.mDetail_releaseDateTextView.setText(cursor.getString(DetailMovieFragment.COL_DETAIL_MOVIE_RELEASE_DATE));
-        viewHolder.mDetail_genreTextView.setText(cursor.getString(DetailMovieFragment.COL_DETAIL_MOVIE_GENRE_IDS));
+        viewHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
+        viewHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
 
         //viewHolder.mDetail_genreTextView.setText(getGenreName(cursor.getString(DetailMovieFragment.COL_DETAIL_MOVIE_GENRE_IDS)));
     }
