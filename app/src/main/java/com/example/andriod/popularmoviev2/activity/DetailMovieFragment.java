@@ -110,19 +110,32 @@ public class DetailMovieFragment extends Fragment
             ReviewEntry.COLUMN_URL
     };
 
-    public DetailMovieFragment() {}
+    /**
+     * Empty construction
+     */
+    public DetailMovieFragment(){}
 
-
+    /**
+     * Set the mUri (local variable) with the Bundle argument data
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState){
         Bundle arguments = getArguments();
         if(arguments != null){
             mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
+            Log.v("DMF Name ",mUri.toString());
         }
-        Log.v("DMF Name ",mUri.toString());
 
+        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
+        Log.v("Loader Name "," Detail Movie");
+        getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
+        Log.v("Loader Name "," Detail Movie Trailers");
+        getLoaderManager().initLoader(REVIEW_MOVIE_LOADER, null, this);
+        Log.v("Loader Name "," Detail Movie Reviews");
         super.onCreate(savedInstanceState);
     }
+
     /**
      * When the View is created I get the Bundle argument with the movie Uri
      *
@@ -165,12 +178,6 @@ public class DetailMovieFragment extends Fragment
      * @param savedInstanceState - Fragment for the bundle
      */
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
-        Log.v("Loader Name "," Detail Movie");
-        getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
-        Log.v("Loader Name "," Detail Movie Trailers");
-        getLoaderManager().initLoader(REVIEW_MOVIE_LOADER, null, this);
-        Log.v("Loader Name "," Detail Movie Reviews");
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -210,52 +217,54 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        switch (id){
-            case DETAIL_MOVIE_LOADER:{
-                Log.v("DetailMovieFragment ", MovieContract.MovieEntry.CONTENT_URI.toString());
-                Log.v("Movie URI ", mUri.toString());
+        if ( null != mUri ) {
+            switch (id) {
+                case DETAIL_MOVIE_LOADER: {
+                    Log.v("DetailMovieFragment ", MovieContract.MovieEntry.CONTENT_URI.toString());
+                    Log.v("Movie URI ", mUri.toString());
 
-                return new CursorLoader(
-                        getActivity(),
-                        mUri,
-                        DETAIL_MOVIE_COLUMNS,
-                        null,
-                        null,
-                        null);
-            }
-            case TRAILER_MOVIE_LOADER:{
-                Log.v("Trailer before URI ", TrailerEntry.CONTENT_URI.toString());
-                Log.v("Trailer URI ", mUri.toString());
+                    return new CursorLoader(
+                            getActivity(),
+                            mUri,
+                            DETAIL_MOVIE_COLUMNS,
+                            null,
+                            null,
+                            null);
+                }
+                case TRAILER_MOVIE_LOADER: {
+                    Log.v("Trailer before URI ", TrailerEntry.CONTENT_URI.toString());
+                    Log.v("Trailer URI ", mUri.toString());
 
-                Uri trailerUri = MovieContract.TrailerEntry.buildTrailerMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
+                    Uri trailerUri = MovieContract.TrailerEntry.buildTrailerMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
 
-                Log.v("Trailer after URI ", trailerUri.toString());
+                    Log.v("Trailer after URI ", trailerUri.toString());
 
-                return new CursorLoader(
-                        getActivity(),
-                        trailerUri,
-                        TRAILER_MOVIE_COLUMNS,
-                        null,
-                        null,
-                        null);
+                    return new CursorLoader(
+                            getActivity(),
+                            trailerUri,
+                            TRAILER_MOVIE_COLUMNS,
+                            null,
+                            null,
+                            null);
 
-            }
-            case REVIEW_MOVIE_LOADER:{
-                Log.v("Review Content URI ", MovieContract.ReviewEntry.CONTENT_URI.toString());
-                Log.v("Review URI ", mUri.toString());
+                }
+                case REVIEW_MOVIE_LOADER: {
+                    Log.v("Review Content URI ", MovieContract.ReviewEntry.CONTENT_URI.toString());
+                    Log.v("Review URI ", mUri.toString());
 
-                Uri reviewUri = MovieContract.ReviewEntry.buildReviewMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
+                    Uri reviewUri = MovieContract.ReviewEntry.buildReviewMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
 
-                Log.v("Review after URI ", reviewUri.toString());
+                    Log.v("Review after URI ", reviewUri.toString());
 
-                return new CursorLoader(
-                        getActivity(),
-                        reviewUri,
-                        REVIEW_MOVIE_COLUMNS,
-                        null,
-                        null,
-                        null);
+                    return new CursorLoader(
+                            getActivity(),
+                            reviewUri,
+                            REVIEW_MOVIE_COLUMNS,
+                            null,
+                            null,
+                            null);
 
+                }
             }
         }
         return null;
@@ -269,23 +278,25 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (loader.getId()){
-            case DETAIL_MOVIE_LOADER:{
-                Log.v("Movie onLoadFinished ", " populate");
-                detailMovieAdapter.swapCursor(data);
-            }
-            break;
-            case TRAILER_MOVIE_LOADER:{
-                Log.v("Trailer onLoadFinished ", " populate");
-                detailTrailerAdapter.swapCursor(data);
+        if (data != null) {
+            switch (loader.getId()) {
+                case DETAIL_MOVIE_LOADER: {
+                    Log.v("Movie onLoadFinished ", " populate");
+                    detailMovieAdapter.swapCursor(data);
+                }
+                break;
+                case TRAILER_MOVIE_LOADER: {
+                    Log.v("Trailer onLoadFinished ", " populate");
+                    detailTrailerAdapter.swapCursor(data);
 
+                }
+                break;
+                case REVIEW_MOVIE_LOADER: {
+                    Log.v("Review onLoadFinished ", " populate");
+                    detailReviewAdapter.swapCursor(data);
+                }
+                break;
             }
-            break;
-            case REVIEW_MOVIE_LOADER:{
-                Log.v("Review onLoadFinished ", " populate");
-                detailReviewAdapter.swapCursor(data);
-            }
-            break;
         }
     }
 
@@ -295,22 +306,8 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        switch (loader.getId()){
-            case DETAIL_MOVIE_LOADER:{
-                Log.v("Movie Reset ", " populate");
-                detailMovieAdapter.swapCursor(null);
-            }
-            break;
-            case TRAILER_MOVIE_LOADER:{
-                Log.v("Trailer Reset ", " populate");
-                detailTrailerAdapter.swapCursor(null);
-            }
-            break;
-            case REVIEW_MOVIE_LOADER:{
-                Log.v("Review Reset ", " populate");
-                detailReviewAdapter.swapCursor(null);
-            }
-            break;
-        }
+        detailMovieAdapter.swapCursor(null);
+        detailTrailerAdapter.swapCursor(null);
+        detailReviewAdapter.swapCursor(null);
     }
 }

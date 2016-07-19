@@ -38,6 +38,12 @@ public class DetailMovieAdapter extends CursorAdapter {
     static final int COL_DETAIL_MOVIE_VOTE_AVERAGE = 14;
     static final int COL_DETAIL_MOVIE_TYPE = 15;
 
+    /**
+     * MovieAdapter constructor the set-up outside stuff inside
+     * @param context - The current app context
+     * @param cursor - The current app cursor
+     * @param flags - The current flag
+     */
     public DetailMovieAdapter(Context context, Cursor cursor, int flags){
         super(context,cursor,flags);
     }
@@ -55,6 +61,10 @@ public class DetailMovieAdapter extends CursorAdapter {
         public final TextView mDetail_genreTextView;
         public final LinearLayout mUserRatingLayout;
 
+        /**
+         * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
+         * @param view - The current view for the layout elements
+         */
         public ViewHolder(View view){
             // Local variable for detail screen elements
             mDetail_imageView = (ImageView) view.findViewById(R.id.detail_imageView);

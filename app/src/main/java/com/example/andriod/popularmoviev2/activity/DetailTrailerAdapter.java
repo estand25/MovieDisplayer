@@ -38,6 +38,12 @@ public class DetailTrailerAdapter extends CursorAdapter {
     // Set the local Trailer Detail elements
     private TextView mTrailer_link;
 
+    /**
+     * MovieAdapter constructor the set-up outside stuff inside
+     * @param context - The current app context
+     * @param cursor - The current app cursor
+     * @param flags - The current flag
+     */
     public DetailTrailerAdapter(Context context, Cursor cursor, int flags){
         super(context,cursor,flags);
     }
@@ -49,6 +55,10 @@ public class DetailTrailerAdapter extends CursorAdapter {
         // LinearLayout for Trailer dynamically create elements
         public final LinearLayout mTrailerLayout;
 
+        /**
+         * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
+         * @param view - The current view for the layout elements
+         */
         public ViewHolder(View view){
             // Local variable for detail screen elements
             mTrailerLayout = (LinearLayout) view.findViewById(R.id.movieTrailerItem);

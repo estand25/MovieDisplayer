@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:layout_margin="0dp"
             android:gravity="left"
             android:textSize="15sp"/>
         <ListView
@@ -25,7 +24,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:layout_margin="0dp"
             android:gravity="left"
             android:textSize="15sp"/>
         <ListView
@@ -33,7 +31,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:layout_margin="0dp"
             android:gravity="left"
             android:textSize="15sp"/>
     </LinearLayout>

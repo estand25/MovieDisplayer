@@ -36,7 +36,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private MovieAdapter movieAdapter;
     private ArrayList<Movie> movieList;
     private int mPosition = gridView.INVALID_POSITION;
-    private boolean mUseTodayLayout;
+    private boolean mTablet;
 
     private static final String SELECTED_KEY = "selected_position";
 
@@ -59,7 +59,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     static final int COL_MOVIE_TITLE = 3;
     static final int COL_MOVIE_TYPE = 4;
 
-    // Empty construction
+    /**
+     * Empty construction
+     */
     public MovieFragment() {}
 
     MovieSyncUploader movieSyncUploader;
@@ -99,14 +101,13 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onSaveInstanceState(Bundle outState){
-        outState.putParcelableArrayList("movies",movieList);
-
         // When tablets rotate, the currently selected list item needs to be saved.
         // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
         // so check for that before storing.
         if (mPosition != GridView.INVALID_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
         }
+        outState.putParcelableArrayList("movies",movieList);
         super.onSaveInstanceState(outState);
     }
 
@@ -137,19 +138,25 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         gridView.setAdapter(movieAdapter);
 
         // Got this code section from
-        // http://stackoverflow.com/questions/6912922/android-how-does-gridview-auto-fit-find-the-number-of-columns/7874011#7874011
-        // I need a way to not alway default the column number to 2 or hard code it 3 or 4.
-        // the below code does that for me
-        // Note: This works even better because I'm using both the virtual phone & my tablet
-        float scalefactor = getResources().getDisplayMetrics().density*100;
-        int number = getActivity().getWindowManager().getDefaultDisplay().getWidth();
-        int columns = (int) ((float) number /scalefactor)/2;
-        if(columns == 0 || columns == 1){
-            columns = 2;
-        }
+        //if(!mTablet) {
+            // http://stackoverflow.com/questions/6912922/android-how-does-gridview-auto-fit-find-the-number-of-columns/7874011#7874011
+            // I need a way to not alway default the column number to 2 or hard code it 3 or 4.
+            // the below code does that for me
+            // Note: This works even better because I'm using both the virtual phone & my tablet
+            float scalefactor = getResources().getDisplayMetrics().density * 100;
+            int number = getActivity().getWindowManager().getDefaultDisplay().getWidth();
+            int columns = (int) ((float) number / scalefactor) / 2;
+            if (columns == 0 || columns == 1) {
+                columns = 2;
+            }
 
-        // Set the number of columns
-        gridView.setNumColumns(columns);
+            // Set the number of columns
+            gridView.setNumColumns(columns);
+        //}else {
+        //if(mTablet) {
+            // Set the number of columns
+            gridView.setNumColumns(3);
+        //}
 
         movieSyncUploader = new MovieSyncUploader(getContext(), true);
 
@@ -177,12 +184,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                     movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
 
-                    Log.v("Selection Name "," Movie before selecting");
-
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
-
-                    Log.v("Selection Name "," Movie after selecting");
                 }
                 mPosition = pos;
             }
@@ -198,8 +201,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
-
-        movieAdapter.setUseTodayLayout(mUseTodayLayout);
 
         return  rootView;
     }
@@ -243,13 +244,12 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        movieAdapter.swapCursor(data);
-
         if (mPosition != GridView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
             gridView.smoothScrollToPosition(mPosition);
         }
+        movieAdapter.swapCursor(data);
     }
 
     /**
@@ -261,10 +261,12 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         movieAdapter.swapCursor(null);
     }
 
-    public void setUseTodayLayout(boolean useTodayLayout) {
-        mUseTodayLayout = useTodayLayout;
-        if (movieAdapter != null) {
-            movieAdapter.setUseTodayLayout(mUseTodayLayout);
-        }
+    /**
+     * Set the layout for the gridview
+     * True - for tablet and false - for phone
+     * @param layout - the layout of the gridview
+     */
+    public void setLayout(boolean layout){
+        mTablet = layout;
     }
 }

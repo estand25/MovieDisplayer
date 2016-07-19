@@ -35,6 +35,12 @@ public class DetailReviewAdapter extends CursorAdapter{
     private TextView mReview_Content;
     private TextView mReview_URL;
 
+    /**
+     * MovieAdapter constructor the set-up outside stuff inside
+     * @param context - The current app context
+     * @param cursor - The current app cursor
+     * @param flags - The current flag
+     */
     public DetailReviewAdapter(Context context, Cursor cursor, int flag){
         super(context,cursor,flag);
     }
@@ -45,6 +51,10 @@ public class DetailReviewAdapter extends CursorAdapter{
     public static class ViewHolder{
         public final LinearLayout reviewLinearLayout;
 
+        /**
+         * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
+         * @param view - The current view for the layout elements
+         */
         public ViewHolder(View view){
             reviewLinearLayout = (LinearLayout) view.findViewById(R.id.movieReviewItem);
         }

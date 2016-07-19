@@ -21,6 +21,12 @@ public class MovieAdapter extends CursorAdapter {
     // Flag to determine if we want to use a separate view for "today".
     private boolean mUseTodayLayout = true;
 
+    /**
+     * MovieAdapter constructor the set-up outside stuff inside
+     * @param context - The current app context
+     * @param cursor - The current app cursor
+     * @param flags - The current flag
+     */
     public MovieAdapter(Context context, Cursor cursor, int flags){
         super(context,cursor,flags);
     }
@@ -32,6 +38,10 @@ public class MovieAdapter extends CursorAdapter {
         public final ImageView movieView;
         public final TextView titleView;
 
+        /**
+         * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
+         * @param view - The current view for the layout elements
+         */
         public ViewHolder(View view){
             movieView = (ImageView) view.findViewById(R.id.moviePoster_image);
             titleView = (TextView) view.findViewById(R.id.movie_description);
@@ -66,7 +76,7 @@ public class MovieAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor){
-        // Get a viewhold instance and set it to the already declared display items
+        // Get a viewHolder instance and set it to the already declared display items
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         // Create an instance of AQuery and set it to the movieView item
@@ -79,9 +89,5 @@ public class MovieAdapter extends CursorAdapter {
         // Take the ImageView and add an Image from the post location and
         // make it visible too
         aq.id(viewHolder.movieView).image(poster).visible();
-    }
-
-    public void setUseTodayLayout(boolean useTodayLayout) {
-        mUseTodayLayout = useTodayLayout;
     }
 }

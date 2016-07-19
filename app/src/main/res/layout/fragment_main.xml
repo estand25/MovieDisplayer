@@ -6,13 +6,10 @@
     tools:context=".activity.MovieFragment"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:showIn="@layout/activity_main">
-
     <GridView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/gridView"
         android:layout_gravity="fill"
-        android:numColumns="auto_fit"
         android:scaleType="fitXY"/>
-
 </FrameLayout>

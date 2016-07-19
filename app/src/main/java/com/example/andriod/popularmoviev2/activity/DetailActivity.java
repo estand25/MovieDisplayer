@@ -25,8 +25,6 @@ public class DetailActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Log.v("Detail Name "," Before Triggered");
-
         if(savedInstanceState == null){
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
@@ -50,14 +48,11 @@ public class DetailActivity extends AppCompatActivity{
                 // This should generate a email with the current movie's detail view information
                 // Note: It isn't working, but I will figure it out sometime.
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                //emailIntent.setData(Uri.parse("mailto:")); // Only emails
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Popular Movie App -- Information");
                 if(emailIntent.resolveActivity(getPackageManager()) != null){
                     startActivity(emailIntent);
                 }
             }
         });
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

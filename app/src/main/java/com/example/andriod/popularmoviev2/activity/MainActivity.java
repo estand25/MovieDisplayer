@@ -18,21 +18,16 @@ import android.view.MenuItem;
 import com.example.andriod.popularmoviev2.R;
 
 public class MainActivity extends AppCompatActivity implements MovieFragment.Callback{
-    // Constants
-    // The authority for the sync adapter's (MovieSyncUploader) content provider
-    public static final String AUTHORITY = "com.example.andriod.popularmoviev2";
-
-    // An account type, in the form of a domin name
-    public static final String ACCOUNT_TYPE = "example.com";
-
     private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
-
-    public boolean mTwoPane;
+    public boolean mTwoPane = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         if (findViewById(R.id.movie_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
@@ -52,14 +47,14 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             getSupportActionBar().setElevation(0f);
         }
 
+        // Create new instance of the MovieFragment, but get the MovieFragment from
+        // the getSupportFragmentManager found fragment
         MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_main_container));
+                .findFragmentById(R.id.container));
 
-
-        movieFragment.setUseTodayLayout(false);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        // Tell the MovieFragment which layout is being used
+        // True - for tablet and false - for phone
+        movieFragment.setLayout(mTwoPane);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
                 }
             }
         });
-
     }
 
     @Override
@@ -114,16 +108,12 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
                 fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_main_container, fragment)
+                    .replace(R.id.movie_detail_container, fragment)
                     .commit();
         } else {
-
-            Log.v("Intent Name "," Before Intent");
-                Intent intent = new Intent(this, DetailActivity.class)
+            Intent intent = new Intent(this, DetailActivity.class)
                         .setData(contentUri);
-                startActivity(intent);
-
-            Log.v("Intent Name "," After Intent");
+            startActivity(intent);
         }
     }
 }
