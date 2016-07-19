@@ -34,6 +34,30 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (findViewById(R.id.movie_detail_container) != null) {
+            // The detail container view will be present only in the large-screen layouts
+            // (res/layout-sw600dp). If this view is present, then the activity should be
+            // in two-pane mode.
+            mTwoPane = true;
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, new DetailMovieFragment(), MOVIEDETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+            getSupportActionBar().setElevation(0f);
+        }
+
+        MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_main_container));
+
+
+        movieFragment.setUseTodayLayout(false);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -51,29 +75,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
                 }
             }
         });
-
-        if (findViewById(R.id.content_detail) != null) {
-            // The detail container view will be present only in the large-screen layouts
-            // (res/layout-sw600dp). If this view is present, then the activity should be
-            // in two-pane mode.
-            mTwoPane = true;
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
-            if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_detail, new DetailMovieFragment(), MOVIEDETAILFRAGMENT_TAG)
-                        .commit();
-            }
-        } else {
-            mTwoPane = false;
-            getSupportActionBar().setElevation(0f);
-        }
-
-        MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.container));
-
-        movieFragment.setUseTodayLayout(!mTwoPane);
 
     }
 
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
                 fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment, fragment)
+                    .replace(R.id.fragment_main_container, fragment)
                     .commit();
         } else {
 
