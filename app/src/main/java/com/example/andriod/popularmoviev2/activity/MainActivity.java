@@ -19,8 +19,12 @@ import com.example.andriod.popularmoviev2.R;
 
 public class MainActivity extends AppCompatActivity implements MovieFragment.Callback{
     private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
-    public boolean mTwoPane = false;
+    public boolean mTwoPane;
 
+    /**
+     * On Create set-up the Toolbar and determine if we using 1 or 2 pane for the app
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Log.v("Before pick pane type ","NONE");
         if (findViewById(R.id.movie_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
@@ -42,19 +47,20 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
                         .replace(R.id.movie_detail_container, new DetailMovieFragment(), MOVIEDETAILFRAGMENT_TAG)
                         .commit();
             }
+
+            // Create new instance of the MovieFragment, but get the MovieFragment from
+            // the getSupportFragmentManager found fragment
+            MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.container));
         } else {
             mTwoPane = false;
             getSupportActionBar().setElevation(0f);
+
+            // Create new instance of the MovieFragment, but get the MovieFragment from
+            // the getSupportFragmentManager found fragment
+            MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment));
         }
-
-        // Create new instance of the MovieFragment, but get the MovieFragment from
-        // the getSupportFragmentManager found fragment
-        MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.container));
-
-        // Tell the MovieFragment which layout is being used
-        // True - for tablet and false - for phone
-        movieFragment.setLayout(mTwoPane);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +78,11 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         });
     }
 
+    /**
+     * Inflates the menu options and return if that happens
+     * @param menu - menu object
+     * @return - Returns boolean if menu was created
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -79,6 +90,11 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         return true;
     }
 
+    /**
+     * Does something when the associated menu option is selected
+     * @param item - The selected menu item
+     * @return - Returns boolean if menu item is selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -95,6 +111,10 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * OnItemSelected is what happens after an movie poster is selected
+     * @param contentUri - The Uri used by the app to query/insert/delete table data
+     */
     @Override
     public void onItemSelected(Uri contentUri){
         if(mTwoPane){

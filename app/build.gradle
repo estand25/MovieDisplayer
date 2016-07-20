@@ -18,7 +18,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'THE_MOVIE_DB_API', "\"d2919c2333e0f291ccf58c5e5ec88543\""
+        it.buildConfigField 'String', 'THE_MOVIE_DB_API', "\"You Movie API Key, Please...\""
 
     }
     repositories {
@@ -29,13 +29,14 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:design:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.1.0'
+    compile 'com.android.support:design:24.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.android.support:support-v4:24.0.0'
+    compile 'com.android.support:support-v4:24.1.0'
     compile 'com.googlecode.android-query:android-query:0.25.9'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.android.support:recyclerview-v7:24.0.0'
+    compile 'com.android.support:recyclerview-v7:24.1.0'
+    compile 'com.android.support:cardview-v7:24.1.0'
 }

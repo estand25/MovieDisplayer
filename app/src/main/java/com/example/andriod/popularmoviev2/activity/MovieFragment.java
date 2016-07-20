@@ -1,7 +1,9 @@
 package com.example.andriod.popularmoviev2.activity;
 
 
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -137,26 +139,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         //  Populare the GridView with the custom adapter information
         gridView.setAdapter(movieAdapter);
 
-        // Got this code section from
-        //if(!mTablet) {
-            // http://stackoverflow.com/questions/6912922/android-how-does-gridview-auto-fit-find-the-number-of-columns/7874011#7874011
-            // I need a way to not alway default the column number to 2 or hard code it 3 or 4.
-            // the below code does that for me
-            // Note: This works even better because I'm using both the virtual phone & my tablet
-            float scalefactor = getResources().getDisplayMetrics().density * 100;
-            int number = getActivity().getWindowManager().getDefaultDisplay().getWidth();
-            int columns = (int) ((float) number / scalefactor) / 2;
-            if (columns == 0 || columns == 1) {
-                columns = 2;
-            }
-
-            // Set the number of columns
-            gridView.setNumColumns(columns);
-        //}else {
-        //if(mTablet) {
-            // Set the number of columns
+        // Check if device is landscape or portrait I got this working, but find a good post about it
+        // so I add it as a reference just in case it can be used later
+        // http://stackoverflow.com/questions/3674933/find-out-if-android-device-is-portrait-or-landscape-for-normal-usage
+        if(Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation){
             gridView.setNumColumns(3);
-        //}
+        }else{
+            gridView.setNumColumns(2);
+        }
 
         movieSyncUploader = new MovieSyncUploader(getContext(), true);
 
