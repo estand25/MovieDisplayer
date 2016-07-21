@@ -78,15 +78,10 @@ public class MovieProvider extends ContentProvider {
             MovieContract.MovieEntry.TABLE_NAME +
                     "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ";
 
-    // movie._ID = ?
-    public static final String sIdSettingSelection =
-            MovieContract.MovieEntry.TABLE_NAME +
-                    "." + MovieContract.MovieEntry._ID + " = ? ";
-
-    // movie.movie_type = ?
-    public static final String sMovieTypeSettingSelection =
-            MovieContract.MovieEntry.TABLE_NAME +
-                    "." + MovieContract.MovieEntry.COLUMN_MOVIE_TYPE + " = ?";
+    // genre.genre_id = ?
+    public static final String sGenreIdSettingSelection =
+            MovieContract.GenreEntry.TABLE_NAME +
+                    "." + MovieContract.GenreEntry.COLUMN_GENRE_ID + " = ?";
 
     /**
      * Get a Cursor using SQLiteQueryBuilder for a join between Review and movie
@@ -200,24 +195,6 @@ public class MovieProvider extends ContentProvider {
         }
     }
 
-
-    public String getGenreName(int id){
-        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-
-        Cursor cursor = db.query(
-                MovieContract.GenreEntry.TABLE_NAME,
-                new String[]{"name"},
-                "genre_id = ?",
-                new String[]{Integer.toString(id)},
-                null,
-                null,
-                null);
-
-        String genreName = cursor.getString(0);
-
-        return genreName;
-    }
-
     /**
      * Query the specified table using specific project, selection, selectionArgs, and SortOrder
      * @param uri - Uri that content the path of the table
@@ -296,8 +273,8 @@ public class MovieProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.GenreEntry.TABLE_NAME,
                         new String[]{"genre_id","name"},
-                        sMovieIdSettingSelection,
-                        new String[]{"movie.genre_ids"},
+                        sGenreIdSettingSelection,
+                        new String[]{MovieContract.GenreEntry.getGenreID(uri)},
                         null,
                         null,
                         sortOrder
@@ -535,51 +512,53 @@ public class MovieProvider extends ContentProvider {
 
         try {
             for (ContentValues value : values) {
-                switch (match) {
-                    case MOVIE: {
-                        _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
-                        if (_id != -1) {
-                            returnCount++;
+                if(value != null) {
+                    switch (match) {
+                        case MOVIE: {
+                            _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                            if (_id != -1) {
+                                returnCount++;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case MOVIE_WITH_MOVIE_ID: {
-                        _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
-                        if (_id != -1) {
-                            returnCount++;
+                        case MOVIE_WITH_MOVIE_ID: {
+                            _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                            if (_id != -1) {
+                                returnCount++;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case GENRE: {
-                        _id = db.insert(MovieContract.GenreEntry.TABLE_NAME, null, value);
-                        if (_id != -1) {
-                            returnCount++;
+                        case GENRE: {
+                            _id = db.insert(MovieContract.GenreEntry.TABLE_NAME, null, value);
+                            if (_id != -1) {
+                                returnCount++;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case TRAILER: {
-                        _id = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, value);
-                        if (_id != -1) {
-                            returnCount++;
+                        case TRAILER: {
+                            _id = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, value);
+                            if (_id != -1) {
+                                returnCount++;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case REVIEW: {
-                        _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, value);
-                        if (_id != -1) {
-                            returnCount++;
+                        case REVIEW: {
+                            _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, value);
+                            if (_id != -1) {
+                                returnCount++;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case FAVORITE_MOVIES: {
-                        _id = db.insert(MovieContract.FavoriteMovies.TABLE_NAME, null, value);
-                        if (_id != -1) {
-                            returnCount++;
+                        case FAVORITE_MOVIES: {
+                            _id = db.insert(MovieContract.FavoriteMovies.TABLE_NAME, null, value);
+                            if (_id != -1) {
+                                returnCount++;
+                            }
+                            break;
                         }
-                        break;
+                        default:
+                            return super.bulkInsert(uri, values);
                     }
-                    default:
-                        return super.bulkInsert(uri, values);
                 }
             }
 

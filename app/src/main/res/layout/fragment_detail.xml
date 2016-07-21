@@ -1,37 +1,36 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context=".activity.DetailMovieFragment"
     android:fillViewport="true"
-    tools:showIn="@layout/activity_detail">
-    <LinearLayout
+    tools:showIn="@layout/activity_detail"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ListView
+        android:id="@+id/detail_MovieDetaiListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ListView
-            android:id="@+id/detail_MovieDetaiListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="1dp"
-            android:gravity="left"
-            android:textSize="15sp"/>
-        <ListView
-            android:id="@+id/detail_reviewListView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="1dp"
-            android:gravity="left"
-            android:textSize="15sp"/>
-        <ListView
-            android:id="@+id/detail_trailerListView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="1dp"
-            android:gravity="left"
-            android:textSize="15sp"/>
-    </LinearLayout>
-</ScrollView>
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        android:gravity="left"
+        android:textSize="15sp"/>
+    <ListView
+        android:id="@+id/detail_reviewListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        android:gravity="left"
+        android:textSize="15sp"
+        android:layout_below="@+id/detail_MovieDetaiListView"/>
+    <ListView
+        android:id="@+id/detail_trailerListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        android:gravity="left"
+        android:textSize="15sp"
+        android:layout_below="@+id/detail_reviewListView"/>
+</RelativeLayout>
+

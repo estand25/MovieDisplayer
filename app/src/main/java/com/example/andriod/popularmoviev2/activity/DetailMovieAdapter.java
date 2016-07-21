@@ -2,6 +2,9 @@ package com.example.andriod.popularmoviev2.activity;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.icu.text.DateFormat;
+import android.icu.text.SimpleDateFormat;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +16,10 @@ import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieProvider;
+
+import java.util.Date;
 
 /**
  * Detail Movie Adapter for the individual general movie details
@@ -143,8 +149,10 @@ public class DetailMovieAdapter extends CursorAdapter {
         // Loop through and populate the start images
         for(int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
             ImageView starImages = new ImageView(context);
-            starImages.setImageResource(R.drawable.ic_full_star);
+            starImages.setImageResource(R.drawable.star);
             viewHolder.mUserRatingLayout.addView(starImages);
+            //center_vertical 16 and Left 3
+            viewHolder.mUserRatingLayout.setVerticalGravity(16|3);
             Log.v("Stars created ",Integer.toString(i));
         }
 
@@ -162,5 +170,4 @@ public class DetailMovieAdapter extends CursorAdapter {
         result = line.substring(1, line.length()-1);
         return result;
     }
-
 }

@@ -25,6 +25,7 @@ import com.example.andriod.popularmoviev2.model.TrailerColl;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.service.TheMovieDBAPIService;
 
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -265,9 +266,12 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
     /**
      *  Populated the Genre tables
      */
-    public void getGenreInfo(){
+    public void getGenreInfo(String movieGenres,final int movieId){
         // Remove all the information before populating new data
         deleteAllGenre();
+
+        // String[] of comma separate genre id
+        final String[] genres = getIndividualGenreID(movieGenres);
 
         // Create an instance of the framework that creates the Uri and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
@@ -281,40 +285,57 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         // Call the service for movie genre
         Call<Genres> jsonGenres = service.getMovieGenres(BuildConfig.THE_MOVIE_DB_API);
 
-        // Start the connect up and see if it successed and you have a response
+        // Start the connect up and see if it success and you have a response
         // or if you failure and you got nothing
         jsonGenres.enqueue(new Callback<Genres>() {
             @Override
             public void onResponse(Call<Genres> call, Response<Genres> response) {
                 // Grab the response (the list of genres) from the API
                 // and put it in a local list variable
-                List<Genre> movieGenres = response.body().getGenres();
+                HashMap<Integer,String> movieGenres = response.body().genreMap();
 
-                // Content Value Array that I will pass to bulk insert
+                // Content Value Array that I will pass to bulk insert genre
                 ContentValues[] bulkMovieGenre = new ContentValues[movieGenres.size()];
 
-                // Index counter
-                int i = 0;
+                // Blank the genreName field to start
+                String genreName = "";
 
-                // Loop through added the individual genres details to the content
-                for(Genre genre : movieGenres){
+                // Loop through the movie's genre names
+                for(int i = 0; i <= genres.length-1;i++) {
+                    // Get all the Genre Name and update Genre id in the Movie
+                    if(genreName == ""){
+                        genreName = (String) movieGenres.get(Integer.parseInt(genres[i]));
+                    }else{
+                        genreName = genreName + "|" + (String) movieGenres.get(Integer.parseInt(genres[i]));
+                    }
+
+                    // Add the GenreNames together
+                    Log.v("Genre name ",genreName);
+
                     // Content that holds all the genres information
                     // retrieved from the Movie DB API
                     ContentValues genreContent = new ContentValues();
 
                     // Set the value of each column and inserts the genre property
-                    genreContent.put(MovieContract.GenreEntry.COLUMN_GENRE_ID,genre.getId());
-                    genreContent.put(MovieContract.GenreEntry.COLUMN_NAME,genre.getName());
+                    genreContent.put(MovieContract.GenreEntry.COLUMN_GENRE_ID,genres[i]);
+                    genreContent.put(MovieContract.GenreEntry.COLUMN_NAME, (String) movieGenres.get(Integer.parseInt(genres[i])));
 
                     // Add genre details to the contentValue array
                     bulkMovieGenre[i] = genreContent;
-
-                    // Increment index
-                    i++;
-
-                    //Log.v("Genre Name ",genre.getName());
                 }
+                // Content that holds all the genre name information
+                // retrieved from the Movie DB API
+                ContentValues movieIdNameContent = new ContentValues();
+                movieIdNameContent.put(MovieContract.MovieEntry.COLUMN_GENRE_IDS,genreName);
+
+                // Bulk Insert the movie's Genre information
                 mContentResolver.bulkInsert(MovieContract.GenreEntry.CONTENT_URI,bulkMovieGenre);
+
+                // Update the Genre ids field in movie from genre id to genre name plus | in-between
+                mContentResolver.update(MovieContract.MovieEntry.CONTENT_URI,
+                        movieIdNameContent,
+                        "movie.movie_id = ?",
+                        new String[]{String.valueOf(movieId)});
             }
 
             @Override
@@ -322,6 +343,21 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 Log.e(TAG,"Retrofit 2 failed to get populate genre table!!");
             }
         });
+    }
+
+    /**
+     * Remove first and end brackets then splits the line by comma
+     * @param line - String of genre id with brackets
+     * @return - String[] of genres id without brackets
+     */
+    public String[] getIndividualGenreID(String line){
+        String result = "";
+        result = line.substring(1, line.length()-1);
+        // Note: I know is little regression pattern, but I'm not that good
+        // so I had to search around to found this one
+        // http://stackoverflow.com/questions/15633228/how-to-remove-all-white-spaces-in-java
+        result = result.replaceAll("\\s+","");
+        return result.split(",");
     }
 
     /**
@@ -442,7 +478,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     // Increment index
                     i++;
 
-                    Log.v("Review Name ",review.getAuthor());
+                    //Log.v("Review Name ",review.getAuthor());
                 }
                 mContentResolver.bulkInsert(MovieContract.ReviewEntry.CONTENT_URI,bulkMovieReview);
             }

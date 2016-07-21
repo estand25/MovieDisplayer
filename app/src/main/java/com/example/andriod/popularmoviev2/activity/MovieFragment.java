@@ -50,16 +50,16 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
             MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_TITLE,
-            MovieContract.MovieEntry.COLUMN_MOVIE_TYPE
+            MovieContract.MovieEntry.COLUMN_GENRE_IDS,
+            MovieContract.MovieEntry.COLUMN_TITLE
     };
 
     // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
     static final int COL_ID = 0;
     static final int COL_MOVIE_ID = 1;
     static final int COL_MOVIE_POSTER_PATH = 2;
+    static final int COL_MOVIE_GENRE_IDS = 6;
     static final int COL_MOVIE_TITLE = 9;
-    static final int COL_MOVIE_TYPE = 15;
 
     /**
      * Empty construction
@@ -158,8 +158,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             movieSyncUploader.getTopRateMovieColl();
         }
 
-        movieSyncUploader.getGenreInfo();
-
         // When one of the view on the GridView is click the below will happen
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -171,6 +169,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position
                 if(cursor != null){
+
+                    movieSyncUploader.getGenreInfo(cursor.getString(COL_MOVIE_GENRE_IDS),cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
 

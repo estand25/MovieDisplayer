@@ -132,6 +132,17 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI,id);
         }
 
+        // Uri all review for a Movie in the movie table
+        public static Uri buildGenreMovieIDUri(int GenreID){
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(GenreID)).build();
+        }
+
+        // Uri for getting the genre id
+        public static String getGenreID(Uri uri){
+            return uri.getPathSegments().get(1);
+        }
+
+
         // String holding the table name
         public static final String TABLE_NAME ="genre";
 
