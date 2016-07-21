@@ -38,21 +38,5 @@ public class DetailActivity extends AppCompatActivity{
                     .add(R.id.movie_detail_container,fragment)
                     .commit();
         }
-
-        Log.v("Detail Name "," Triggered");
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // This should generate a email with the current movie's detail view information
-                // Note: It isn't working, but I will figure it out sometime.
-                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Popular Movie App -- Information");
-                if(emailIntent.resolveActivity(getPackageManager()) != null){
-                    startActivity(emailIntent);
-                }
-            }
-        });
     }
 }

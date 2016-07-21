@@ -11,9 +11,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.example.andriod.popularmoviev2.R;
 
@@ -33,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Log.v("Before pick pane type ","NONE");
         if (findViewById(R.id.movie_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
@@ -61,21 +62,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.fragment));
         }
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // This should generate a email with the current list of each
-                // Most popular movie or Top Rated movie.
-                // Note: It isn't working, but I will figure it out sometime.
-                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Popular Movie App -- Information");
-                if(emailIntent.resolveActivity(getPackageManager()) != null){
-                    startActivity(emailIntent);
-                }
-            }
-        });
     }
 
     /**

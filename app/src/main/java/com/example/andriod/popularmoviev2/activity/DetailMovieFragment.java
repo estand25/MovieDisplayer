@@ -1,7 +1,9 @@
 package com.example.andriod.popularmoviev2.activity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -196,17 +198,6 @@ public class DetailMovieFragment extends Fragment
         if (mForecast != null) {
             mShareActionProvider.setShareIntent(createShareForecastIntent());
         }*/
-    }
-
-    /**
-     * Remove first and end braskets
-     * @param line - String of genre id with brasket
-     * @return - String of genres id without braskets
-     */
-    public String getGenreName(String line){
-        String result = "";
-        result = line.substring(1, line.length()-1);
-        return result;
     }
 
     /**

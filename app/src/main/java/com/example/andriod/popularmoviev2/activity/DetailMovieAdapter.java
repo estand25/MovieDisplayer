@@ -13,8 +13,11 @@ import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.data.MovieProvider;
 
 /**
+ * Detail Movie Adapter for the individual general movie details
+ * 
  * Created by StandleyEugene on 7/17/2016.
  */
 public class DetailMovieAdapter extends CursorAdapter {
@@ -105,7 +108,9 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor){
+        // Set the local viewHolder with the previous tag information
         ViewHolder viewHolder = (ViewHolder) view.getTag();
+
         // Create an instance of AQuery and set it to the movieView item
         AQuery aq = new AQuery(viewHolder.mDetail_imageView);
 
@@ -146,4 +151,16 @@ public class DetailMovieAdapter extends CursorAdapter {
         viewHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
         viewHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
     }
+
+    /**
+     * Remove first and end braskets
+     * @param line - String of genre id with brasket
+     * @return - String of genres id without braskets
+     */
+    public String getGenreName(String line){
+        String result = "";
+        result = line.substring(1, line.length()-1);
+        return result;
+    }
+
 }

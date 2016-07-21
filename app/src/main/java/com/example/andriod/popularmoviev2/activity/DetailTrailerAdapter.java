@@ -6,15 +6,21 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.model.Trailer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by StandleyEugene on 7/17/2016.
@@ -36,7 +42,16 @@ public class DetailTrailerAdapter extends CursorAdapter {
     static final int COL_TRAILER_TYPE = 10;
 
     // Set the local Trailer Detail elements
-    private TextView mTrailer_link;
+    private TextView mTrailer_id;
+    private TextView mTrailer_iso_639_1;
+    private TextView mTrailer_iso_3166_1;
+    private TextView mTrailer_key;
+    private TextView mTrailer_name;
+    private TextView mTrailer_site;
+    private TextView mTrailer_size;
+    private TextView mTrailer_type;
+    private CardView mTrailer_CardHolder;
+    private RelativeLayout mTrailer_RalativeLayout;
 
     /**
      * MovieAdapter constructor the set-up outside stuff inside
@@ -61,7 +76,7 @@ public class DetailTrailerAdapter extends CursorAdapter {
          */
         public ViewHolder(View view){
             // Local variable for detail screen elements
-            mTrailerLayout = (LinearLayout) view.findViewById(R.id.movieTrailerItem);
+            mTrailerLayout = (LinearLayout) view.findViewById(R.id.detail_trailerList);
         }
     }
 
@@ -93,34 +108,65 @@ public class DetailTrailerAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
-        if(cursor != null && cursor.moveToFirst()) {
-            ViewHolder viewHolder = (ViewHolder) view.getTag();
+        // Set the local viewHolder with the previous tag information
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-            // Set the record local in table is less then zero
-            // Note: So when we go into the loop we start at the
-            //       top of the tables
-            cursor.moveToPosition(-1);
+        // Set the record local in table is less then zero
+        // Note: So when we go into the loop we start at the
+        //       top of the tables
+        cursor.moveToPosition(-1);
 
-            // Loop through adding new reviews
-            while (cursor.moveToNext()) {
+        // Set the initial Text it
+        int i = 1;
+
+        // List of Trailers
+        List<Trailer> trailerColl = new ArrayList<Trailer>();
+
+        // Loop through adding new reviews
+        while (cursor.moveToNext()) {
+            // Create a new Trailer Object
+            Trailer t = new Trailer();
+            t.setId(cursor.getString(COL_TRAILER_ID));
+            t.setIso6391(cursor.getString(COL_TRAILER_ISO_6391));
+            t.setIso31661(cursor.getString(COL_TRAILER_ISO_31661));
+            t.setKey(cursor.getString(COL_TRAILER_KEY));
+            t.setName(cursor.getString(COL_TRAILER_NAME));
+            t.setSite(cursor.getString(COL_TRAILER_SITE));
+            t.setSize(cursor.getInt(COL_TRAILER_SIZE));
+            t.setType(cursor.getString(COL_TRAILER_TYPE));
+            String movieTitle = cursor.getString(COL_MOVIE_TITLE);
+
+            // Add the new review to the list to check against to make sure
+            // there are not repeats
+            trailerColl.add(t);
+            // Check if list already has trailer
+            if(!trailerColl.contains(t)){
 
                 // Set the button label text
-                String trailerLabel = cursor.getString(COL_MOVIE_TITLE) + " " + cursor.getString(COL_TRAILER_NAME);
+                String trailerLabel = movieTitle + " - " + t.getName();
 
                 // Create new instance of TextView for trailer link
-                mTrailer_link = new TextView(context);
-
-                mTrailer_link.setLinkTextColor(context.getResources().getColor(R.color.colorPrimary));
-
+                mTrailer_name = new TextView(context);
+                // Set the link text color
+                mTrailer_name.setLinkTextColor(context.getResources().getColor(R.color.colorPrimary));
                 // Set the link text
-                mTrailer_link.setText(trailerLabel);
+                mTrailer_name.setText(trailerLabel);
+                // Set the View id for this Text
+                mTrailer_name.setId(i++);
 
                 // Set the video key to pass to YouTube
-                final String video_id = cursor.getString(COL_TRAILER_KEY);
+                final String video_id = t.getKey();
+
+                // Create new instance of the RelativeLayout.LayoutParams
+                // set the width & height of the relativeLayout
+                RelativeLayout.LayoutParams R1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                // Create new instance of the RelativeLayout
+                mTrailer_RalativeLayout = new RelativeLayout(context);
 
                 // Set-up the onClickListener for the TextView push key to
                 // trigger youtube
-                mTrailer_link.setOnClickListener(new View.OnClickListener() {
+                mTrailer_name.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         // Try to open up youtube with trailer video directly, but if not able
@@ -139,8 +185,28 @@ public class DetailTrailerAdapter extends CursorAdapter {
                     }
                 });
 
+                // Create new instance of the CardViewer
+                mTrailer_CardHolder = new CardView(context);
+
+                // Add the Trailer text to the new layout
+                mTrailer_RalativeLayout.addView(mTrailer_name);
+                // Set the padding of the RelativeLayout
+                mTrailer_RalativeLayout.setPadding(10,10,10,10);
+
+                // Add the RelativeLayout to the cardView
+                mTrailer_CardHolder.addView(mTrailer_RalativeLayout);
+                // Set to true to ensure separate views have padding
+                mTrailer_CardHolder.setUseCompatPadding(true);
+                // Set the Elevation of the CardViewer
+                mTrailer_CardHolder.setElevation(10);
+                // Set the Radius of the individual CardViewers
+                mTrailer_CardHolder.setRadius(3);
+                // Set general padding space in the content
+                mTrailer_CardHolder.setContentPadding(10,10,10,10);
+                // Set the CardView Overlap to true to stop overlapping of the CardViewers
+                mTrailer_CardHolder.setPreventCornerOverlap(true);
                 // added the link to the layout
-                viewHolder.mTrailerLayout.addView(mTrailer_link);
+                viewHolder.mTrailerLayout.addView(mTrailer_name);
             }
         }
     }

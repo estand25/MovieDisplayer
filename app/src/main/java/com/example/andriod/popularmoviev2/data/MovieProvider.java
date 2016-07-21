@@ -135,9 +135,9 @@ public class MovieProvider extends ContentProvider {
                 null);
     }
 
-
-    /*
-        Uri Matcher that determine how the Uri is handling inputs
+    /**
+     * Rri Matcher that determine how the Uri is handling inputs
+     * @return - Returns a UriMatcher
      */
     static UriMatcher buildUriMatcher(){
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -157,14 +157,20 @@ public class MovieProvider extends ContentProvider {
         return matcher;
     }
 
+    /**
+     * Set the mOpenHelper to local variable
+     * @return - Return the boolean result
+     */
     @Override
     public boolean onCreate() {
         mOpenHelper = new MovieDbHelper(getContext());
         return true;
     }
 
-    /*
-        Determine the Uri type based on the Uri
+    /**
+     * Determine the Uri type based on the Uri
+     * @param uri - Pass in the Uri
+     * @return - Returns the string for the content name
      */
     @Override
     public String getType(Uri uri){
@@ -194,8 +200,32 @@ public class MovieProvider extends ContentProvider {
         }
     }
 
-    /*
-        Query the specified table using specific project, selection, selectionArgs, and SortOrder
+
+    public String getGenreName(int id){
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                MovieContract.GenreEntry.TABLE_NAME,
+                new String[]{"name"},
+                "genre_id = ?",
+                new String[]{Integer.toString(id)},
+                null,
+                null,
+                null);
+
+        String genreName = cursor.getString(0);
+
+        return genreName;
+    }
+
+    /**
+     * Query the specified table using specific project, selection, selectionArgs, and SortOrder
+     * @param uri - Uri that content the path of the table
+     * @param projection - The individual column to select
+     * @param selection - The fields that should be included in the Where criteria
+     * @param selectionArgs - The field value that should be included in the Where criteria
+     * @param sortOrder - The sort order for the query
+     * @return - Returns the Cursor of the specified table
      */
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
@@ -291,8 +321,11 @@ public class MovieProvider extends ContentProvider {
         return retCursor;
     }
 
-    /*
-        Insert the specified table using specific project, selection, selectionArgs, and SortOrder
+    /**
+     * Insert the specified table using specific project, selection, selectionArgs, and SortOrder
+     * @param uri - Uri that content the path of the table
+     * @param values - Content value to pass into the table
+     * @return - Return the Uri of the inserted table
      */
     @Override
     public Uri insert(Uri uri, ContentValues values){
@@ -348,8 +381,12 @@ public class MovieProvider extends ContentProvider {
         return returnUri;
     }
 
-    /*
-        Delete the specified table using specific project, selection, selectionArgs
+    /**
+     * Delete the specified table using specific project, selection, selectionArgs
+     * @param uri - Uri that content the path of the table
+     * @param selection - The fields that should be included in the Where criteria
+     * @param selectionArgs - The field value that should be included in the Where criteria
+     * @return - Returns the int number of row deleted
      */
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs){
@@ -416,8 +453,13 @@ public class MovieProvider extends ContentProvider {
         return rowsDeleted;
     }
 
-    /*
-        Update the specified table using specific project, selection, selectionArgs
+    /**
+     *  Update the specified table using specific project, selection, selectionArgs
+     * @param uri - Uri that content the path of the table
+     * @param values - Content value to pass into the table
+     * @param selection - The fields that should be included in the Where criteria
+     * @param selectionArgs - The field value that should be included in the Where criteria
+     * @return - Returns the int number of row update
      */
     @Override
     public int update(Uri uri, ContentValues values, String selection,
@@ -476,9 +518,12 @@ public class MovieProvider extends ContentProvider {
         return rowsUpdated;
     }
 
-    /*
-        Bulkd insert the specified table using specific project, selection, selectionArgs, and SortOrder
-    */
+    /**
+     * Bulkd insert the specified table using specific project, selection, selectionArgs, and SortOrder
+     * @param uri - Uri that content the path of the table
+     * @param values - Content value to pass into the table
+     * @return - Returns the int number of row inserted
+     */
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values){
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();

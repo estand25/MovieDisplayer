@@ -3,6 +3,7 @@ package com.example.andriod.popularmoviev2.activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,11 @@ import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 
 /**
- * Object that will take passing data and display it on the view
+ * MovieAdapter that will handle and display the cursor data on the screen
  * Created by StandleyEugene on 6/30/2016.
  */
 public class MovieAdapter extends CursorAdapter {
     private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
-    // Flag to determine if we want to use a separate view for "today".
-    private boolean mUseTodayLayout = true;
 
     /**
      * MovieAdapter constructor the set-up outside stuff inside
@@ -89,5 +88,8 @@ public class MovieAdapter extends CursorAdapter {
         // Take the ImageView and add an Image from the post location and
         // make it visible too
         aq.id(viewHolder.movieView).image(poster).visible();
+
+        // Set the title description for the movie title
+        viewHolder.titleView.setText(cursor.getString(MovieFragment.COL_MOVIE_TITLE));
     }
 }

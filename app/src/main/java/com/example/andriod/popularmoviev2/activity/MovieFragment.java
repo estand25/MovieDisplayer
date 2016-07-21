@@ -58,8 +58,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     static final int COL_ID = 0;
     static final int COL_MOVIE_ID = 1;
     static final int COL_MOVIE_POSTER_PATH = 2;
-    static final int COL_MOVIE_TITLE = 3;
-    static final int COL_MOVIE_TYPE = 4;
+    static final int COL_MOVIE_TITLE = 9;
+    static final int COL_MOVIE_TYPE = 15;
 
     /**
      * Empty construction

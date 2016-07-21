@@ -18,7 +18,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'THE_MOVIE_DB_API', "\"You Movie API Key, Please...\""
+        it.buildConfigField 'String', 'THE_MOVIE_DB_API', "\"d2919c2333e0f291ccf58c5e5ec88543\""
 
     }
     repositories {
@@ -39,4 +39,5 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.android.support:recyclerview-v7:24.1.0'
     compile 'com.android.support:cardview-v7:24.1.0'
+    compile 'com.androidessence:recyclerviewcursoradapter:1.0.0'
 }

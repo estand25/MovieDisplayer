@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:id="@+id/movie_item_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/movie_item_container_cv"
+    card_view:cardCornerRadius="3dp"
+    card_view:cardUseCompatPadding="true"
+    card_view:cardElevation="10dp">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
     <!-- Note: I had to get the center, padding, adjustViewbound, and layout_margin for a -->
     <!-- form post link here (https://discussions.udacity.com/t/layout-with-space/166514)-->
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/moviePoster_image"
-        android:minWidth="200dp"
-        android:minHeight="275dp"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"/>
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/movie_description"/>
-</FrameLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/moviePoster_image"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/movie_description"
+            android:lines="2"
+            android:layout_below="@+id/moviePoster_image"
+            android:gravity="center"/>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
