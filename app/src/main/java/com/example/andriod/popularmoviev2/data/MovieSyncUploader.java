@@ -273,6 +273,14 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         // String[] of comma separate genre id
         final String[] genres = getIndividualGenreID(movieGenres);
 
+        // Check if genres has already been replaced with genre name
+        // I look around for a little weight solution instead of loop or something else
+        // Note: Found this post while I was looking
+        // http://stackoverflow.com/questions/14206768/how-to-check-if-a-string-is-numeric
+        if(!genres[0].matches("[-+]?\\d*\\.?\\d+")){
+            return;
+        }
+
         // Create an instance of the framework that creates the Uri and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(movieRoot)
@@ -304,9 +312,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 for(int i = 0; i <= genres.length-1;i++) {
                     // Get all the Genre Name and update Genre id in the Movie
                     if(genreName == ""){
-                        genreName = (String) movieGenres.get(Integer.parseInt(genres[i]));
+                        genreName = movieGenres.get(Integer.parseInt(genres[i]));
                     }else{
-                        genreName = genreName + "|" + (String) movieGenres.get(Integer.parseInt(genres[i]));
+                        genreName = genreName + "|" + movieGenres.get(Integer.parseInt(genres[i]));
                     }
 
                     // Add the GenreNames together
@@ -318,7 +326,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Set the value of each column and inserts the genre property
                     genreContent.put(MovieContract.GenreEntry.COLUMN_GENRE_ID,genres[i]);
-                    genreContent.put(MovieContract.GenreEntry.COLUMN_NAME, (String) movieGenres.get(Integer.parseInt(genres[i])));
+                    genreContent.put(MovieContract.GenreEntry.COLUMN_NAME,movieGenres.get(Integer.parseInt(genres[i])));
 
                     // Add genre details to the contentValue array
                     bulkMovieGenre[i] = genreContent;

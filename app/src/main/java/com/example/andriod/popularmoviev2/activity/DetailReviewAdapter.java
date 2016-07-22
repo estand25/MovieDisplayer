@@ -19,6 +19,8 @@ import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.model.Review;
 import com.example.andriod.popularmoviev2.model.ReviewColl;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +60,8 @@ public class DetailReviewAdapter extends CursorAdapter{
      */
     public static class ViewHolder{
         public final LinearLayout mDetail_reviewList;
+        public final TextView mReview_Authoer;
+        public final TextView mReview_Content;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -65,6 +69,8 @@ public class DetailReviewAdapter extends CursorAdapter{
          */
         public ViewHolder(View view){
             mDetail_reviewList = (LinearLayout) view.findViewById(R.id.detail_reviewList);
+            mReview_Authoer = (TextView) view.findViewById(R.id.review_author);
+            mReview_Content = (TextView) view.findViewById(R.id.review_content);
         }
     }
 
@@ -104,7 +110,7 @@ public class DetailReviewAdapter extends CursorAdapter{
         // Set the record local in table is less then zero
         // Note: So when we go into the loop we start at the
         //       top of the tables
-        cursor.moveToPosition(-1);
+        /*cursor.moveToPosition(-1);
 
         // Set the initial Text it
         int i = 1;
@@ -191,7 +197,9 @@ public class DetailReviewAdapter extends CursorAdapter{
                 viewHolder.mDetail_reviewList.addView(mReview_CardHolder);
                 // Add padding to the outside ot the relativeLayout
                 viewHolder.mDetail_reviewList.setPadding(15,10,15,10);
-            }
-        }
+            }*/
+            viewHolder.mReview_Authoer.setText(cursor.getString(COL_REVIEW_AUTHOR) + " ");
+            viewHolder.mReview_Content.setText(cursor.getString(COL_REVIEW_CONTENT));
+        //}
     }
 }

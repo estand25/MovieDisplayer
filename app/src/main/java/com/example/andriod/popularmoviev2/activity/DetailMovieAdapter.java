@@ -117,57 +117,48 @@ public class DetailMovieAdapter extends CursorAdapter {
         // Set the local viewHolder with the previous tag information
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        // Create an instance of AQuery and set it to the movieView item
-        AQuery aq = new AQuery(viewHolder.mDetail_imageView);
+        if(cursor != null && viewHolder.mDetail_imageView.getDrawable() == null) {
+            // Create an instance of AQuery and set it to the movieView item
+            AQuery aq = new AQuery(viewHolder.mDetail_imageView);
 
-        // Get the post information from the curse (get the row/column of information
-        // from the db)
-        String poster = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
+            // Get the post information from the curse (get the row/column of information
+            // from the db)
+            String poster = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
 
-        // Take the ImageView and add an Image from the post location and
-        // make it visible too
-        // Replaced Picassa with AQery per the below form post. The image were loading to slow
-        //so I looked and found a soluation (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
-        aq.id(viewHolder.mDetail_imageView).image(poster).visible();
+            // Take the ImageView and add an Image from the post location and
+            // make it visible too
+            // Replaced Picassa with AQery per the below form post. The image were loading to slow
+            //so I looked and found a soluation (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
+            aq.id(viewHolder.mDetail_imageView).image(poster).visible();
 
-        /// Get the TextView from the current layout and set the text
-        // to what appears at position X in the column layout
-        viewHolder.mDetail_titleTextView.setText(cursor.getString(COL_DETAIL_MOVIE_TITLE));
-        viewHolder.mDetail_synopsisTextView.setText(cursor.getString(COL_DETAIL_MOVIE_OVERVIEW));
+            /// Get the TextView from the current layout and set the text
+            // to what appears at position X in the column layout
+            viewHolder.mDetail_titleTextView.setText(cursor.getString(COL_DETAIL_MOVIE_TITLE));
+            viewHolder.mDetail_synopsisTextView.setText(cursor.getString(COL_DETAIL_MOVIE_OVERVIEW));
 
-        Log.v("Stars ",cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+            Log.v("Stars ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
-        // Create previous star display then add new rating number then stars
-        viewHolder.mUserRatingLayout.removeAllViews();
+            // Create previous star display then add new rating number then stars
+            viewHolder.mUserRatingLayout.removeAllViews();
 
-        // Add the user rating scores to Textview element
-        viewHolder.mDetail_userRateingTextView.setText(cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+            // Add the user rating scores to Textview element
+            viewHolder.mDetail_userRateingTextView.setText(cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
-        // Add the user rating TextView to the user rating layout
-        viewHolder.mUserRatingLayout.addView(viewHolder.mDetail_userRateingTextView);
+            // Add the user rating TextView to the user rating layout
+            viewHolder.mUserRatingLayout.addView(viewHolder.mDetail_userRateingTextView);
 
-        // Loop through and populate the start images
-        for(int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE);i++){
-            ImageView starImages = new ImageView(context);
-            starImages.setImageResource(R.drawable.star);
-            viewHolder.mUserRatingLayout.addView(starImages);
-            //center_vertical 16 and Left 3
-            viewHolder.mUserRatingLayout.setVerticalGravity(16|3);
-            Log.v("Stars created ",Integer.toString(i));
+            // Loop through and populate the start images
+            for (int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
+                ImageView starImages = new ImageView(context);
+                starImages.setImageResource(R.drawable.star);
+                viewHolder.mUserRatingLayout.addView(starImages);
+                //center_vertical 16 and Left 3
+                viewHolder.mUserRatingLayout.setVerticalGravity(16 | 3);
+                Log.v("Stars created ", Integer.toString(i));
+            }
+
+            viewHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
+            viewHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
         }
-
-        viewHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
-        viewHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
-    }
-
-    /**
-     * Remove first and end braskets
-     * @param line - String of genre id with brasket
-     * @return - String of genres id without braskets
-     */
-    public String getGenreName(String line){
-        String result = "";
-        result = line.substring(1, line.length()-1);
-        return result;
     }
 }

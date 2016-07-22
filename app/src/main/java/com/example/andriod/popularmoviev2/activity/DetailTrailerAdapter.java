@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -68,7 +69,9 @@ public class DetailTrailerAdapter extends CursorAdapter {
      */
     public static class ViewHolder{
         // LinearLayout for Trailer dynamically create elements
-        public final LinearLayout mTrailerLayout;
+        public final RelativeLayout mTrailerLayout;
+        public final ImageView mTrailerIcon;
+        public final TextView mTrailerName;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -76,7 +79,9 @@ public class DetailTrailerAdapter extends CursorAdapter {
          */
         public ViewHolder(View view){
             // Local variable for detail screen elements
-            mTrailerLayout = (LinearLayout) view.findViewById(R.id.detail_trailerList);
+            mTrailerLayout = (RelativeLayout) view.findViewById(R.id.detail_trailerList);
+            mTrailerIcon = (ImageView) view.findViewById(R.id.trailer_icon);
+            mTrailerName = (TextView) view.findViewById(R.id.trailer_name);
         }
     }
 
@@ -114,7 +119,7 @@ public class DetailTrailerAdapter extends CursorAdapter {
         // Set the record local in table is less then zero
         // Note: So when we go into the loop we start at the
         //       top of the tables
-        cursor.moveToPosition(-1);
+        /*cursor.moveToPosition(-1);
 
         // Set the initial Text it
         int i = 1;
@@ -208,6 +213,8 @@ public class DetailTrailerAdapter extends CursorAdapter {
                 // added the link to the layout
                 viewHolder.mTrailerLayout.addView(mTrailer_name);
             }
-        }
+        }*/
+        viewHolder.mTrailerIcon.setImageResource(R.drawable.ic_entypo);
+        viewHolder.mTrailerName.setText(cursor.getString(COL_MOVIE_TITLE) + " " +cursor.getString(COL_TRAILER_NAME));
     }
 }
