@@ -134,7 +134,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                 ViewHolder.DetailMovieViewHolder detailMovieViewHolder = new ViewHolder.DetailMovieViewHolder(view);
 
                 // Get the Tags for the display items
-                view.setTag(detailMovieViewHolder );
+                view.setTag(detailMovieViewHolder);
                 break;
             }
             case VIEW_TYPE_MOVIE_REVIEWS:{
@@ -195,7 +195,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                     detailMovieHolder.mDetail_titleTextView.setText(cursor.getString(COL_DETAIL_MOVIE_TITLE));
                     detailMovieHolder.mDetail_synopsisTextView.setText(cursor.getString(COL_DETAIL_MOVIE_OVERVIEW));
 
-                    Log.v("Stars ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+                    //Log.v("Stars ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
                     // Create previous star display then add new rating number then stars
                     detailMovieHolder.mUserRatingLayout.removeAllViews();
@@ -218,6 +218,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                     detailMovieHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
                     detailMovieHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
                 }
+                break;
             }
             case VIEW_TYPE_MOVIE_REVIEWS:{
                 // Set the local viewholder with the previous tag information
@@ -227,6 +228,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                 reviewHolder.mReview_Authoer.setText(cursor.getString(COL_REVIEW_AUTHOR) + " ");
                 reviewHolder.mReview_Content.setText(cursor.getString(COL_REVIEW_CONTENT));
 
+                break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
                 // Set the local viewHolder with the previous tag information
@@ -235,6 +237,8 @@ public class DetailMovieAdapter extends CursorAdapter {
                 // Set update the Trailer Card View with the Trailer Icon and Name
                 trailerHolder.mTrailerIcon.setImageResource(R.drawable.ic_entypo);
                 trailerHolder.mTrailerName.setText(cursor.getString(COL_MOVIE_TITLE) + " " +cursor.getString(COL_TRAILER_NAME));
+
+                break;
             }
         }
     }

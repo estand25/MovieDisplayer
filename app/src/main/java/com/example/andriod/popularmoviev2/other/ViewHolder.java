@@ -17,7 +17,7 @@ public class ViewHolder {
     /**
      * Class the holds the View elements for the Detail Movie Section
      */
-    public static class DetailMovieViewHolder  {
+    public static class DetailMovieViewHolder extends ViewHolder {
         // Set the local Movie Detail elements
         public final ImageView mDetail_imageView;
         public final TextView mDetail_titleTextView;
@@ -46,7 +46,7 @@ public class ViewHolder {
     /**
      * Class the holds the View elements for the Review section
      */
-    public static class ReviewViewHolder{
+    public static class ReviewViewHolder extends ViewHolder {
         //public final LinearLayout mDetail_reviewList;
         public final TextView mReview_Authoer;
         public final TextView mReview_Content;
@@ -65,7 +65,7 @@ public class ViewHolder {
     /**
      * Class the holds the View elements for the Trailer Section
      */
-    public static class TrailerViewHolder{
+    public static class TrailerViewHolder extends ViewHolder {
         // LinearLayout for Trailer dynamically create elements
         public final RelativeLayout mTrailerLayout;
         public final ImageView mTrailerIcon;
