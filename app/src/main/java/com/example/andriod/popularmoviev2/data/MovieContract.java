@@ -36,6 +36,11 @@ public class MovieContract {
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
 
+        public static Uri buildMovieDetailAllSection(int MovieId){
+            return BASE_CONTENT_URI.buildUpon().appendPath("movie_detail")
+                    .appendPath(Integer.toString(MovieId)).build();
+        }
+
         // URI for the specific Movie row in the movie table
         public static Uri buildMovieUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);

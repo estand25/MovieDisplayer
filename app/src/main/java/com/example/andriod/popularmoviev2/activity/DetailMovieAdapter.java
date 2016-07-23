@@ -80,11 +80,6 @@ public class DetailMovieAdapter extends CursorAdapter {
 
     private ArrayList<Object> mObject = new ArrayList<Object>();
 
-    // String constent for the MovieDetailFragment
-    static final String MOVIE_DETAIL = "MOVIE_DETAIL";
-    static final String REVIEW_DETAIL = "REVIEW_DETAIL";
-    static final String TRAILER_DETAIL = "TRAILER_DETAIL";
-
     /**
      * MovieAdapter constructor the set-up outside stuff inside
      * @param context - The current app context
@@ -106,28 +101,33 @@ public class DetailMovieAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent){
         // Choose the layout type
         int viewType = getItemViewType(getItemViewType(cursor));
+
+        // Set the default layoutid value for layout
         int layoutid = -1;
 
         // Switch to the correct layout based on the viewtype
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
+                // Detail Movie layout
                 layoutid = R.layout.movie_detail_item;
                 break;
             }
             case VIEW_TYPE_MOVIE_REVIEWS:{
+                // Review layout
                 layoutid = R.layout.review_item;
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
+                // Trailer layout
                 layoutid = R.layout.trailer_item;
                 break;
             }
         }
 
-        // Inflate the movie_item (view in the grid
+        // Inflate the movie_item (view in the movie detail section)
         View view = LayoutInflater.from(context).inflate(layoutid, parent, false);
 
-        // Switch to the correct viewHolder based on the viewtype
+        // Switch to the correct viewHolder based on the viewType
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
                 // Create new instance of Detail Movie Section Holder
@@ -138,14 +138,14 @@ public class DetailMovieAdapter extends CursorAdapter {
                 break;
             }
             case VIEW_TYPE_MOVIE_REVIEWS:{
-                // Create new instance of Detail Movie Section Holder
+                // Create new instance of Detail Movie Review Section Holder
                 ViewHolder.ReviewViewHolder reviewViewHolder = new ViewHolder.ReviewViewHolder(view);
                 // Get the Tags for the display items
                 view.setTag(reviewViewHolder);
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
-                // Create new instance of Detail Movie Section Holder
+                // Create new instance of Detail Movie Trailer Section Holder
                 ViewHolder.TrailerViewHolder trailerViewHolder = new ViewHolder.TrailerViewHolder(view);
                 // Get the Tags for the display items
                 view.setTag(trailerViewHolder);
@@ -165,7 +165,6 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor){
-
         // Determine which ViewType I should be using
         int viewType = getItemViewType(getItemViewType(cursor));
 
@@ -176,6 +175,8 @@ public class DetailMovieAdapter extends CursorAdapter {
                 // Set the local viewHolder with the previous tag information
                 ViewHolder.DetailMovieViewHolder detailMovieHolder = (ViewHolder.DetailMovieViewHolder) view.getTag();
 
+                // Check if cursor is null I do nothing
+                // if populated set the layout element
                 if(cursor != null) {
                     // Create an instance of AQuery and set it to the movieView item
                     AQuery aq = new AQuery(detailMovieHolder.mDetail_imageView);
@@ -200,11 +201,12 @@ public class DetailMovieAdapter extends CursorAdapter {
                     // Create previous star display then add new rating number then stars
                     detailMovieHolder.mUserRatingLayout.removeAllViews();
 
-                    // Add the user rating scores to Textview element
+                    // Add the user rating scores to TextView element
                     detailMovieHolder.mDetail_userRateingTextView.setText(cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
                     // Add the user rating TextView to the user rating layout
                     detailMovieHolder.mUserRatingLayout.addView(detailMovieHolder.mDetail_userRateingTextView);
+                    Log.v("Stars created ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
                     // Loop through and populate the start images
                     for (int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
@@ -224,20 +226,32 @@ public class DetailMovieAdapter extends CursorAdapter {
                 // Set the local viewholder with the previous tag information
                 ViewHolder.ReviewViewHolder reviewHolder = (ViewHolder.ReviewViewHolder) view.getTag();
 
-                // Set update the Review Card View with the Author and Content information
-                reviewHolder.mReview_Authoer.setText(cursor.getString(COL_REVIEW_AUTHOR) + " ");
-                reviewHolder.mReview_Content.setText(cursor.getString(COL_REVIEW_CONTENT));
+                // Check if cursor is null I do nothing
+                // if populated set the layout element
+                if(cursor != null) {
+                    // Set local string variable
+                    String author = cursor.getString(COL_REVIEW_AUTHOR) + " ";
 
+                    // Set update the Review Card View with the Author and Content information
+                    reviewHolder.mReview_Authoer.setText(author);
+                    reviewHolder.mReview_Content.setText(cursor.getString(COL_REVIEW_CONTENT));
+                }
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
                 // Set the local viewHolder with the previous tag information
                 ViewHolder.TrailerViewHolder trailerHolder = (ViewHolder.TrailerViewHolder) view.getTag();
 
-                // Set update the Trailer Card View with the Trailer Icon and Name
-                trailerHolder.mTrailerIcon.setImageResource(R.drawable.ic_entypo);
-                trailerHolder.mTrailerName.setText(cursor.getString(COL_MOVIE_TITLE) + " " +cursor.getString(COL_TRAILER_NAME));
+                // Check if cursor is null I do nothing
+                // if populated set the layout element
+                if(cursor != null) {
+                    // Set local string variable
+                    String trailerName = cursor.getString(COL_MOVIE_TITLE) + " " + cursor.getString(COL_TRAILER_NAME);
 
+                    // Set update the Trailer Card View with the Trailer Icon and Name
+                    trailerHolder.mTrailerIcon.setImageResource(R.drawable.ic_entypo);
+                    trailerHolder.mTrailerName.setText(trailerName);
+                }
                 break;
             }
         }
@@ -250,7 +264,10 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     @Override
     public int getItemViewType(int position){
+        // Initialize and set the ret
         int ret = -1;
+
+        // Determine which viewType should be used
         if(position == 0){
             ret = VIEW_TYPE_MOVIE_DETAIL;
         }else if(position == 1){
@@ -258,6 +275,8 @@ public class DetailMovieAdapter extends CursorAdapter {
         }else if(position == 2){
             ret = VIEW_TYPE_MOVIE_TRAILER;
         }
+
+        // Return the viewType
         return ret;
     }
 
@@ -267,17 +286,25 @@ public class DetailMovieAdapter extends CursorAdapter {
      * @return - Returns integer number for a section
      */
     public int getItemViewType(Cursor cursor){
-        int ret = 0;
-        if(cursor.getColumnName(COL_DETAIL_MOVIE_ADULT).contains("adult")){
-            ret = cursor.getExtras().getInt(MOVIE_DETAIL);
+        // Initialize and set the ret
+        int ret = -1;
+
+        // Get the cursorCount from the passed in cursor
+        int[] cursorCount = cursor.getExtras().getIntArray(DetailMovieFragment.MOVIE_DETAIL);
+
+        // Determine which ViewType is being used based on cursor position
+        if(cursorCount[0] == DetailMovieFragment.DETAIL_MOVIE_COLUMNS.length){
+            ret = 0;
             Log.v("Movie Detail ", Integer.toString(ret));
-        }else if(cursor.getColumnName(COL_REVIEW_ID).contains("review_id")){
-            ret = cursor.getExtras().getInt(REVIEW_DETAIL);
+        }else if(cursorCount[1] == DetailMovieFragment.REVIEW_MOVIE_COLUMNS.length){
+            ret = 1;
             Log.v("Review Detail ", Integer.toString(ret));
-        }else if(cursor.getColumnName(COL_TRAILER_ID).contains("trailer_id")){
-            ret = cursor.getExtras().getInt(TRAILER_DETAIL);
+        }else if(cursorCount[2] == DetailMovieFragment.TRAILER_MOVIE_COLUMNS.length){
+            ret = 2;
             Log.v("Trailer Detail ", Integer.toString(ret));
         }
+
+        // Return the cursor position
         return ret;
     }
 

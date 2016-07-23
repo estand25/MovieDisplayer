@@ -59,14 +59,11 @@ public class DetailMovieFragment extends Fragment
     // Movie Detail Loader for DetailMovieFragment
     private static final int DETAIL_MOVIE_LOADER = 0;
 
-    // Trailer Loader for Detail Trailer
-    private static final int TRAILER_MOVIE_LOADER = 1;
-
-    // Review Loader for Detail Review
-    private static final int REVIEW_MOVIE_LOADER = 2;
+    // String constent for the MovieDetailFragment
+    public static final String MOVIE_DETAIL = "MOVIE_DETAIL";
 
     // Movie String[] for Detail Fragment
-    private static final String[] DETAIL_MOVIE_COLUMNS = {
+    public static final String[] DETAIL_MOVIE_COLUMNS = {
             MovieEntry.TABLE_NAME + "." + MovieEntry._ID,
             MovieEntry.COLUMN_MOVIE_ID,
             MovieEntry.COLUMN_POSTER_PATH,
@@ -86,7 +83,7 @@ public class DetailMovieFragment extends Fragment
     };
 
     // Trailer String[] for Detail Trailer Fragment
-    private static final String[] TRAILER_MOVIE_COLUMNS = {
+    public static final String[] TRAILER_MOVIE_COLUMNS = {
             TrailerEntry.TABLE_NAME + "." + TrailerEntry._ID,
             TrailerEntry.COLUMN_TRAILER_ID,
             MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_MOVIE_ID,
@@ -101,7 +98,7 @@ public class DetailMovieFragment extends Fragment
     };
 
     // Review String[] for Detail Review Fragment
-    private static final String[] REVIEW_MOVIE_COLUMNS = {
+    public static final String[] REVIEW_MOVIE_COLUMNS = {
             ReviewEntry.TABLE_NAME + "." + ReviewEntry._ID,
             ReviewEntry.COLUMN_REVIEW_ID,
             ReviewEntry.COLUMN_MOVIE_ID,
@@ -121,17 +118,19 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public void onCreate(Bundle savedInstanceState){
+        // Create new variable holder for bundle
+        // set the new bundle to the current arguments
         Bundle arguments = getArguments();
+
+        // Check if new bundle is populated or null
+        // then set class level Uri or do nothing
         if(arguments != null){
             mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
         }
 
+        // Get the loader manager start for this calls
         getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
-        Log.v("Loader Name "," Detail Movie");
-        getLoaderManager().initLoader(TRAILER_MOVIE_LOADER, null, this);
-        Log.v("Loader Name "," Detail Movie Trailers");
-        getLoaderManager().initLoader(REVIEW_MOVIE_LOADER, null, this);
-        Log.v("Loader Name "," Detail Movie Reviews");
+        Log.v("Loader Name "," Detail Movie, trailers, & reviews");
         super.onCreate(savedInstanceState);
     }
 
@@ -149,19 +148,19 @@ public class DetailMovieFragment extends Fragment
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Initializing the curstom movie detail, review, and trailer adapters
-        // Got the reference for this post:
-        // http://stackoverflow.com/questions/22888233/set-multiple-cursor-loaders-with-multiple-adapters-android
+        // Initializing the custom movie adapter with (detail, review, and trailer section layout)
         mDetailMovieAdapter = new DetailMovieAdapter(getActivity(),null,0);
 
-        // Get the current DetailActivityFragment view layout
+        // Get the current DetailMovieFragment view layout
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         // Find the ListViews on the fragment_detail layout
         ListView movieListView = (ListView) rootView.findViewById(R.id.detail_MovieDetaiListView);
 
-        // Set the ListView to there specific adapters
+        // Set the ListView to the specific adapter
         movieListView.setAdapter(mDetailMovieAdapter);
+
+        // Returns the view with all the information
         return rootView;
     }
 
@@ -190,54 +189,22 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if ( null != mUri ) {
-            switch (id) {
-                case DETAIL_MOVIE_LOADER: {
-                    Log.v("DetailMovieFragment ", MovieContract.MovieEntry.CONTENT_URI.toString());
-                    Log.v("Movie URI ", mUri.toString());
+        if (null != mUri) {
+            // Cursor Loader that point to MovieDetail
+            // which includes selection movie, movie's review, and movie's trailer information
+            Uri allDetail = MovieContract.MovieEntry.buildMovieDetailAllSection(MovieContract.MovieEntry.getIntegerMovieID(mUri));
+            Log.v("All Section Detail ",allDetail.toString());
 
-                    return new CursorLoader(
-                            getActivity(),
-                            mUri,
-                            DETAIL_MOVIE_COLUMNS,
-                            null,
-                            null,
-                            null);
-                }
-                case TRAILER_MOVIE_LOADER: {
-                    Log.v("Trailer before URI ", TrailerEntry.CONTENT_URI.toString());
-                    Log.v("Trailer URI ", mUri.toString());
-
-                    Uri trailerUri = MovieContract.TrailerEntry.buildTrailerMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
-
-                    Log.v("Trailer after URI ", trailerUri.toString());
-
-                    return new CursorLoader(
-                            getActivity(),
-                            trailerUri,
-                            TRAILER_MOVIE_COLUMNS,
-                            null,
-                            null,
-                            null);
-                }
-                case REVIEW_MOVIE_LOADER: {
-                    Log.v("Review Content URI ", MovieContract.ReviewEntry.CONTENT_URI.toString());
-                    Log.v("Review URI ", mUri.toString());
-
-                    Uri reviewUri = MovieContract.ReviewEntry.buildReviewMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(mUri));
-
-                    Log.v("Review after URI ", reviewUri.toString());
-
-                    return new CursorLoader(
-                            getActivity(),
-                            reviewUri,
-                            REVIEW_MOVIE_COLUMNS,
-                            null,
-                            null,
-                            null);
-                }
-            }
+            return new CursorLoader(
+                    getActivity(),
+                    allDetail,
+                    null,
+                    null,
+                    null,
+                    null);
         }
+
+        // Return null if bundle argument has not been populated
         return null;
     }
 
@@ -250,53 +217,8 @@ public class DetailMovieFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
-            Bundle arg = new Bundle();
-
-            switch (loader.getId()) {
-                case DETAIL_MOVIE_LOADER: {
-                    Log.v("Movie onLoadFinished ", " populate");
-
-                    // Set the argument for the Detail Movie Loader Section of adapter
-                    // Key is the movie detail section constant and value is 0
-                    arg.putInt(DetailMovieAdapter.MOVIE_DETAIL,0);
-
-                    // Set the cursor extra bundle argument
-                    data.setExtras(arg);
-
-                    // Add the new cursor data to the adapter
-                    mDetailMovieAdapter.swapCursor(data);
-                }
-                break;
-                case TRAILER_MOVIE_LOADER: {
-                    Log.v("Trailer onLoadFinished ", " populate");
-
-                    // Set the argument for the Detail Movie Loader Section of adapter
-                    // Key is the movie detail section constant and value is 0
-                    arg.putInt(DetailMovieAdapter.TRAILER_DETAIL,1);
-
-                    // Set the cursor extra bundle argument
-                    data.setExtras(arg);
-
-                    // Add the new cursor data to the adapter
-                    mDetailMovieAdapter.swapCursor(data);
-
-                }
-                break;
-                case REVIEW_MOVIE_LOADER: {
-                    Log.v("Review onLoadFinished ", " populate");
-
-                    // Set the argument for the Detail Movie Loader Section of adapter
-                    // Key is the movie detail section constant and value is 0
-                    arg.putInt(DetailMovieAdapter.REVIEW_DETAIL,2);
-
-                    // Set the cursor extra bundle argument
-                    data.setExtras(arg);
-
-                    // Add the new cursor data to the adapter
-                    mDetailMovieAdapter.swapCursor(data);
-                }
-                break;
-            }
+            // Add the new cursor data to the adapter
+            mDetailMovieAdapter.swapCursor(data);
         }
     }
 
@@ -307,7 +229,5 @@ public class DetailMovieFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mDetailMovieAdapter.swapCursor(null);
-        //mDetailTrailerAdapter.swapCursor(null);
-        //mDetailReviewAdapter.swapCursor(null);
     }
 }
