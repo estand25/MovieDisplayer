@@ -154,22 +154,22 @@ public class DetailMovieFragment extends Fragment
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Initize the MergeAdapter
-        mergeAdapter = new MergeAdapter();
+        //mergeAdapter = new MergeAdapter();
 
         // Initializing the curstom movie detail, review, and trailer adapters
         // Got the reference for this post:
         // http://stackoverflow.com/questions/22888233/set-multiple-cursor-loaders-with-multiple-adapters-android
         mDetailMovieAdapter = new DetailMovieAdapter(getActivity(),null,0);
-        mDetailReviewAdapter = new DetailReviewAdapter(getActivity(),null,0);
-        mDetailTrailerAdapter = new DetailTrailerAdapter(getActivity(),null,0);
+        //mDetailReviewAdapter = new DetailReviewAdapter(getActivity(),null,0);
+        //mDetailTrailerAdapter = new DetailTrailerAdapter(getActivity(),null,0);
 
         // Get the current DetailActivityFragment view layout
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         // Find the ListViews on the fragment_detail layout
         ListView movieListView = (ListView) rootView.findViewById(R.id.detail_MovieDetaiListView);
-        ListView trailListView = (ListView) rootView.findViewById(R.id.detail_trailerListView);
-        ListView reviewListView = (ListView) rootView.findViewById(R.id.detail_reviewListView);
+        //ListView trailListView = (ListView) rootView.findViewById(R.id.detail_trailerListView);
+        //ListView reviewListView = (ListView) rootView.findViewById(R.id.detail_reviewListView);
 
         //mergeAdapter.addAdapter(mDetailMovieAdapter);
         //TextView section = new TextView(getContext());
@@ -186,14 +186,14 @@ public class DetailMovieFragment extends Fragment
         // Set the ListView to there specific adapters
         movieListView.setAdapter(mDetailMovieAdapter);
         //reviewListView.setAdapter(mergeAdapter);
-        trailListView.setAdapter(mDetailTrailerAdapter);
-        reviewListView.setAdapter(mDetailReviewAdapter);
+        //trailListView.setAdapter(mDetailTrailerAdapter);
+        //reviewListView.setAdapter(mDetailReviewAdapter);
 
         // Dynamically updated height of the ListViews
         //ListUtils.setDynamicHeight(movieListView);
-        ListUtils.setDynamicHeight(movieListView);
-        ListUtils.setDynamicHeight(trailListView);
-        ListUtils.setDynamicHeight(reviewListView);
+        //ListUtils.setDynamicHeight(movieListView);
+        //ListUtils.setDynamicHeight(trailListView);
+        //ListUtils.setDynamicHeight(reviewListView);
         return rootView;
     }
 
@@ -282,21 +282,50 @@ public class DetailMovieFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
+            Bundle arg = new Bundle();
+
             switch (loader.getId()) {
                 case DETAIL_MOVIE_LOADER: {
                     Log.v("Movie onLoadFinished ", " populate");
+
+                    // Set the argument for the Detail Movie Loader Section of adapter
+                    // Key is the movie detail section constant and value is 0
+                    arg.putInt(DetailMovieAdapter.MOVIE_DETAIL,0);
+
+                    // Set the cursor extra bundle argument
+                    data.setExtras(arg);
+
+                    // Add the new cursor data to the adapter
                     mDetailMovieAdapter.swapCursor(data);
                 }
                 break;
                 case TRAILER_MOVIE_LOADER: {
                     Log.v("Trailer onLoadFinished ", " populate");
-                    mDetailTrailerAdapter.swapCursor(data);
+
+                    // Set the argument for the Detail Movie Loader Section of adapter
+                    // Key is the movie detail section constant and value is 0
+                    arg.putInt(DetailMovieAdapter.TRAILER_DETAIL,0);
+
+                    // Set the cursor extra bundle argument
+                    data.setExtras(arg);
+
+                    // Add the new cursor data to the adapter
+                    mDetailMovieAdapter.swapCursor(data);
 
                 }
                 break;
                 case REVIEW_MOVIE_LOADER: {
                     Log.v("Review onLoadFinished ", " populate");
-                    mDetailReviewAdapter.swapCursor(data);
+
+                    // Set the argument for the Detail Movie Loader Section of adapter
+                    // Key is the movie detail section constant and value is 0
+                    arg.putInt(DetailMovieAdapter.REVIEW_DETAIL,0);
+
+                    // Set the cursor extra bundle argument
+                    data.setExtras(arg);
+
+                    // Add the new cursor data to the adapter
+                    mDetailMovieAdapter.swapCursor(data);
                 }
                 break;
             }
@@ -310,8 +339,8 @@ public class DetailMovieFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mDetailMovieAdapter.swapCursor(null);
-        mDetailTrailerAdapter.swapCursor(null);
-        mDetailReviewAdapter.swapCursor(null);
+        //mDetailTrailerAdapter.swapCursor(null);
+        //mDetailReviewAdapter.swapCursor(null);
     }
 
     /**
