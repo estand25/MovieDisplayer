@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.MovieFragment"
-    android:paddingTop="3dp"
-    android:paddingLeft="3dp"
-    android:paddingRight="3dp"
-    android:paddingBottom="3dp"
+    android:paddingTop="1dp"
+    android:paddingLeft="1dp"
+    android:paddingRight="1dp"
+    android:paddingBottom="1dp"
     tools:showIn="@layout/activity_main">
     <GridView
         android:layout_width="match_parent"

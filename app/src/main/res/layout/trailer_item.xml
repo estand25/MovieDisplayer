@@ -5,9 +5,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    card_view:cardCornerRadius="3dp"
+    card_view:cardCornerRadius="1dp"
     card_view:cardUseCompatPadding="true"
-    card_view:cardElevation="10dp">
+    card_view:cardElevation="5dp">
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
