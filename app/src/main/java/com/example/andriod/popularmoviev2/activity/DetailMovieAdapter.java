@@ -176,7 +176,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                 // Set the local viewHolder with the previous tag information
                 ViewHolder.DetailMovieViewHolder detailMovieHolder = (ViewHolder.DetailMovieViewHolder) view.getTag();
 
-                if(cursor != null && detailMovieHolder.mDetail_imageView.getDrawable() == null) {
+                if(cursor != null) {
                     // Create an instance of AQuery and set it to the movieView item
                     AQuery aq = new AQuery(detailMovieHolder.mDetail_imageView);
 
@@ -250,15 +250,15 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     @Override
     public int getItemViewType(int position){
+        int ret = -1;
         if(position == 0){
-            return VIEW_TYPE_MOVIE_DETAIL;
+            ret = VIEW_TYPE_MOVIE_DETAIL;
         }else if(position == 1){
-            return VIEW_TYPE_MOVIE_REVIEWS;
+            ret = VIEW_TYPE_MOVIE_REVIEWS;
         }else if(position == 2){
-            return VIEW_TYPE_MOVIE_TRAILER;
-        }else {
-            return -1;
+            ret = VIEW_TYPE_MOVIE_TRAILER;
         }
+        return ret;
     }
 
     /**
@@ -267,21 +267,18 @@ public class DetailMovieAdapter extends CursorAdapter {
      * @return - Returns integer number for a section
      */
     public int getItemViewType(Cursor cursor){
+        int ret = 0;
         if(cursor.getColumnName(COL_DETAIL_MOVIE_ADULT).contains("adult")){
-            //Bundle arg = cursor.getExtras().getBundle(MOVIE_DETAIL);
-            //return arg.getInt(MOVIE_DETAIL);
-            return cursor.getExtras().getInt(MOVIE_DETAIL);
+            ret = cursor.getExtras().getInt(MOVIE_DETAIL);
+            Log.v("Movie Detail ", Integer.toString(ret));
         }else if(cursor.getColumnName(COL_REVIEW_ID).contains("review_id")){
-            //Bundle arg = cursor.getExtras().getBundle(REVIEW_DETAIL);
-            //return arg.getInt(REVIEW_DETAIL);
-            return cursor.getExtras().getInt(REVIEW_DETAIL);
+            ret = cursor.getExtras().getInt(REVIEW_DETAIL);
+            Log.v("Review Detail ", Integer.toString(ret));
         }else if(cursor.getColumnName(COL_TRAILER_ID).contains("trailer_id")){
-            //Bundle arg = cursor.getExtras().getBundle(TRAILER_DETAIL);
-            //return arg.getInt(TRAILER_DETAIL);
-            return cursor.getExtras().getInt(TRAILER_DETAIL);
-        }else{
-            return -1;
+            ret = cursor.getExtras().getInt(TRAILER_DETAIL);
+            Log.v("Trailer Detail ", Integer.toString(ret));
         }
+        return ret;
     }
 
     //@Override

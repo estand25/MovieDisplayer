@@ -55,10 +55,6 @@ public class DetailMovieFragment extends Fragment
 
     // Three detail adapters (Movie details, Trailers, and Reviews)
     private DetailMovieAdapter mDetailMovieAdapter;
-    private DetailTrailerAdapter mDetailTrailerAdapter;
-    private DetailReviewAdapter mDetailReviewAdapter;
-
-    private MergeAdapter mergeAdapter;
 
     // Movie Detail Loader for DetailMovieFragment
     private static final int DETAIL_MOVIE_LOADER = 0;
@@ -153,47 +149,19 @@ public class DetailMovieFragment extends Fragment
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Initize the MergeAdapter
-        //mergeAdapter = new MergeAdapter();
-
         // Initializing the curstom movie detail, review, and trailer adapters
         // Got the reference for this post:
         // http://stackoverflow.com/questions/22888233/set-multiple-cursor-loaders-with-multiple-adapters-android
         mDetailMovieAdapter = new DetailMovieAdapter(getActivity(),null,0);
-        //mDetailReviewAdapter = new DetailReviewAdapter(getActivity(),null,0);
-        //mDetailTrailerAdapter = new DetailTrailerAdapter(getActivity(),null,0);
 
         // Get the current DetailActivityFragment view layout
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         // Find the ListViews on the fragment_detail layout
         ListView movieListView = (ListView) rootView.findViewById(R.id.detail_MovieDetaiListView);
-        //ListView trailListView = (ListView) rootView.findViewById(R.id.detail_trailerListView);
-        //ListView reviewListView = (ListView) rootView.findViewById(R.id.detail_reviewListView);
-
-        //mergeAdapter.addAdapter(mDetailMovieAdapter);
-        //TextView section = new TextView(getContext());
-        //section.setText("Reviews");
-        //mergeAdapter.addView(section);
-        //mergeAdapter.addAdapter(mDetailReviewAdapter);
-        //TextView section1 = new TextView(getContext());
-        //section1.setText("Trailer");
-        //mergeAdapter.addView(section1);
-        //mergeAdapter.addAdapter(mDetailTrailerAdapter);
-
-        //movieListView.setAdapter(mergeAdapter);
 
         // Set the ListView to there specific adapters
         movieListView.setAdapter(mDetailMovieAdapter);
-        //reviewListView.setAdapter(mergeAdapter);
-        //trailListView.setAdapter(mDetailTrailerAdapter);
-        //reviewListView.setAdapter(mDetailReviewAdapter);
-
-        // Dynamically updated height of the ListViews
-        //ListUtils.setDynamicHeight(movieListView);
-        //ListUtils.setDynamicHeight(movieListView);
-        //ListUtils.setDynamicHeight(trailListView);
-        //ListUtils.setDynamicHeight(reviewListView);
         return rootView;
     }
 
@@ -304,7 +272,7 @@ public class DetailMovieFragment extends Fragment
 
                     // Set the argument for the Detail Movie Loader Section of adapter
                     // Key is the movie detail section constant and value is 0
-                    arg.putInt(DetailMovieAdapter.TRAILER_DETAIL,0);
+                    arg.putInt(DetailMovieAdapter.TRAILER_DETAIL,1);
 
                     // Set the cursor extra bundle argument
                     data.setExtras(arg);
@@ -319,7 +287,7 @@ public class DetailMovieFragment extends Fragment
 
                     // Set the argument for the Detail Movie Loader Section of adapter
                     // Key is the movie detail section constant and value is 0
-                    arg.putInt(DetailMovieAdapter.REVIEW_DETAIL,0);
+                    arg.putInt(DetailMovieAdapter.REVIEW_DETAIL,2);
 
                     // Set the cursor extra bundle argument
                     data.setExtras(arg);
@@ -341,34 +309,5 @@ public class DetailMovieFragment extends Fragment
         mDetailMovieAdapter.swapCursor(null);
         //mDetailTrailerAdapter.swapCursor(null);
         //mDetailReviewAdapter.swapCursor(null);
-    }
-
-    /**
-     * Static public class for calculating dynamic height for my
-     * Detail Movie ListViews
-     *
-     * Note: I worked on a couple of solution in the end I had to look online for a
-     * way to correctly display the List View information.
-     * http://stackoverflow.com/questions/17693578/android-how-to-display-2-listviews-in-one-activity-one-after-the-other
-     */
-    public static class ListUtils {
-        public static void setDynamicHeight(ListView mListView) {
-            ListAdapter mListAdapter = mListView.getAdapter();
-            if (mListAdapter == null) {
-                // when adapter is null
-                return;
-            }
-            int height = 0;
-            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-            for (int i = 0; i < mListAdapter.getCount(); i++) {
-                View listItem = mListAdapter.getView(i, null, mListView);
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                height += listItem.getMeasuredHeight();
-            }
-            ViewGroup.LayoutParams params = mListView.getLayoutParams();
-            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
-            mListView.setLayoutParams(params);
-            mListView.requestLayout();
-        }
     }
 }

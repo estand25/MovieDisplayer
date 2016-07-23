@@ -15,7 +15,7 @@ import com.example.andriod.popularmoviev2.R;
 public class ViewHolder {
 
     /**
-     * Class the holds the View elements for the Detail Movie Section
+     * Class that holds the View elements for the Detail Movie Section
      */
     public static class DetailMovieViewHolder extends ViewHolder {
         // Set the local Movie Detail elements
@@ -44,7 +44,7 @@ public class ViewHolder {
     }
 
     /**
-     * Class the holds the View elements for the Review section
+     * Class that holds the View elements for the Review section
      */
     public static class ReviewViewHolder extends ViewHolder {
         //public final LinearLayout mDetail_reviewList;
@@ -63,7 +63,7 @@ public class ViewHolder {
     }
 
     /**
-     * Class the holds the View elements for the Trailer Section
+     * Class that holds the View elements for the Trailer Section
      */
     public static class TrailerViewHolder extends ViewHolder {
         // LinearLayout for Trailer dynamically create elements
