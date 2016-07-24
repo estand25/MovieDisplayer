@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
@@ -67,6 +68,8 @@ public class DetailMovieAdapter extends CursorAdapter {
     private static final int VIEW_TYPE_MOVIE_TRAILER = 2;
     private static final int VIEW_TYPE_COUNT = 3;
 
+    private Context myContext;
+
     /**
      * MovieAdapter constructor the set-up outside stuff inside
      * @param context - The current app context
@@ -75,6 +78,8 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     public DetailMovieAdapter(Context context, Cursor cursor, int flags){
         super(context,cursor,flags);
+
+        myContext = context;
     }
 
     /**
@@ -177,7 +182,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                 // Take the ImageView and add an Image from the post location and
                 // make it visible too
                 // Replaced Picassa with AQery per the below form post. The image were loading to slow
-                //so I looked and found a soluation (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
+                // so I looked and found a solution (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
                 aq.id(detailMovieViewHolder.mDetail_imageView).image(poster).visible();
 
                 /// Get the TextView from the current layout and set the text
@@ -353,44 +358,70 @@ public class DetailMovieAdapter extends CursorAdapter {
         return VIEW_TYPE_COUNT;
     }
 
-
-    /*      May need to change for my custom views
-            public View getView(int position, View convertView, ViewGroup parent) {
-            final int itemViewType = getItemViewType(position);
-            switch (itemViewType) {
-                case ITEM_VIEW_TYPE_FOOTER:
-                    if (convertView == null || convertView.getId() != ITEM_VIEW_TYPE_FOOTER) {
-                        convertView = LayoutInflater.from(getContext()).inflate(
-                                R.layout.abc_activity_chooser_view_list_item, parent, false);
-                        convertView.setId(ITEM_VIEW_TYPE_FOOTER);
-                        TextView titleView = (TextView) convertView.findViewById(R.id.title);
-                        titleView.setText(getContext().getString(
-                                R.string.abc_activity_chooser_view_see_all));
-                    }
-                    return convertView;
-                case ITEM_VIEW_TYPE_ACTIVITY:
-                    if (convertView == null || convertView.getId() != R.id.list_item) {
-                        convertView = LayoutInflater.from(getContext()).inflate(
-                                R.layout.abc_activity_chooser_view_list_item, parent, false);
-                    }
-                    PackageManager packageManager = getContext().getPackageManager();
-                    // Set the icon
-                    ImageView iconView = (ImageView) convertView.findViewById(R.id.icon);
-                    ResolveInfo activity = (ResolveInfo) getItem(position);
-                    iconView.setImageDrawable(activity.loadIcon(packageManager));
-                    // Set the title.
-                    TextView titleView = (TextView) convertView.findViewById(R.id.title);
-                    titleView.setText(activity.loadLabel(packageManager));
-                    // Highlight the default.
-                    if (mShowDefaultActivity && position == 0 && mHighlightDefaultActivity) {
-                        ViewCompat.setActivated(convertView, true);
-                    } else {
-                        ViewCompat.setActivated(convertView, false);
-                    }
-                    return convertView;
-                default:
-                    throw new IllegalArgumentException();
-            }
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view;
+        if(convertView == null){
+            view = newView(myContext,getCursor(),parent);
+        } else {
+            view = convertView;
         }
-     */
+
+        bindView(view,myContext,getCursor());
+        return view;
+        /*View newV = convertView;
+        int itemViewType = getItemViewType(position);
+        switch (itemViewType) {
+            case VIEW_TYPE_MOVIE_DETAIL:
+                //DetailMovieViewHolder detailMovieViewHolder;
+
+                if (convertView == null) {
+                    //detailMovieViewHolder = new DetailMovieViewHolder(convertView);
+                    //convertView.setTag(detailMovieViewHolder);
+                    newV = newView(myContext, getCursor(), parent);
+                } else {
+                    //detailMovieViewHolder = new DetailMovieViewHolder(convertView);
+                    //detailMovieViewHolder = (DetailMovieViewHolder) convertView.getTag();
+                    newV = convertView;
+                }
+
+                bindView(newV, myContext, getCursor());
+                //detailMovieViewHolder.mDetail_imageView.set
+                return newV;
+            case VIEW_TYPE_MOVIE_REVIEWS:
+                //ReviewViewHolder reviewViewHolder;
+
+                if (convertView == null) {
+                    //reviewViewHolder = new ReviewViewHolder(convertView);
+                    //convertView.setTag(reviewViewHolder);
+                    newV = newView(myContext, getCursor(), parent);
+                } else {
+                    //reviewViewHolder = new ReviewViewHolder(convertView);
+                    //reviewViewHolder = (ReviewViewHolder) convertView.getTag();
+                    newV = convertView;
+                }
+
+                bindView(newV, myContext, getCursor());
+                return newV;
+            case VIEW_TYPE_MOVIE_TRAILER:
+                //TrailerViewHolder trailerViewHolder;
+
+                if (convertView == null) {
+                    //trailerViewHolder = new TrailerViewHolder(convertView);
+                    //convertView.setTag(trailerViewHolder);
+                    newV = newView(myContext, getCursor(), parent);
+                } else {
+                    //trailerViewHolder = new TrailerViewHolder(convertView);
+                    //trailerViewHolder = (TrailerViewHolder) convertView.getTag();
+
+                    newV = convertView;
+                }
+
+                bindView(newV, myContext, getCursor());
+                return newV;
+            default:
+                throw new IllegalArgumentException();
+        }*/
+
+    }
 }

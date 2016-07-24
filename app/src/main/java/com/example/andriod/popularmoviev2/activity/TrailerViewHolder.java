@@ -2,16 +2,14 @@ package com.example.andriod.popularmoviev2.activity;
 
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.example.andriod.popularmoviev2.R;
-import com.example.andriod.popularmoviev2.activity.MovieAdapter;
-
 
 /**
  * Class that holds the View elements for the Trailer Section
+ *
+ * Created by StandleyEugene on 7/24/2016.
  */
 public class TrailerViewHolder {
     // LinearLayout for Trailer dynamically create elements

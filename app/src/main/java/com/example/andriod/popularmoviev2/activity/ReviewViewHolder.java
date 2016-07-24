@@ -1,16 +1,13 @@
 package com.example.andriod.popularmoviev2.activity;
 
-/**
- * Created by StandleyEugene on 7/24/2016.
- */
-
 import android.view.View;
 import android.widget.TextView;
-
 import com.example.andriod.popularmoviev2.R;
 
 /**
  * Class that holds the View elements for the Review section
+ *
+ * Created by StandleyEugene on 7/24/2016.
  */
 public class ReviewViewHolder {
     //public final LinearLayout mDetail_reviewList;

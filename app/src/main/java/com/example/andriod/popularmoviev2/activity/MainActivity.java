@@ -1,21 +1,12 @@
 package com.example.andriod.popularmoviev2.activity;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
 import com.example.andriod.popularmoviev2.R;
 
