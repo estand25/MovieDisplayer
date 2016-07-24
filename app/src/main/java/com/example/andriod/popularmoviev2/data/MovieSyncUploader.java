@@ -400,21 +400,21 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 for(Trailer trailer: movieTrailer){
                      // Content that holds all the popular movie information
                      // retrieved from the Movie DB API
-                    ContentValues trailerContanter = new ContentValues();
+                    ContentValues trailerContent = new ContentValues();
 
                     // Set the value of each column and insert the movie property
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID,trailer.getId());
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID,movie_id);
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_ISO_6391,trailer.getIso6391());
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_ISO_31661,trailer.getIso31661());
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_KEY,trailer.getKey());
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_NAME,trailer.getName());
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_SITE,trailer.getSite());
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_SIZE,trailer.getSize());
-                    trailerContanter.put(MovieContract.TrailerEntry.COLUMN_TYPE,trailer.getType());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID,trailer.getId());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID,movie_id);
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_ISO_6391,trailer.getIso6391());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_ISO_31661,trailer.getIso31661());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_KEY,trailer.getKey());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_NAME,trailer.getName());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_SITE,trailer.getSite());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_SIZE,trailer.getSize());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_TYPE,trailer.getType());
 
                     // Add trailer details to the ContentValue array
-                    bulkMovieTrailer[i] = trailerContanter;
+                    bulkMovieTrailer[i] = trailerContent;
 
                     // Increment index
                     i++;
@@ -465,17 +465,17 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 for(Review review : movieReview){
                     // Content that holds all the populated movie information
                     // retrieved from the Movie DB API
-                    ContentValues reviewContanter = new ContentValues();
+                    ContentValues reviewContent = new ContentValues();
 
                     // Set the value of each column and insert the movie property
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movie_id);
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID,review.getId());
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
-                    reviewContanter.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movie_id);
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID,review.getId());
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
 
                     // Add review detail to the ContentValue aray
-                    bulkMovieReview[i] = reviewContanter;
+                    bulkMovieReview[i] = reviewContent;
 
                     // Increment index
                     i++;
