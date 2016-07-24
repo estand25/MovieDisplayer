@@ -249,8 +249,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
-
-                    //Log.v("Movie Name ",movie.getTitle());
                 }
                 // Bulk insert all the new content information
                 mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulktopRatedMovies);
@@ -317,9 +315,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                         genreName = genreName + "|" + movieGenres.get(Integer.parseInt(genres[i]));
                     }
 
-                    // Add the GenreNames together
-                    Log.v("Genre name ",genreName);
-
                     // Content that holds all the genres information
                     // retrieved from the Movie DB API
                     ContentValues genreContent = new ContentValues();
@@ -361,6 +356,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
     public String[] getIndividualGenreID(String line){
         String result = "";
         result = line.substring(1, line.length()-1);
+
         // Note: I know is little regression pattern, but I'm not that good
         // so I had to search around to found this one
         // http://stackoverflow.com/questions/15633228/how-to-remove-all-white-spaces-in-java
@@ -422,8 +418,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
-
-                    Log.v("Trailer Name ",trailer.getName());
                 }
                 mContentResolver.bulkInsert(MovieContract.TrailerEntry.CONTENT_URI,bulkMovieTrailer);
             }
@@ -485,8 +479,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
-
-                    //Log.v("Review Name ",review.getAuthor());
                 }
                 mContentResolver.bulkInsert(MovieContract.ReviewEntry.CONTENT_URI,bulkMovieReview);
             }
