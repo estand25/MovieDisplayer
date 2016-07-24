@@ -220,6 +220,15 @@ public class DetailMovieAdapter extends CursorAdapter {
                     String content = cursor.getString(COL_REVIEW_CONTENT);
                     final String reviewUri = cursor.getString(COL_REVIEW_URL);
 
+                    // Check if author and content is populated
+                    if(author.isEmpty()){
+                        break;
+                    }
+
+                    if(content.isEmpty()) {
+                        break;
+                    }
+
                     // Set update the Review Card View with the Author and Content information
                     reviewHolder.mReview_Author.setText(author);
                     reviewHolder.mReview_Content.setText(content);
@@ -234,9 +243,10 @@ public class DetailMovieAdapter extends CursorAdapter {
                     });
 
                     // Break out of the while loop if we move to the next table (trailer)
-                    if(cursor.getColumnName(COL_TRAILER__ID).contains("_id")){
+                    if (cursor.getColumnName(COL_TRAILER__ID).contains("_id")) {
                         break;
                     }
+
                 }
                 break;
             }
@@ -256,6 +266,13 @@ public class DetailMovieAdapter extends CursorAdapter {
                     // Set local string variable
                     String trailerName = cursor.getString(COL_MOVIE_TITLE) + " - " + cursor.getString(COL_TRAILER_NAME);
                     final String video_id = cursor.getString(COL_TRAILER_KEY);
+
+                    Log.v("Trailer Name ",trailerName);
+
+                    // Check if trailerName is populated
+                    if(trailerName == null) {
+                        break;
+                    }
 
                     // Set update the Trailer Card View with the Trailer Icon and Name
                     //trailerHolder.mTrailerIcon.setImageResource(R.drawable.ic_entypo);
