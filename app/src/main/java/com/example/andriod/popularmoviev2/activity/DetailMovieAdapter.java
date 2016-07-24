@@ -4,29 +4,16 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.icu.text.DateFormat;
-import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
-import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieProvider;
-import com.example.andriod.popularmoviev2.other.ViewHolder;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
 
 /**
  * Detail Movie Adapter for the individual general movie details
@@ -128,10 +115,33 @@ public class DetailMovieAdapter extends CursorAdapter {
         View view = LayoutInflater.from(context).inflate(layoutid, parent, false);
 
         // Create new instance of Detail Movie, Review, & Trailer Section Holder
-        ViewHolder viewHolder = new ViewHolder(view);
+        // Switch to the correct layout based on the viewtype
+        switch(viewType){
+            case VIEW_TYPE_MOVIE_DETAIL:{
+                // Detail Movie ViewHolder
+                DetailMovieViewHolder detailMovieViewHolder = new DetailMovieViewHolder(view);
 
-        // Get the Tags for the display items
-        view.setTag(viewHolder);
+                // Get the Tags for the display items
+                view.setTag(detailMovieViewHolder);
+                break;
+            }
+            case VIEW_TYPE_MOVIE_REVIEWS:{
+                // Review ViewHolder
+                ReviewViewHolder reviewViewHolder = new ReviewViewHolder(view);
+
+                // Get the Tags for the display items
+                view.setTag(reviewViewHolder);
+                break;
+            }
+            case VIEW_TYPE_MOVIE_TRAILER:{
+                // Trailer layout
+                TrailerViewHolder trailerViewHolder = new TrailerViewHolder(view);
+
+                // Get the Tags for the display items
+                view.setTag(trailerViewHolder);
+                break;
+            }
+        }
 
         // Return the view with all its stuff
         return view;
@@ -151,15 +161,14 @@ public class DetailMovieAdapter extends CursorAdapter {
         // Switch to the correct viewHolder based on the viewtype
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
-
                 // Set the local viewHolder with the previous tag information
-                ViewHolder detailMovieHolder = (ViewHolder) view.getTag();
+                DetailMovieViewHolder detailMovieViewHolder = (DetailMovieViewHolder) view.getTag();
 
                 String[] DetailMovieColumne = getCursor().getColumnNames();
                 String[] DetailMovieColumne1 = cursor.getColumnNames();
 
                 // Create an instance of AQuery and set it to the movieView item
-                AQuery aq = new AQuery(detailMovieHolder.mDetail_imageView);
+                AQuery aq = new AQuery(detailMovieViewHolder.mDetail_imageView);
 
                 // Get the post information from the curse (get the row/column of information
                 // from the db)
@@ -169,45 +178,44 @@ public class DetailMovieAdapter extends CursorAdapter {
                 // make it visible too
                 // Replaced Picassa with AQery per the below form post. The image were loading to slow
                 //so I looked and found a soluation (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
-                aq.id(detailMovieHolder.mDetail_imageView).image(poster).visible();
+                aq.id(detailMovieViewHolder.mDetail_imageView).image(poster).visible();
 
                 /// Get the TextView from the current layout and set the text
                 // to what appears at position X in the column layout
-                detailMovieHolder.mDetail_titleTextView.setText(cursor.getString(COL_DETAIL_MOVIE_TITLE));
-                detailMovieHolder.mDetail_synopsisTextView.setText(cursor.getString(COL_DETAIL_MOVIE_OVERVIEW));
+                detailMovieViewHolder.mDetail_titleTextView.setText(cursor.getString(COL_DETAIL_MOVIE_TITLE));
+                detailMovieViewHolder.mDetail_synopsisTextView.setText(cursor.getString(COL_DETAIL_MOVIE_OVERVIEW));
 
                 Log.v("Stars ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
                 Log.v("Column Loc ",Integer.toString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
                 // Create previous star display then add new rating number then stars
-                detailMovieHolder.mUserRatingLayout.removeAllViews();
+                detailMovieViewHolder.mUserRatingLayout.removeAllViews();
 
                 // Add the user rating scores to TextView element
-                detailMovieHolder.mDetail_userRateingTextView.setText(cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+                detailMovieViewHolder.mDetail_userRateingTextView.setText(cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
                 // Add the user rating TextView to the user rating layout
-                detailMovieHolder.mUserRatingLayout.addView(detailMovieHolder.mDetail_userRateingTextView);
-                //Log.v("Stars created ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
+                detailMovieViewHolder.mUserRatingLayout.addView(detailMovieViewHolder.mDetail_userRateingTextView);
 
                 // Loop through and populate the start images
                 for (int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
                     ImageView starImages = new ImageView(context);
                     starImages.setImageResource(R.drawable.star);
-                    detailMovieHolder.mUserRatingLayout.addView(starImages);
+                    detailMovieViewHolder.mUserRatingLayout.addView(starImages);
                     //center_vertical 16 and Left 3
-                    detailMovieHolder.mUserRatingLayout.setVerticalGravity(16 | 3);
+                    detailMovieViewHolder.mUserRatingLayout.setVerticalGravity(16 | 3);
                     Log.v("Stars created ", Integer.toString(i));
                 }
-                detailMovieHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
-                detailMovieHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
+                detailMovieViewHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
+                detailMovieViewHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
                 break;
             }
             case VIEW_TYPE_MOVIE_REVIEWS:{
+                // Set the local viewHolder with the previous tag information
+                ReviewViewHolder reviewViewHolder = (ReviewViewHolder) view.getTag();
+
                 String[] DetailMovieColumne = getCursor().getColumnNames();
                 String[] DetailMovieColumne1 = cursor.getColumnNames();
-
-                // Set the local viewHolder with the previous tag information
-                ViewHolder reviewHolder = (ViewHolder) view.getTag();
 
                 // Move to the cursor column location
                 cursor.move(cursor.getColumnIndex("_id"));
@@ -230,10 +238,10 @@ public class DetailMovieAdapter extends CursorAdapter {
                     }
 
                     // Set update the Review Card View with the Author and Content information
-                    reviewHolder.mReview_Author.setText(author);
-                    reviewHolder.mReview_Content.setText(content);
+                    reviewViewHolder.mReview_Author.setText(author);
+                    reviewViewHolder.mReview_Content.setText(content);
 
-                    reviewHolder.mReview_Content.setOnClickListener(new View.OnClickListener() {
+                    reviewViewHolder.mReview_Content.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(Intent.ACTION_VIEW,
@@ -251,11 +259,11 @@ public class DetailMovieAdapter extends CursorAdapter {
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
+                // Set the local viewHolder with the previous tag information
+                TrailerViewHolder trailerViewHolder = (TrailerViewHolder) view.getTag();
+
                 String[] DetailMovieColumne = getCursor().getColumnNames();
                 String[] DetailMovieColumne1 = cursor.getColumnNames();
-
-                // Set the local viewHolder with the previous tag information
-                ViewHolder trailerHolder = (ViewHolder) view.getTag();
 
                 // Move to the cursor column location
                 cursor.move(cursor.getColumnIndex("_id"));
@@ -274,10 +282,13 @@ public class DetailMovieAdapter extends CursorAdapter {
                         break;
                     }
 
+                    if(trailerViewHolder.mTrailerName.equals(null)){
+                        break;
+                    }
                     // Set update the Trailer Card View with the Trailer Icon and Name
                     //trailerHolder.mTrailerIcon.setImageResource(R.drawable.ic_entypo);
-                    trailerHolder.mTrailerName.setText(trailerName);
-                    trailerHolder.mTrailerName.setOnClickListener(new View.OnClickListener() {
+                    trailerViewHolder.mTrailerName.setText(trailerName);
+                    trailerViewHolder.mTrailerName.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             // Try to open up youtube with trailer video directly, but if not able
