@@ -15,9 +15,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/detail_trailerList">
         <ImageView
+            android:layout_toLeftOf="@+id/trailer_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/trailer_name"
             android:id="@+id/trailer_icon"/>
         <TextView
             android:layout_width="wrap_content"
