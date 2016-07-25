@@ -239,8 +239,6 @@ public class DetailMovieAdapter extends CursorAdapter {
         return VIEW_TYPE_COUNT;
     }
 
-
-    /*
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int itemViewType = getItemViewType(position);
@@ -256,7 +254,8 @@ public class DetailMovieAdapter extends CursorAdapter {
                     detailMovieViewHolder = (DetailMovieViewHolder) convertView.getTag();
                 }
 
-                bindView(convertView, myContext, getCursor());
+                //bindView(convertView, myContext, getCursor());
+                detailMovieViewHolder.bindViews(myContext,getCursor());
                 return convertView;
             case VIEW_TYPE_MOVIE_REVIEWS:
                 ReviewViewHolder reviewViewHolder;
@@ -269,7 +268,8 @@ public class DetailMovieAdapter extends CursorAdapter {
                     reviewViewHolder = (ReviewViewHolder) convertView.getTag();
                 }
 
-                bindView(convertView, myContext, getCursor());
+                //bindView(convertView, myContext, getCursor());
+                reviewViewHolder.bindViews(myContext,getCursor());
                 return convertView;
             case VIEW_TYPE_MOVIE_TRAILER:
                 TrailerViewHolder trailerViewHolder;
@@ -282,12 +282,13 @@ public class DetailMovieAdapter extends CursorAdapter {
                     trailerViewHolder = (TrailerViewHolder) convertView.getTag();
                 }
 
-                bindView(convertView, myContext, getCursor());
+                //bindView(convertView, myContext, getCursor());
+                trailerViewHolder.bindViews(myContext,getCursor());
                 return convertView;
             default:
                 throw new IllegalArgumentException();
         }
-    }*/
+    }
 
     /**
      * Class that holds the View elements for the Detail Movie Section
