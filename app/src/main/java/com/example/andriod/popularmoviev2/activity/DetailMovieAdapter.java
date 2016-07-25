@@ -95,14 +95,15 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent){
+
         // Choose the layout type
-        int viewType = getItemViewType(cursor.getPosition());
-        Log.v("Cursor position",String.valueOf(cursor.getPosition()));
+        int viewType = getItemViewType(cursor.getColumnCount());
+        Log.v("Cursor position",String.valueOf(cursor.getColumnCount()));
 
         // Set the default layoutid value for layout
         int layoutid = -1;
 
-        // Switch to the correct layout based on the viewtype
+        // Switch to the correct layout based on the view type
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
                 // Detail Movie layout
@@ -125,7 +126,7 @@ public class DetailMovieAdapter extends CursorAdapter {
         View view = LayoutInflater.from(context).inflate(layoutid, parent, false);
 
         // Create new instance of Detail Movie, Review, & Trailer Section Holder
-        // Switch to the correct layout based on the viewtype
+        // Switch to the correct layout based on the view type
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
                 // Detail Movie ViewHolder
@@ -165,30 +166,34 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, final Context context, Cursor cursor){
-        // Determine which ViewType I should be using
-        int viewType = getItemViewType(cursor.getPosition());
 
-        // Switch to the correct viewHolder based on the viewtype
+        // Move to the cursor column location
+        cursor.moveToNext();
+
+        // Determine which ViewType I should be using
+        int viewType = getItemViewType(cursor.getColumnCount());
+
+        // Switch to the correct viewHolder based on the view type
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
                 // Set the local viewHolder with the previous tag information
                 DetailMovieViewHolder detailMovieViewHolder = (DetailMovieViewHolder) view.getTag();
-
-                detailMovieViewHolder.bindViews(myContext,getCursor());
+                // Bind cursor data to the view
+                detailMovieViewHolder.bindViews(myContext,cursor);
                 break;
             }
             case VIEW_TYPE_MOVIE_REVIEWS:{
                 // Set the local viewHolder with the previous tag information
                 ReviewViewHolder reviewViewHolder = (ReviewViewHolder) view.getTag();
-
-                reviewViewHolder.bindViews(myContext,getCursor());
+                // Bind cursor data to the view
+                reviewViewHolder.bindViews(myContext,cursor);
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
                 // Set the local viewHolder with the previous tag information
                 TrailerViewHolder trailerViewHolder = (TrailerViewHolder) view.getTag();
-
-                trailerViewHolder.bindViews(myContext,getCursor());
+                // Bind cursor data to the view
+                trailerViewHolder.bindViews(myContext,cursor);
                 break;
             }
         }
@@ -210,16 +215,13 @@ public class DetailMovieAdapter extends CursorAdapter {
 
         // Determine which viewType should be used based on unique columns in each of the table
         while (!found) {
-            if ((getCursor().getColumnIndex("_id") <= position && getCursor().getColumnIndex("movie_type") >= position) && (cursorCount[0] == getCursor().getColumnCount())) {
-                //if(cursorCount[0] == getCursor().getColumnCount()) {
+            if(cursorCount[0] == position){
                 ret = VIEW_TYPE_MOVIE_DETAIL;
                 found = true;
-            } else if ((getCursor().getColumnIndex("_id") <= position && getCursor().getColumnIndex("url") >= position) && (cursorCount[1] == getCursor().getColumnCount())) {
-                //} else if(cursorCount[1] == getCursor().getColumnCount()){
+            } else if(cursorCount[1] == position){
                 ret = VIEW_TYPE_MOVIE_REVIEWS;
                 found = true;
-            } else if ((getCursor().getColumnIndex("_id") <= position && getCursor().getColumnIndex("type") >= position) && (cursorCount[2] == getCursor().getColumnCount())) {
-                //} else if(cursorCount[2] == getCursor().getColumnCount()){
+            } else if(cursorCount[2] == position){
                 ret = VIEW_TYPE_MOVIE_TRAILER;
                 found = true;
             }
@@ -241,7 +243,11 @@ public class DetailMovieAdapter extends CursorAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        int itemViewType = getItemViewType(position);
+
+        // Move to the cursor column location
+        getCursor().moveToNext();
+
+        int itemViewType = getItemViewType(getCursor().getColumnCount());
         switch (itemViewType) {
             case VIEW_TYPE_MOVIE_DETAIL:
                 DetailMovieViewHolder detailMovieViewHolder;
@@ -250,14 +256,14 @@ public class DetailMovieAdapter extends CursorAdapter {
                     convertView = newView(myContext, getCursor(), parent);
                     detailMovieViewHolder = new DetailMovieViewHolder(convertView);
                     convertView.setTag(detailMovieViewHolder);
-
-                    bindView(convertView, myContext, getCursor());
-                    return convertView;
                 } else {
                     detailMovieViewHolder = (DetailMovieViewHolder) convertView.getTag();
-                    detailMovieViewHolder.bindViews(myContext,getCursor());
-                    return convertView;
+                    //detailMovieViewHolder.bindViews(myContext,getCursor());
+                    //return convertView;
                 }
+
+                bindView(convertView, myContext, getCursor());
+                return convertView;
             case VIEW_TYPE_MOVIE_REVIEWS:
                 ReviewViewHolder reviewViewHolder;
 
@@ -265,14 +271,14 @@ public class DetailMovieAdapter extends CursorAdapter {
                     convertView = newView(myContext, getCursor(), parent);
                     reviewViewHolder = new ReviewViewHolder(convertView);
                     convertView.setTag(reviewViewHolder);
-
-                    bindView(convertView, myContext, getCursor());
-                    return convertView;
                 } else {
                     reviewViewHolder = (ReviewViewHolder) convertView.getTag();
-                    reviewViewHolder.bindViews(myContext,getCursor());
-                    return convertView;
+                    //reviewViewHolder.bindViews(myContext,getCursor());
+                    //return convertView;
                 }
+
+                bindView(convertView, myContext, getCursor());
+                return convertView;
             case VIEW_TYPE_MOVIE_TRAILER:
                 TrailerViewHolder trailerViewHolder;
 
@@ -280,14 +286,14 @@ public class DetailMovieAdapter extends CursorAdapter {
                     convertView = newView(myContext, getCursor(), parent);
                     trailerViewHolder = new TrailerViewHolder(convertView);
                     convertView.setTag(trailerViewHolder);
-
-                    bindView(convertView, myContext, getCursor());
-                    return convertView;
                 } else {
                     trailerViewHolder = (TrailerViewHolder) convertView.getTag();
-                    trailerViewHolder.bindViews(myContext,getCursor());
-                    return convertView;
+                    //trailerViewHolder.bindViews(myContext,getCursor());
+                    //return convertView;
                 }
+
+                bindView(convertView, myContext, getCursor());
+                return convertView;
             default:
                 throw new IllegalArgumentException();
         }
@@ -320,13 +326,9 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param cursor - The current cursor
          */
         public void bindViews(Context context, Cursor cursor) {
-
-            // Move to the cursor column location
-            cursor.moveToNext();
-
             // Create an instance of AQuery and set it to the movieView item
             // Take the ImageView and add an Image from the post location and make it visible too
-            // Replaced Picassa with AQery per the below form post. The image were loading to slow
+            // Replaced Picassa with AQuery per the below form post. The image were loading to slow
             // so I looked and found a solution (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
             String poster = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
             AQuery aq = new AQuery(mDetail_imageView);
@@ -338,9 +340,6 @@ public class DetailMovieAdapter extends CursorAdapter {
             mDetail_titleTextView.setText(title);
             String overView = cursor.getString(COL_DETAIL_MOVIE_OVERVIEW);
             mDetail_synopsisTextView.setText(overView);
-
-            //Log.v("Stars ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
-            //Log.v("Column Loc ",Integer.toString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
             // Create previous star display then add new rating number then stars
             mUserRatingLayout.removeAllViews();
@@ -366,8 +365,6 @@ public class DetailMovieAdapter extends CursorAdapter {
             mDetail_releaseDateTextView.setText(releaseDate);
             String movieGenere = cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS);
             mDetail_genreTextView.setText(movieGenere);
-
-            cursor.moveToLast();
         }
     }
 
@@ -393,9 +390,6 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param cursor - The current cursor
          */
         public void bindViews(final Context context,Cursor cursor){
-            // Move to the cursor column location
-            cursor.moveToNext();
-
             // Loop through the records of review data until
             // we get to the next cursor's first column name
             for(int i = 0; i<cursor.getCount();i++){
@@ -403,15 +397,6 @@ public class DetailMovieAdapter extends CursorAdapter {
                 String author = cursor.getString(COL_REVIEW_AUTHOR) + " ";
                 String content = cursor.getString(COL_REVIEW_CONTENT);
                 final String reviewUri = cursor.getString(COL_REVIEW_URL);
-
-                // Check if author and content is populated
-                if(author.isEmpty()){
-                    break;
-                }
-
-                if(content.isEmpty()) {
-                    break;
-                }
 
                 // Set update the Review Card View with the Author and Content information
                 mReview_Author.setText(author);
@@ -430,8 +415,6 @@ public class DetailMovieAdapter extends CursorAdapter {
                 if (cursor.getColumnName(COL_TRAILER__ID).contains("_id")) {
                     break;
                 }
-
-                cursor.moveToLast();
             }
         }
     }
@@ -452,10 +435,12 @@ public class DetailMovieAdapter extends CursorAdapter {
             ButterKnife.bind(this,view);
         }
 
+        /**
+         * Bind the view with the view data
+         * @param context - The current context
+         * @param cursor - The current cursor
+         */
         public void bindViews(final Context context, Cursor cursor){
-            // Move to the cursor column location
-            cursor.moveToNext();
-
             // Loop through the records of review data until
             // we get to the next cursor's first column name
             for(int i = 0; i<cursor.getCount();i++){
@@ -487,8 +472,6 @@ public class DetailMovieAdapter extends CursorAdapter {
                     }
                 });
             }
-
-            cursor.moveToLast();
         }
     }
 }
