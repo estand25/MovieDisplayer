@@ -126,7 +126,7 @@ public class DetailMovieAdapter extends CursorAdapter {
         View view = LayoutInflater.from(context).inflate(layoutid, parent, false);
 
         // Create new instance of Detail Movie, Review, & Trailer Section Holder
-        // Switch to the correct layout based on the viewtype
+        // Switch to the correct layout based on the view type
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
                 // Detail Movie ViewHolder
@@ -145,7 +145,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
-                // Trailer layout
+                // Trailer ViewHolder
                 TrailerViewHolder trailerViewHolder = new TrailerViewHolder(view);
 
                 // Get the Tags for the display items
@@ -250,12 +250,12 @@ public class DetailMovieAdapter extends CursorAdapter {
                     convertView = newView(myContext, getCursor(), parent);
                     detailMovieViewHolder = new DetailMovieViewHolder(convertView);
                     convertView.setTag(detailMovieViewHolder);
+                    detailMovieViewHolder.bindViews(myContext,getCursor());
+                    //bindView(convertView, myContext, getCursor());
                 } else {
                     detailMovieViewHolder = (DetailMovieViewHolder) convertView.getTag();
+                    detailMovieViewHolder.bindViews(myContext,getCursor());
                 }
-
-                //bindView(convertView, myContext, getCursor());
-                detailMovieViewHolder.bindViews(myContext,getCursor());
                 return convertView;
             case VIEW_TYPE_MOVIE_REVIEWS:
                 ReviewViewHolder reviewViewHolder;
@@ -264,12 +264,11 @@ public class DetailMovieAdapter extends CursorAdapter {
                     convertView = newView(myContext, getCursor(), parent);
                     reviewViewHolder = new ReviewViewHolder(convertView);
                     convertView.setTag(reviewViewHolder);
+                    bindView(convertView, myContext, getCursor());
                 } else {
                     reviewViewHolder = (ReviewViewHolder) convertView.getTag();
+                    reviewViewHolder.bindViews(myContext,getCursor());
                 }
-
-                //bindView(convertView, myContext, getCursor());
-                reviewViewHolder.bindViews(myContext,getCursor());
                 return convertView;
             case VIEW_TYPE_MOVIE_TRAILER:
                 TrailerViewHolder trailerViewHolder;
@@ -278,12 +277,11 @@ public class DetailMovieAdapter extends CursorAdapter {
                     convertView = newView(myContext, getCursor(), parent);
                     trailerViewHolder = new TrailerViewHolder(convertView);
                     convertView.setTag(trailerViewHolder);
+                    bindView(convertView, myContext, getCursor());
                 } else {
                     trailerViewHolder = (TrailerViewHolder) convertView.getTag();
+                    trailerViewHolder.bindViews(myContext,getCursor());
                 }
-
-                //bindView(convertView, myContext, getCursor());
-                trailerViewHolder.bindViews(myContext,getCursor());
                 return convertView;
             default:
                 throw new IllegalArgumentException();
@@ -318,7 +316,6 @@ public class DetailMovieAdapter extends CursorAdapter {
          */
         public void bindViews(Context context, Cursor cursor) {
             // Move to the cursor column location
-            // cursor.move(cursor.getColumnIndex("_id"));
             cursor.moveToNext();
 
             // Create an instance of AQuery and set it to the movieView item
@@ -337,20 +334,25 @@ public class DetailMovieAdapter extends CursorAdapter {
             // Get the TextView from the current layout and set the text
             // to what appears at position X in the column layout
             String title = cursor.getString(COL_DETAIL_MOVIE_TITLE);
-            mDetail_titleTextView.setText(title);
+            aq = new AQuery(mDetail_titleTextView);
+            aq.id(mDetail_titleTextView).text(title);
 
             String overView = cursor.getString(COL_DETAIL_MOVIE_OVERVIEW);
-            mDetail_synopsisTextView.setText(overView);
+            aq = new AQuery(mDetail_synopsisTextView);
+            aq.id(mDetail_synopsisTextView).text(overView);
 
             //Log.v("Stars ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
             //Log.v("Column Loc ",Integer.toString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
             // Create previous star display then add new rating number then stars
-            mUserRatingLayout.removeAllViews();
+            if(mUserRatingLayout.getChildCount() > 0) {
+                mUserRatingLayout.removeAllViews();
+            }
 
             // Add the user rating scores to TextView element
             String voteAverage = cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE);
-            mDetail_userRateingTextView.setText(voteAverage);
+            aq = new AQuery(mDetail_userRateingTextView);
+            aq.id(mDetail_userRateingTextView).text(voteAverage);
 
             // Add the user rating TextView to the user rating layout
             mUserRatingLayout.addView(mDetail_userRateingTextView);
@@ -366,10 +368,12 @@ public class DetailMovieAdapter extends CursorAdapter {
             }
 
             String releaseDate = cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE);
-            mDetail_releaseDateTextView.setText(releaseDate);
+            aq = new AQuery(mDetail_releaseDateTextView);
+            aq.id(mDetail_releaseDateTextView).text(releaseDate);
 
             String movieGenere = cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS);
-            mDetail_genreTextView.setText(movieGenere);
+            aq = new AQuery(mDetail_genreTextView);
+            aq.id(mDetail_genreTextView).text(movieGenere);
         }
     }
 
