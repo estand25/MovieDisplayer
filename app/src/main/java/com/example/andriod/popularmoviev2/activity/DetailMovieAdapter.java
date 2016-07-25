@@ -172,9 +172,6 @@ public class DetailMovieAdapter extends CursorAdapter {
         // Switch to the correct viewHolder based on the viewtype
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
-                String[] DetailMovieColumne = getCursor().getColumnNames();
-                String[] DetailMovieColumne1 = cursor.getColumnNames();
-
                 // Set the local viewHolder with the previous tag information
                 DetailMovieViewHolder detailMovieViewHolder = (DetailMovieViewHolder) view.getTag();
 
@@ -183,9 +180,6 @@ public class DetailMovieAdapter extends CursorAdapter {
                 break;
             }
             case VIEW_TYPE_MOVIE_REVIEWS:{
-                String[] DetailMovieColumne = getCursor().getColumnNames();
-                String[] DetailMovieColumne1 = cursor.getColumnNames();
-
                 // Set the local viewHolder with the previous tag information
                 ReviewViewHolder reviewViewHolder = (ReviewViewHolder) view.getTag();
 
@@ -194,9 +188,6 @@ public class DetailMovieAdapter extends CursorAdapter {
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
-                String[] DetailMovieColumne = getCursor().getColumnNames();
-                String[] DetailMovieColumne1 = cursor.getColumnNames();
-
                 // Set the local viewHolder with the previous tag information
                 TrailerViewHolder trailerViewHolder = (TrailerViewHolder) view.getTag();
 
@@ -249,6 +240,7 @@ public class DetailMovieAdapter extends CursorAdapter {
     }
 
 
+    /*
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int itemViewType = getItemViewType(position);
@@ -295,7 +287,7 @@ public class DetailMovieAdapter extends CursorAdapter {
             default:
                 throw new IllegalArgumentException();
         }
-    }
+    }*/
 
     /**
      * Class that holds the View elements for the Detail Movie Section
@@ -345,6 +337,7 @@ public class DetailMovieAdapter extends CursorAdapter {
             // to what appears at position X in the column layout
             String title = cursor.getString(COL_DETAIL_MOVIE_TITLE);
             mDetail_titleTextView.setText(title);
+
             String overView = cursor.getString(COL_DETAIL_MOVIE_OVERVIEW);
             mDetail_synopsisTextView.setText(overView);
 
@@ -373,6 +366,7 @@ public class DetailMovieAdapter extends CursorAdapter {
 
             String releaseDate = cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE);
             mDetail_releaseDateTextView.setText(releaseDate);
+
             String movieGenere = cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS);
             mDetail_genreTextView.setText(movieGenere);
         }

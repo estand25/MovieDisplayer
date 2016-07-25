@@ -13,6 +13,9 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * MovieAdapter that will handle and display the cursor data on the screen
  * Created by StandleyEugene on 6/30/2016.
