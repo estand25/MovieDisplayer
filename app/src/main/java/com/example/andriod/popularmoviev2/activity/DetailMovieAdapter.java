@@ -3,7 +3,6 @@ package com.example.andriod.popularmoviev2.activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
@@ -99,6 +97,7 @@ public class DetailMovieAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent){
         // Choose the layout type
         int viewType = getItemViewType(cursor.getPosition());
+        Log.v("Cursor position",String.valueOf(cursor.getPosition()));
 
         // Set the default layoutid value for layout
         int layoutid = -1;
@@ -175,127 +174,21 @@ public class DetailMovieAdapter extends CursorAdapter {
                 // Set the local viewHolder with the previous tag information
                 DetailMovieViewHolder detailMovieViewHolder = (DetailMovieViewHolder) view.getTag();
 
-                // Move to the cursor column location
-                cursor.moveToNext();
-
-                // Create an instance of AQuery and set it to the movieView item
-                AQuery aq = new AQuery(detailMovieViewHolder.mDetail_imageView);
-
-                // Get the post information from the curse (get the row/column of information
-                // from the db)
-                String poster = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
-
-                // Take the ImageView and add an Image from the post location and
-                // make it visible too
-                // Replaced Picassa with AQery per the below form post. The image were loading to slow
-                // so I looked and found a solution (https://discussions.udacity.com/t/picassa-image-caching-and-loading/175512)
-                aq.id(detailMovieViewHolder.mDetail_imageView).image(poster).visible();
-
-                /// Get the TextView from the current layout and set the text
-                // to what appears at position X in the column layout
-                detailMovieViewHolder.mDetail_titleTextView.setText(cursor.getString(COL_DETAIL_MOVIE_TITLE));
-                detailMovieViewHolder.mDetail_synopsisTextView.setText(cursor.getString(COL_DETAIL_MOVIE_OVERVIEW));
-
-                Log.v("Stars ", cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
-                Log.v("Column Loc ",Integer.toString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
-
-                // Create previous star display then add new rating number then stars
-                detailMovieViewHolder.mUserRatingLayout.removeAllViews();
-
-                // Add the user rating scores to TextView element
-                detailMovieViewHolder.mDetail_userRatingTextView.setText(cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
-
-                // Add the user rating TextView to the user rating layout
-                detailMovieViewHolder.mUserRatingLayout.addView(detailMovieViewHolder.mDetail_userRatingTextView);
-
-                // Loop through and populate the start images
-                for (int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
-                    ImageView starImages = new ImageView(context);
-                    starImages.setImageResource(R.drawable.star);
-                    detailMovieViewHolder.mUserRatingLayout.addView(starImages);
-                    //center_vertical 16 and Left 3
-                    detailMovieViewHolder.mUserRatingLayout.setVerticalGravity(16 | 3);
-                    Log.v("Stars created ", Integer.toString(i));
-                }
-                detailMovieViewHolder.mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
-                detailMovieViewHolder.mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
-                cursor.moveToLast();
+                detailMovieViewHolder.bindViews(myContext,getCursor());
                 break;
             }
             case VIEW_TYPE_MOVIE_REVIEWS:{
                 // Set the local viewHolder with the previous tag information
                 ReviewViewHolder reviewViewHolder = (ReviewViewHolder) view.getTag();
 
-                // Move to the cursor column location
-                cursor.moveToNext();
-
-                // Loop through the records of review data until
-                // we get to the next cursor's first column name
-                for(int i = 0; i<cursor.getCount();i++){
-                    // Set local string variable
-                    String author = cursor.getString(COL_REVIEW_AUTHOR) + " ";
-                    String content = cursor.getString(COL_REVIEW_CONTENT);
-                    final String reviewUri = cursor.getString(COL_REVIEW_URL);
-
-                    // Set update the Review Card View with the Author and Content information
-                    reviewViewHolder.mReview_Author.setText(author);
-                    reviewViewHolder.mReview_Content.setText(content);
-
-                    reviewViewHolder.mReview_Content.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse(reviewUri));
-                            context.startActivity(intent);
-                        }
-                    });
-
-                    // Break out of the while loop if we move to the next table (trailer)
-                    if (cursor.getColumnName(COL_TRAILER__ID).contains("_id")) {
-                        break;
-                    }
-                    cursor.moveToLast();
-                }
+                reviewViewHolder.bindViews(myContext,getCursor());
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
                 // Set the local viewHolder with the previous tag information
                 TrailerViewHolder trailerViewHolder = (TrailerViewHolder) view.getTag();
 
-                // Move to the cursor column location
-                cursor.moveToNext();
-
-                // Loop through the records of review data until
-                // we get to the next cursor's first column name
-                for(int i = 0; i<cursor.getCount();i++){
-                    // Set local string variable
-                    String trailerName = cursor.getString(COL_MOVIE_TITLE) + " - " + cursor.getString(COL_TRAILER_NAME);
-                    final String video_id = cursor.getString(COL_TRAILER_KEY);
-
-                    Log.v("Trailer Name ",trailerName);
-
-                    // Set update the Trailer Card View with the Trailer Icon and Name
-                    trailerViewHolder.mTrailerName.setText(trailerName);
-                    trailerViewHolder.mTrailerName.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Try to open up youtube with trailer video directly, but if not able
-                            // I open an internet browser
-                            // Note: I embedded this code section based on the stackoverflow post
-                            // it was a lot better then what I was thinking of doing
-                            // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
-                            try {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
-                                context.startActivity(intent);
-                            } catch (ActivityNotFoundException ex) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW,
-                                        Uri.parse("http://www.youtube.com/watch?v=" + video_id));
-                                context.startActivity(intent);
-                            }
-                        }
-                    });
-                }
-                cursor.moveToLast();
+                trailerViewHolder.bindViews(myContext,getCursor());
                 break;
             }
         }
@@ -318,15 +211,15 @@ public class DetailMovieAdapter extends CursorAdapter {
         // Determine which viewType should be used based on unique columns in each of the table
         while (!found) {
             if ((getCursor().getColumnIndex("_id") <= position && getCursor().getColumnIndex("movie_type") >= position) && (cursorCount[0] == getCursor().getColumnCount())) {
-            //if(cursorCount[0] == getCursor().getColumnCount()) {
+                //if(cursorCount[0] == getCursor().getColumnCount()) {
                 ret = VIEW_TYPE_MOVIE_DETAIL;
                 found = true;
             } else if ((getCursor().getColumnIndex("_id") <= position && getCursor().getColumnIndex("url") >= position) && (cursorCount[1] == getCursor().getColumnCount())) {
-            //} else if(cursorCount[1] == getCursor().getColumnCount()){
+                //} else if(cursorCount[1] == getCursor().getColumnCount()){
                 ret = VIEW_TYPE_MOVIE_REVIEWS;
                 found = true;
             } else if ((getCursor().getColumnIndex("_id") <= position && getCursor().getColumnIndex("type") >= position) && (cursorCount[2] == getCursor().getColumnCount())) {
-            //} else if(cursorCount[2] == getCursor().getColumnCount()){
+                //} else if(cursorCount[2] == getCursor().getColumnCount()){
                 ret = VIEW_TYPE_MOVIE_TRAILER;
                 found = true;
             }
