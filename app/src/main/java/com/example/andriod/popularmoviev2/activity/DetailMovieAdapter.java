@@ -265,8 +265,6 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param cursor - The current cursor
          */
         public void bindViews(Context context, Cursor cursor) {
-            //cursor.moveToNext();
-
             // Create an instance of AQuery and set it to the movieView item
             // Take the ImageView and add an Image from the post location and make it visible too
             // Replaced Picassa with AQuery per the below form post. The image were loading to slow
@@ -277,17 +275,14 @@ public class DetailMovieAdapter extends CursorAdapter {
 
             // Get the TextView from the current layout and set the text
             // to what appears at position X in the column layout
-            String title = cursor.getString(COL_DETAIL_MOVIE_TITLE);
-            mDetail_titleTextView.setText(title);
-            String overView = cursor.getString(COL_DETAIL_MOVIE_OVERVIEW);
-            mDetail_synopsisTextView.setText(overView);
+            mDetail_titleTextView.setText(cursor.getString(COL_DETAIL_MOVIE_TITLE));
+            mDetail_synopsisTextView.setText(cursor.getString(COL_DETAIL_MOVIE_OVERVIEW));
 
             // Create previous star display then add new rating number then stars
             mUserRatingLayout.removeAllViews();
 
             // Add the user rating scores to TextView element
-            String voteAverage = cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE);
-            mDetail_userRatingTextView.setText(voteAverage);
+            mDetail_userRatingTextView.setText(cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE));
 
             // Add the user rating TextView to the user rating layout
             mUserRatingLayout.addView(mDetail_userRatingTextView);
@@ -302,10 +297,9 @@ public class DetailMovieAdapter extends CursorAdapter {
                 Log.v("Stars created ", Integer.toString(i));
             }
 
-            String releaseDate = cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE);
-            mDetail_releaseDateTextView.setText(releaseDate);
-            String movieGenere = cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS);
-            mDetail_genreTextView.setText(movieGenere);
+            // Populates the Release Date & Genre id
+            mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
+            mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
         }
     }
 
@@ -313,9 +307,11 @@ public class DetailMovieAdapter extends CursorAdapter {
      * Class that holds the View elements for the Review section
      */
     static class ReviewViewHolder {
+        static boolean display = false;
         // Set the static local Review elements
         @BindView(R.id.review_author) TextView mReview_Author;
         @BindView(R.id.review_content) TextView mReview_Content;
+        @BindView(R.id.reviewCard) android.support.v7.widget.CardView mReviewCard;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -330,33 +326,25 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param context - The current context
          * @param cursor - The current cursor
          */
-        public void bindViews(final Context context,Cursor cursor){
-            // Loop through the records of review data until
-            // we get to the next cursor's first column name
-            for(int i = 0; i<cursor.getCount();i++){
-                // Set local string variable
-                String author = cursor.getString(COL_REVIEW_AUTHOR) + " ";
-                String content = cursor.getString(COL_REVIEW_CONTENT);
-                final String reviewUri = cursor.getString(COL_REVIEW_URL);
+        public void bindViews(final Context context,Cursor cursor) {
+            // Create local string variable
+            String author ="Review Author: " + cursor.getString(COL_REVIEW_AUTHOR);
+            String content = cursor.getString(COL_REVIEW_CONTENT);
+            final String reviewUri = cursor.getString(COL_REVIEW_URL);
 
-                // Set update the Review Card View with the Author and Content information
-                mReview_Author.setText(author);
-                mReview_Content.setText(content);
+            // Set review card elements text
+            mReview_Author.setText(author);
+            mReview_Content.setText(content);
 
-                mReview_Content.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse(reviewUri));
-                        context.startActivity(intent);
-                    }
-                });
-
-                // Break out of the while loop if we move to the next table (trailer)
-                if (cursor.getColumnName(COL_TRAILER__ID).contains("_id")) {
-                    break;
+            // onClickListener for the review card
+            mReviewCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(reviewUri));
+                    context.startActivity(intent);
                 }
-            }
+            });
         }
     }
 
@@ -367,6 +355,10 @@ public class DetailMovieAdapter extends CursorAdapter {
         // Set the static local Trailer elements
         @BindView(R.id.trailer_icon) ImageView mTrailerIcon;
         @BindView(R.id.trailer_name) TextView mTrailerName;
+        @BindView(R.id.trailer_site) TextView mTrailerSite;
+        @BindView(R.id.trailer_type) TextView mTrailerType;
+        @BindView(R.id.trailer_size) TextView mTrailerSize;
+        @BindView(R.id.trailerCard) android.support.v7.widget.CardView mTrailerCard;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -382,44 +374,44 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param cursor - The current cursor
          */
         public void bindViews(final Context context, Cursor cursor){
-            // Loop through the records of review data until
-            // we get to the next cursor's first column name
-            for(int i = 0; i<cursor.getCount();i++){
-                // Set local string variable
-                String trailerName = cursor.getString(COL_MOVIE_TITLE) + " - " + cursor.getString(COL_TRAILER_NAME);
-                final String video_id = cursor.getString(COL_TRAILER_KEY);
+            // Get the video_id for the trailer
+            final String video_id = cursor.getString(COL_TRAILER_KEY);
+            // Add thumbnail image for specific trailer on youtube
+            String poster = "http://i3.ytimg.com/vi/"+video_id+"/hqdefault.jpg";
+            AQuery aq = new AQuery(mTrailerIcon);
+            aq.id(mTrailerIcon).image(poster).visible();
 
-                // Add thumbnail image for specific trailer on youtube
-                String poster = "http://i3.ytimg.com/vi/"+video_id+"/default.jpg";
-                //poster.replace("{}",video_id);
+            // Create local string variable
+            String trailerName = "Title: " + cursor.getString(COL_TRAILER_NAME);
+            String trailerSite = "Site: " + cursor.getString(COL_TRAILER_SITE);
+            String trailerType = "Type: " + cursor.getString(COL_TRAILER_TYPE);
+            String trailerSize = "Size: " + cursor.getString(COL_TRAILER_SIZE);
 
-                AQuery aq = new AQuery(mTrailerIcon);
-                aq.id(mTrailerIcon).image(poster).visible();
+            // Set trailer card elements text
+            mTrailerName.setText(trailerName);
+            mTrailerSite.setText(trailerSite);
+            mTrailerSize.setText(trailerSize);
+            mTrailerType.setText(trailerType);
 
-                Log.v("Trailer Name ",trailerName);
-
-                // Set update the Trailer Card View with the Trailer Icon and Name
-                //trailerHolder.mTrailerIcon.setImageResource(R.drawable.ic_entypo);
-                mTrailerName.setText(trailerName);
-                mTrailerName.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // Try to open up youtube with trailer video directly, but if not able
-                        // I open an internet browser
-                        // Note: I embedded this code section based on the stackoverflow post
-                        // it was a lot better then what I was thinking of doing
-                        // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
-                        try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
-                            context.startActivity(intent);
-                        } catch (ActivityNotFoundException ex) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse("http://www.youtube.com/watch?v=" + video_id));
-                            context.startActivity(intent);
-                        }
+            // onClickListener for the trailer card
+            mTrailerCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Try to open up youtube with trailer video directly, but if not able
+                    // I open an internet browser
+                    // Note: I embedded this code section based on the stackoverflow post
+                    // it was a lot better then what I was thinking of doing
+                    // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
+                        context.startActivity(intent);
+                    } catch (ActivityNotFoundException ex) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://www.youtube.com/watch?v=" + video_id));
+                        context.startActivity(intent);
                     }
-                });
-            }
+                }
+            });
         }
     }
 }

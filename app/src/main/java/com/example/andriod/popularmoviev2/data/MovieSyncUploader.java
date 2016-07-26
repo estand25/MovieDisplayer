@@ -365,10 +365,77 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
     }
 
     /**
+     * Populate the reivew table
+     * @param movie_id - Movie id for the specific reviews
+     */
+    public void getReviewInfor(final int movie_id){
+        // Delete already existing data
+        deleteAllReview();
+
+        // Create an instance of the framework that create the Uri and converter the json to gson
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(movieRoot)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // Uses the framework services to connect to the API
+        TheMovieDBAPIService service = retrofit.create(TheMovieDBAPIService.class);
+
+        // Call the service for movie's review
+        Call<ReviewColl> jsonReviewColl = service.getMovieReview(movie_id,BuildConfig.THE_MOVIE_DB_API);
+
+        // Start the connect up and see if it successed and you have a response
+        // or if you failure and you got nothing
+        jsonReviewColl.enqueue(new Callback<ReviewColl>() {
+            @Override
+            public void onResponse(Call<ReviewColl> call, Response<ReviewColl> response) {
+                // Grab the response (the list of movie review) from the API
+                // and put it in a local list variable
+                List<Review> movieReview = response.body().getReviews();
+
+                // ContentValue Array that I will past to bulkinsert
+                ContentValues[] bulkMovieReview = new ContentValues[movieReview.size()];
+
+                // Index counter
+                int i = 0;
+
+                // Loop through added the individual movie details to the ContentValue
+                for(Review review : movieReview){
+                    // Content that holds all the populated movie information
+                    // retrieved from the Movie DB API
+                    ContentValues reviewContent = new ContentValues();
+
+                    // Set the value of each column and insert the movie property
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movie_id);
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID,review.getId());
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
+
+                    // Add review detail to the ContentValue aray
+                    bulkMovieReview[i] = reviewContent;
+
+                    // Increment index
+                    i++;
+                }
+                mContentResolver.bulkInsert(MovieContract.ReviewEntry.CONTENT_URI,bulkMovieReview);
+            }
+
+            @Override
+            public void onFailure(Call<ReviewColl> call, Throwable t) {
+                Log.e(TAG,"Retrofit 2 failed to populate movie review table!!");
+            }
+        });
+    }
+
+    /**
      * Populate the trailer table
      * @param movie_id - Movie id for the specific trailers
      */
     public void getTrailerInfor(final int movie_id){
+        // Deleted already existing data
+        deleteAllTrailer();
+
         // Create an instance of the framework that created the Uri and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(movieRoot)
@@ -429,67 +496,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         });
     }
 
-    /**
-     * Populate the reivew table
-     * @param movie_id - Movie id for the specific reviews
-     */
-    public void getReviewInfor(final int movie_id){
-        // Create an instance of the framework that create the Uri and converter the json to gson
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(movieRoot)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        // Uses the framework services to connect to the API
-        TheMovieDBAPIService service = retrofit.create(TheMovieDBAPIService.class);
-
-        // Call the service for movie's review
-        Call<ReviewColl> jsonReviewColl = service.getMovieReview(movie_id,BuildConfig.THE_MOVIE_DB_API);
-
-        // Start the connect up and see if it successed and you have a response
-        // or if you failure and you got nothing
-        jsonReviewColl.enqueue(new Callback<ReviewColl>() {
-            @Override
-            public void onResponse(Call<ReviewColl> call, Response<ReviewColl> response) {
-                // Grab the response (the list of movie review) from the API
-                // and put it in a local list variable
-                List<Review> movieReview = response.body().getReviews();
-
-                // ContentValue Array that I will past to bulkinsert
-                ContentValues[] bulkMovieReview = new ContentValues[movieReview.size()];
-
-                // Index counter
-                int i = 0;
-
-                // Loop through added the individual movie details to the ContentValue
-                for(Review review : movieReview){
-                    // Content that holds all the populated movie information
-                    // retrieved from the Movie DB API
-                    ContentValues reviewContent = new ContentValues();
-
-                    // Set the value of each column and insert the movie property
-                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movie_id);
-                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID,review.getId());
-                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
-                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
-                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
-
-                    // Add review detail to the ContentValue aray
-                    bulkMovieReview[i] = reviewContent;
-
-                    // Increment index
-                    i++;
-                }
-                mContentResolver.bulkInsert(MovieContract.ReviewEntry.CONTENT_URI,bulkMovieReview);
-            }
-
-            @Override
-            public void onFailure(Call<ReviewColl> call, Throwable t) {
-                Log.e(TAG,"Retrofit 2 failed to populate movie review table!!");
-            }
-        });
-    }
-
      /**
      * Delete all the other tables associated to the correct GridView display
      */
@@ -504,5 +510,19 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
      */
     public void deleteAllGenre(){
         mContentResolver.delete(MovieContract.GenreEntry.CONTENT_URI,"",new String[]{});
+    }
+
+    /**
+     * Delete Review before populate the table
+     */
+    public void deleteAllReview(){
+        mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
+    }
+
+    /**
+     * Delete Trailer before populate the table
+     */
+    public void deleteAllTrailer(){
+        mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"", new String[]{});
     }
 }

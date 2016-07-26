@@ -7,20 +7,23 @@
     android:layout_height="match_parent"
     card_view:cardCornerRadius="1dp"
     card_view:cardUseCompatPadding="true"
-    card_view:cardElevation="5dp">
-    <LinearLayout
+    card_view:cardElevation="5dp"
+    android:id="@+id/reviewCard">
+    <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/detail_reviewList">
+        android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/review_author"/>
+            android:id="@+id/review_author"
+            android:padding="10dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/review_content"/>
-    </LinearLayout>
+            android:id="@+id/review_content"
+            android:layout_below="@+id/review_author"
+            android:padding="10dp"/>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

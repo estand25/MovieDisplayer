@@ -7,21 +7,43 @@
     android:layout_height="match_parent"
     card_view:cardCornerRadius="1dp"
     card_view:cardUseCompatPadding="true"
-    card_view:cardElevation="5dp">
+    card_view:cardElevation="5dp"
+    android:id="@+id/trailerCard">
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/detail_trailerList">
+        android:layout_height="wrap_content">
         <ImageView
-            android:layout_toLeftOf="@+id/trailer_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/trailer_icon"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/trailer_name"/>
+            android:id="@+id/trailer_name"
+            android:layout_toRightOf="@+id/trailer_icon"
+            android:padding="1dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailer_site"
+            android:layout_toRightOf="@+id/trailer_icon"
+            android:layout_below="@id/trailer_name"
+            android:padding="1dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailer_type"
+            android:layout_toRightOf="@+id/trailer_icon"
+            android:layout_below="@+id/trailer_site"
+            android:padding="1dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailer_size"
+            android:layout_toRightOf="@+id/trailer_icon"
+            android:layout_below="@+id/trailer_type"
+            android:padding="1dp"/>
     </RelativeLayout>
 </android.support.v7.widget.CardView>
