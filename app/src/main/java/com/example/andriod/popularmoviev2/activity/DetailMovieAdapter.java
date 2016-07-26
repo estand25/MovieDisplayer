@@ -95,10 +95,9 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent){
-
         // Choose the layout type
         int viewType = getItemViewType(cursor.getColumnCount());
-        Log.v("Cursor position",String.valueOf(cursor.getColumnCount()));
+        Log.v("Cursor Column count: ",String.valueOf(cursor.getColumnCount()));
 
         // Set the default layoutid value for layout
         int layoutid = -1;
@@ -166,16 +165,13 @@ public class DetailMovieAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, final Context context, Cursor cursor){
-
-        // Move to the cursor column location
-        cursor.moveToNext();
-
         // Determine which ViewType I should be using
         int viewType = getItemViewType(cursor.getColumnCount());
 
         // Switch to the correct viewHolder based on the view type
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
+                //cursor.moveToNext();
                 // Set the local viewHolder with the previous tag information
                 DetailMovieViewHolder detailMovieViewHolder = (DetailMovieViewHolder) view.getTag();
                 // Bind cursor data to the view
@@ -190,6 +186,8 @@ public class DetailMovieAdapter extends CursorAdapter {
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
+                //cursor.getColumnIndex("_id");
+
                 // Set the local viewHolder with the previous tag information
                 TrailerViewHolder trailerViewHolder = (TrailerViewHolder) view.getTag();
                 // Bind cursor data to the view
@@ -208,25 +206,25 @@ public class DetailMovieAdapter extends CursorAdapter {
     public int getItemViewType(int position){
         // Initialize and set the ret
         int ret = -1;
-        boolean found = false;
 
         // Get the cursorCount from the passed in cursor
         int[] cursorCount = getCursor().getExtras().getIntArray(DetailMovieFragment.MOVIE_DETAIL);
 
         // Determine which viewType should be used based on unique columns in each of the table
-        while (!found) {
-            if(cursorCount[0] == position){
-                ret = VIEW_TYPE_MOVIE_DETAIL;
-                found = true;
-            } else if(cursorCount[1] == position){
-                ret = VIEW_TYPE_MOVIE_REVIEWS;
-                found = true;
-            } else if(cursorCount[2] == position){
-                ret = VIEW_TYPE_MOVIE_TRAILER;
-                found = true;
-            }
-            position++;
+        if(cursorCount[0] == position){
+            ret = VIEW_TYPE_MOVIE_DETAIL;
+        } else if(cursorCount[1] == position){
+            ret = VIEW_TYPE_MOVIE_REVIEWS;
+        } else if(cursorCount[2] == position){
+            ret = VIEW_TYPE_MOVIE_TRAILER;
         }
+        /*if(position > -1 && position < cursorCount[0]){
+            ret = VIEW_TYPE_MOVIE_DETAIL;
+        } else if(position >= cursorCount[0] && position < (cursorCount[0]+cursorCount[1])){
+            ret  = VIEW_TYPE_MOVIE_REVIEWS;
+        } else if(position >= (cursorCount[0]+cursorCount[1]) && position < (cursorCount[0]+cursorCount[1]+cursorCount[2])){
+            ret = VIEW_TYPE_MOVIE_TRAILER;
+        }*/
         // Return the viewType
         return ret;
     }
@@ -238,65 +236,6 @@ public class DetailMovieAdapter extends CursorAdapter {
     @Override
     public int getViewTypeCount(){
         return VIEW_TYPE_COUNT;
-    }
-
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        // Move to the cursor column location
-        getCursor().moveToNext();
-
-        int itemViewType = getItemViewType(getCursor().getColumnCount());
-        switch (itemViewType) {
-            case VIEW_TYPE_MOVIE_DETAIL:
-                DetailMovieViewHolder detailMovieViewHolder;
-
-                if (convertView == null) {
-                    convertView = newView(myContext, getCursor(), parent);
-                    detailMovieViewHolder = new DetailMovieViewHolder(convertView);
-                    convertView.setTag(detailMovieViewHolder);
-                } else {
-                    detailMovieViewHolder = (DetailMovieViewHolder) convertView.getTag();
-                    //detailMovieViewHolder.bindViews(myContext,getCursor());
-                    //return convertView;
-                }
-
-                bindView(convertView, myContext, getCursor());
-                return convertView;
-            case VIEW_TYPE_MOVIE_REVIEWS:
-                ReviewViewHolder reviewViewHolder;
-
-                if (convertView == null) {
-                    convertView = newView(myContext, getCursor(), parent);
-                    reviewViewHolder = new ReviewViewHolder(convertView);
-                    convertView.setTag(reviewViewHolder);
-                } else {
-                    reviewViewHolder = (ReviewViewHolder) convertView.getTag();
-                    //reviewViewHolder.bindViews(myContext,getCursor());
-                    //return convertView;
-                }
-
-                bindView(convertView, myContext, getCursor());
-                return convertView;
-            case VIEW_TYPE_MOVIE_TRAILER:
-                TrailerViewHolder trailerViewHolder;
-
-                if (convertView == null) {
-                    convertView = newView(myContext, getCursor(), parent);
-                    trailerViewHolder = new TrailerViewHolder(convertView);
-                    convertView.setTag(trailerViewHolder);
-                } else {
-                    trailerViewHolder = (TrailerViewHolder) convertView.getTag();
-                    //trailerViewHolder.bindViews(myContext,getCursor());
-                    //return convertView;
-                }
-
-                bindView(convertView, myContext, getCursor());
-                return convertView;
-            default:
-                throw new IllegalArgumentException();
-        }
     }
 
     /**
@@ -326,6 +265,8 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param cursor - The current cursor
          */
         public void bindViews(Context context, Cursor cursor) {
+            //cursor.moveToNext();
+
             // Create an instance of AQuery and set it to the movieView item
             // Take the ImageView and add an Image from the post location and make it visible too
             // Replaced Picassa with AQuery per the below form post. The image were loading to slow
@@ -447,6 +388,13 @@ public class DetailMovieAdapter extends CursorAdapter {
                 // Set local string variable
                 String trailerName = cursor.getString(COL_MOVIE_TITLE) + " - " + cursor.getString(COL_TRAILER_NAME);
                 final String video_id = cursor.getString(COL_TRAILER_KEY);
+
+                // Add thumbnail image for specific trailer on youtube
+                String poster = "http://i3.ytimg.com/vi/"+video_id+"/default.jpg";
+                //poster.replace("{}",video_id);
+
+                AQuery aq = new AQuery(mTrailerIcon);
+                aq.id(mTrailerIcon).image(poster).visible();
 
                 Log.v("Trailer Name ",trailerName);
 
