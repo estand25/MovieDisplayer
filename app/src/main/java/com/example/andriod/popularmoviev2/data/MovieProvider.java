@@ -128,9 +128,9 @@ public class MovieProvider extends ContentProvider {
     private Cursor getFavoriteMovie(Uri uri){
         return sFavoriteMovie.query(
                 mOpenHelper.getReadableDatabase(),
-                null,
-                null,
-                null,
+                new String[]{"movie.movie_id"}, //null,
+                "movie.movie_id = ?",//null,
+                new String[]{MovieContract.FavoriteMovies.getFavoriteMovieID(uri)},//null,
                 null,
                 null,
                 null);

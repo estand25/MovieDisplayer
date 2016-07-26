@@ -46,12 +46,6 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI,id);
         }
 
-        // Get a list of move based on type from the DB
-        public static Uri buildMovieList(String movieType){
-            return CONTENT_URI.buildUpon().
-                    appendPath(movieType).build();
-        }
-
         // Uri for the specific Movie ID in the movie table
         public static Uri buildMovieIDUri(int MovieID){
             return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
@@ -206,9 +200,19 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE_MOVIES;
 
-        // Uri for the specific favorite movie row in the favoritemovie table
+        // Uri for the specific favorite movie row in the favorite movie table
         public static Uri buildFavoriteMovieUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
+        }
+
+        // Uri for the specific Movie ID in the movie table
+        public static Uri buildFavoriteMovieIDUri(int MovieID){
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
+        }
+
+        // Uri for getting the movie id
+        public static String getFavoriteMovieID(Uri uri){
+            return uri.getPathSegments().get(1);
         }
 
         // String hold the table name

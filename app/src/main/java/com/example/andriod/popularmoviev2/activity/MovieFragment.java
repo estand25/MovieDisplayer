@@ -61,12 +61,12 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     static final int COL_MOVIE_GENRE_IDS = 6;
     static final int COL_MOVIE_TITLE = 9;
 
+    MovieSyncUploader movieSyncUploader;
+
     /**
      * Empty construction
      */
     public MovieFragment() {}
-
-    MovieSyncUploader movieSyncUploader;
 
     /**
      * A callback interface that all activities containing this fragment must

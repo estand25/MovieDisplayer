@@ -10,12 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
+import com.example.andriod.popularmoviev2.other.Utility;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,6 +69,7 @@ public class DetailMovieAdapter extends CursorAdapter {
     static final int COL_REVIEW_AUTHOR = 3;
     static final int COL_REVIEW_CONTENT = 4;
     static final int COL_REVIEW_URL = 5;
+    static MovieSyncUploader movieSyncUploader;
 
     private static final int VIEW_TYPE_MOVIE_DETAIL = 0;
     private static final int VIEW_TYPE_MOVIE_REVIEWS = 1;
@@ -83,7 +87,11 @@ public class DetailMovieAdapter extends CursorAdapter {
     public DetailMovieAdapter(Context context, Cursor cursor, int flags){
         super(context,cursor,flags);
 
+        // Local context
         myContext = context;
+
+        // Local movie sync uploader
+        movieSyncUploader = new MovieSyncUploader(context, true);
     }
 
     /**
@@ -250,6 +258,8 @@ public class DetailMovieAdapter extends CursorAdapter {
         @BindView(R.id.detail_releaseDateTextView) TextView mDetail_releaseDateTextView;
         @BindView(R.id.detail_genreTextView) TextView mDetail_genreTextView;
         @BindView(R.id.detail_UserRateingLayout) LinearLayout mUserRatingLayout;
+        @BindView(R.id.detail_favoriteMovieLayout) LinearLayout mFavoriteMovieLayout;
+        @BindView(R.id.detail_favorButton) ImageButton mFavorButton;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -264,7 +274,7 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param context - The current context
          * @param cursor - The current cursor
          */
-        public void bindViews(Context context, Cursor cursor) {
+        public void bindViews(Context context, final Cursor cursor) {
             // Create an instance of AQuery and set it to the movieView item
             // Take the ImageView and add an Image from the post location and make it visible too
             // Replaced Picassa with AQuery per the below form post. The image were loading to slow
@@ -294,12 +304,32 @@ public class DetailMovieAdapter extends CursorAdapter {
                 mUserRatingLayout.addView(starImages);
                 //center_vertical 16 and Left 3
                 mUserRatingLayout.setVerticalGravity(16 | 3);
-                Log.v("Stars created ", Integer.toString(i));
             }
 
             // Populates the Release Date & Genre id
             mDetail_releaseDateTextView.setText(cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE));
             mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
+
+            // Check if movie is favorite or not
+            if(cursor.getString(COL_DETAIL_MOVIE_TYPE).isEmpty()){
+                mFavorButton.setImageResource(R.drawable.unfavorite);
+            }else{
+                mFavorButton.setImageResource(R.drawable.favorite);
+            }
+
+            // Set local variable for movie id
+            final int movieId = Integer.parseInt(cursor.getString(COL_DETAIL_MOVIE_ID));
+
+            // onClickListener for favorite button to update movie type
+            // and add it to favorite_movie type
+            mFavorButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mFavorButton.setImageResource(R.drawable.favorite);
+                    movieSyncUploader.updateMovieFavorite(movieId);
+                }
+            });
+
         }
     }
 
@@ -376,8 +406,16 @@ public class DetailMovieAdapter extends CursorAdapter {
         public void bindViews(final Context context, Cursor cursor){
             // Get the video_id for the trailer
             final String video_id = cursor.getString(COL_TRAILER_KEY);
+
             // Add thumbnail image for specific trailer on youtube
-            String poster = "http://i3.ytimg.com/vi/"+video_id+"/hqdefault.jpg";
+            // Determine what type of screen is being used got it from this post
+            //  (http://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet)
+            String poster;
+            if (Utility.isTablet(context)) {
+                poster = "http://i3.ytimg.com/vi/"+video_id+"/default.jpg";
+            } else {
+                poster = "http://i3.ytimg.com/vi/"+video_id+"/hqdefault.jpg";
+            }
             AQuery aq = new AQuery(mTrailerIcon);
             aq.id(mTrailerIcon).image(poster).visible();
 
