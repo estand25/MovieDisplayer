@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.andriod.popularmoviev2.activity.DetailMovieFragment;
+import com.example.andriod.popularmoviev2.model.Movie;
 
 /**
  * Note: Base on SunShine App
@@ -68,7 +69,7 @@ public class MovieProvider extends ContentProvider {
         );
 
         // This is an inner join which looks a
-        // favorite_movie INNER JOIN movie on movie_id = favorite_movie.movie_id
+        // favorite_movie INNER JOIN movie on movie.movie_id = favorite_movie.movie_id
         sFavoriteMovie.setTables(
                 MovieContract.FavoriteMovies.TABLE_NAME + " INNER JOIN " +
                         MovieContract.MovieEntry.TABLE_NAME +
@@ -88,6 +89,11 @@ public class MovieProvider extends ContentProvider {
     public static final String sGenreIdSettingSelection =
             MovieContract.GenreEntry.TABLE_NAME +
                     "." + MovieContract.GenreEntry.COLUMN_GENRE_ID + " = ?";
+
+    // favorite_movie = ?
+    public static final String sFavoriteSettingSelection =
+            MovieContract.FavoriteMovies.TABLE_NAME +
+                    "." + MovieContract.FavoriteMovies.COLUMN_MOVIE_ID + " = ? ";
 
     /**
      * Get a Cursor using SQLiteQueryBuilder for a join between Review and movie
@@ -129,8 +135,8 @@ public class MovieProvider extends ContentProvider {
         return sFavoriteMovie.query(
                 mOpenHelper.getReadableDatabase(),
                 new String[]{"movie.movie_id"}, //null,
-                "movie.movie_id = ?",//null,
-                new String[]{MovieContract.FavoriteMovies.getFavoriteMovieID(uri)},//null,
+                sFavoriteSettingSelection,//null,
+                new String[]{MovieContract.MovieEntry.getMovieID(uri)},//null,MovieContract.FavoriteMovies.getFavoriteMovieID(uri)
                 null,
                 null,
                 null);
@@ -217,9 +223,7 @@ public class MovieProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder){
         Cursor retCursor = null;
-        if(uri.toString().contains("movie_detail")){
-            Log.v("Movie Detail "," I'm getting here");
-        }
+
         switch (sUriMatcher.match(uri)){
             case MOVIE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -246,7 +250,7 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             case MOVIE_DETAILS: {
-                // Updated Movie Detail with this soluation instead of using three adapter to one adapter
+                // Updated Movie Detail with this solution instead of using three adapter to one adapter
                 // with multiply viewType layout
                 // https://discussions.udacity.com/t/how-do-you-design-popularmovies-detail-view-in-terms-of-loaders-adapters-tables/37618/6
 
@@ -256,12 +260,8 @@ public class MovieProvider extends ContentProvider {
                 // Set-up the CursorCount to the length of the Cursors array
                 int[] cursorsCount = new int[cursors.length];
 
-                Log.v("Movie Detail before ", uri.toString());
-
                 // Set the Uri for the movie information
                 uri = MovieContract.MovieEntry.buildMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(uri));
-
-                Log.v("Movie URI after ", uri.toString());
 
                 // Set the first entry in the cursor with the movie details
                 cursors[0]= query(
@@ -277,8 +277,6 @@ public class MovieProvider extends ContentProvider {
                 // Set the Uri for the movie review information
                 uri = MovieContract.ReviewEntry.buildReviewMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(uri));
 
-                Log.v("Review URI ", uri.toString());
-
                 // Set the second entry in the cursor with the review details
                 cursors[1] = query(
                         uri,
@@ -292,8 +290,6 @@ public class MovieProvider extends ContentProvider {
 
                 // Set the Uri for the movie trailer information
                 uri = MovieContract.TrailerEntry.buildTrailerMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(uri));
-
-                Log.v("Trailer URI ", uri.toString());
 
                 // Set the third entry in the cursor with the review
                 cursors[2] = query(

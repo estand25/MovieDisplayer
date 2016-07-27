@@ -148,14 +148,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     // local variable that holds favorite movie status
                     String favorStatus = "";
 
-                    // Check if movie already in favorite_movie table
-                    if(!queryFavoriteMovie(movie.getId())){
-                        Log.v("Movie not set as favor ",movie.getTitle());
-                    }else{
-                        Log.v("Movie set as favor ",movie.getTitle());
-                        favorStatus = "FAVOR";
-                    }
-
                     // Content that holds all the popular movie information
                     // retrieved from the Movie DB API
                     ContentValues popularMovieContenter = new ContentValues();
@@ -236,11 +228,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     // local variable that holds favorite movie status
                     String favorStatus = "";
 
-                    // Check if movie already is on the favorites movie list
-                    if(queryFavoriteMovie(movie.getId())){
-                        favorStatus = "FAVOR";
-                    }
-
                     // Content that holds all the popular movie information
                     // retrieved from the Movie DB API
                     ContentValues topRatedMovieContenter = new ContentValues();
@@ -311,7 +298,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         favorites.put(MovieContract.FavoriteMovies.COLUMN_MOVIE_ID,String.valueOf(movieId));
 
         // Insert the movie id into favorite table
-        mContentResolver.insert(MovieContract.FavoriteMovies.CONTENT_URI,
+        mContentResolver.insert(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),
                 favorites);
     }
 
@@ -321,10 +308,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
      * @return - Returns true if movie id already exists and false if it doesn't
      */
     public boolean queryFavoriteMovie(int movieId){
-        // Content Value that holds the favorite movie information
-        ContentValues favorites = new ContentValues();
-        favorites.put(MovieContract.FavoriteMovies.COLUMN_MOVIE_ID,String.valueOf(movieId));
-
         // Create cursor with favorite movie id for passed in movie id
         Cursor cursor = mContentResolver.query(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),
                                             null,// new String[]{"movie_id"},
@@ -338,19 +321,23 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         cursor.close();
 
         return result;
-        //Log.v("Favorite column 1 ",cursor.getColumnName(0));
-        //Log.v("Favorite column 1 data ",String.valueOf(cursor.getInt(1)));
-        // Return true or false if cursor has null data in index 1 column
-        //if(cursor.getString(0).equals(String.valueOf(movieId))){
-        //    Log.v("Movie in table ",String.valueOf(movieId));
-        //    cursor.close();
-        //    return true;
-        //} else{
-        //    Log.v("Movie not in table ",String.valueOf(movieId));
-        //    cursor.close();
-        //    return false;
-        //}
-        //return cursor.moveToFirst();
+    }
+
+    public void chkFavoriteMovie(int movieId){
+        // Check if movie already in favorite_movie table
+        if(!queryFavoriteMovie(movieId)) {
+            insertFavoriteMovie(movieId);
+        }
+    }
+
+    public void deleteFavoriteMovie(int movieId){
+        int i = mContentResolver.delete(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),
+                                                MovieContract.FavoriteMovies.TABLE_NAME + "." + MovieContract.FavoriteMovies.COLUMN_MOVIE_ID + " = ? ",
+                                                new String[]{MovieContract.MovieEntry.getMovieID(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId))});
+
+        if(i != 0){
+            getContext().getContentResolver().notifyChange(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),null);
+        }
     }
 
     /**

@@ -105,9 +105,8 @@ public class DetailMovieAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent){
         // Choose the layout type
         int viewType = getItemViewType(cursor.getColumnCount());
-        Log.v("Cursor Column count: ",String.valueOf(cursor.getColumnCount()));
 
-        // Set the default layoutid value for layout
+        // Set the default layout id value for layout
         int layoutid = -1;
 
         // Switch to the correct layout based on the view type
@@ -226,14 +225,6 @@ public class DetailMovieAdapter extends CursorAdapter {
         } else if(cursorCount[2] == position){
             ret = VIEW_TYPE_MOVIE_TRAILER;
         }
-        /*if(position > -1 && position < cursorCount[0]){
-            ret = VIEW_TYPE_MOVIE_DETAIL;
-        } else if(position >= cursorCount[0] && position < (cursorCount[0]+cursorCount[1])){
-            ret  = VIEW_TYPE_MOVIE_REVIEWS;
-        } else if(position >= (cursorCount[0]+cursorCount[1]) && position < (cursorCount[0]+cursorCount[1]+cursorCount[2])){
-            ret = VIEW_TYPE_MOVIE_TRAILER;
-        }*/
-        // Return the viewType
         return ret;
     }
 
@@ -311,7 +302,8 @@ public class DetailMovieAdapter extends CursorAdapter {
             mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
 
             // Check if movie is favorite or not
-            if(cursor.getString(COL_DETAIL_MOVIE_TYPE).isEmpty()){
+            final boolean favoriteSetting = cursor.getString(COL_DETAIL_MOVIE_TYPE).isEmpty();
+            if(favoriteSetting){
                 mFavorButton.setImageResource(R.drawable.unfavorite);
             }else{
                 mFavorButton.setImageResource(R.drawable.favorite);
@@ -329,7 +321,6 @@ public class DetailMovieAdapter extends CursorAdapter {
                     movieSyncUploader.updateMovieFavorite(movieId);
                 }
             });
-
         }
     }
 
