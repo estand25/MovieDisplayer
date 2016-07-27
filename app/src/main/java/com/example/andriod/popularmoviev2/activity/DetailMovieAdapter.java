@@ -312,6 +312,20 @@ public class DetailMovieAdapter extends CursorAdapter {
             // Set local variable for movie id
             final int movieId = Integer.parseInt(cursor.getString(COL_DETAIL_MOVIE_ID));
 
+            // Create String array of movie stuff
+            final String[] movieStuff = new String[10];
+
+            movieStuff[0] = cursor.getString(COL_DETAIL_MOVIE_ID);
+            movieStuff[1] = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
+            movieStuff[2] = cursor.getString(COL_DETAIL_MOVIE_OVERVIEW);
+            movieStuff[3] = cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE);
+            movieStuff[4] = cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS);
+            movieStuff[5] = cursor.getString(COL_DETAIL_MOVIE_ORIG_TITLE);
+            movieStuff[6] = cursor.getString(COL_DETAIL_MOVIE_ORIG_LANGUAGE);
+            movieStuff[7] = cursor.getString(COL_DETAIL_MOVIE_TITLE);
+            movieStuff[8] = cursor.getString(COL_DETAIL_MOVIE_BACKDROP_PATH);
+            movieStuff[9] = cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE);
+
             // onClickListener for favorite button to update movie type
             // and add it to favorite_movie type
             mFavorButton.setOnClickListener(new View.OnClickListener() {
@@ -319,6 +333,11 @@ public class DetailMovieAdapter extends CursorAdapter {
                 public void onClick(View view) {
                     mFavorButton.setImageResource(R.drawable.favorite);
                     movieSyncUploader.updateMovieFavorite(movieId);
+
+                    // Check if movie already in favorite_movie table
+                    if(!movieSyncUploader.queryFavoriteMovie(movieId)) {
+                        movieSyncUploader.insertFavoriteMovie(movieStuff);
+                    }
                 }
             });
         }

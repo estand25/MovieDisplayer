@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.andriod.popularmoviev2.BuildConfig;
+import com.example.andriod.popularmoviev2.activity.DetailMovieFragment;
 import com.example.andriod.popularmoviev2.model.Genre;
 import com.example.andriod.popularmoviev2.model.Genres;
 import com.example.andriod.popularmoviev2.model.Movie;
@@ -174,8 +175,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                     // Increment index
                     i++;
-
-                    //Log.v("Movie Name ",movie.getTitle());
                 }
                 // Bulk insert all the new content information
                 mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulkPopularMovies);
@@ -281,24 +280,34 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 movieTypeContent,
                 "movie.movie_id = ?",
                 new String[]{String.valueOf(movieId)});
-
-        // Check if movie already in favorite_movie table
-        if(!queryFavoriteMovie(movieId)) {
-            insertFavoriteMovie(movieId);
-        }
     }
 
     /**
      * Insert movie id into the favorite_movie table
-     * @param movieId - The movie id to add to the favorite_movie table
+     * @param movieStuff - Movie array of movie parts
      */
-    public void insertFavoriteMovie(int movieId){
+    public void insertFavoriteMovie(String[] movieStuff){
+
         // Content Value that holds the favorite movie information
         ContentValues favorites = new ContentValues();
-        favorites.put(MovieContract.FavoriteMovies.COLUMN_MOVIE_ID,String.valueOf(movieId));
+
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_MOVIE_ID, movieStuff[0]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_POSTER_PATH, movieStuff[1]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_ADULT, "");
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_OVERVIEW, movieStuff[2]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_RELEASE_DATE, movieStuff[3]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_GENRE_IDS, movieStuff[4]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_ORIGINAL_TITLE, movieStuff[5]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_ORIGINAL_LANGUAGE, movieStuff[6]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_TITLE, movieStuff[7]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_BACKDROP_PATH, movieStuff[8]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_POPULARITY, "");
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_VOTE_COUNT, "");
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_VIDEO, "");
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_VOTE_AVERAGE, movieStuff[9]);
 
         // Insert the movie id into favorite table
-        mContentResolver.insert(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),
+        mContentResolver.insert(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(Integer.parseInt(movieStuff[0])),
                 favorites);
     }
 
@@ -310,23 +319,29 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
     public boolean queryFavoriteMovie(int movieId){
         // Create cursor with favorite movie id for passed in movie id
         Cursor cursor = mContentResolver.query(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),
-                                            null,// new String[]{"movie_id"},
-                                            null,// "movie.movie_id = ?",
-                                            null,// new String[]{String.valueOf(movieId)},
-                                            null);
+                null,
+                null,
+                null,
+                null);
 
         Log.v("Favorite row count ",String.valueOf(cursor.getCount()));
 
+        // Set boolean based on if cursor can moveToFirst
         boolean result = cursor.moveToFirst();
+        // Close the cursor before return
         cursor.close();
-
+        // Return result of move to first for cursor
         return result;
     }
 
+    /**
+     * Check if favorite movie exist in the table
+     * @param movieId - The movie id to check for
+     */
     public void chkFavoriteMovie(int movieId){
-        // Check if movie already in favorite_movie table
-        if(!queryFavoriteMovie(movieId)) {
-            insertFavoriteMovie(movieId);
+        // Check if movie is in the favorite_movie table
+        if(queryFavoriteMovie(movieId)){
+            updateMovieFavorite(movieId);
         }
     }
 

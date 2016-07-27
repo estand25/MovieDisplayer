@@ -5,6 +5,7 @@
 
     <string name="pref_sort_option_mPopular_label">Most Popular</string>
     <string name="pref_sort_option_mTopRate_label">Top Rated</string>
+    <string name="pref_sort_option_mFavorite_movie_label">Favorite Movies</string>
     <string name="pref_sort_option_label">Sort Options</string>
 
     <string name="pref_sort_option_key" translatable="false">sort_option</string>
@@ -12,15 +13,18 @@
 
     <string name="pref_sort_option_mPopular">movie/popular</string>
     <string name="pref_sort_option_mTopRate">movie/top_rated</string>
+    <string name="pref_sort_option_mFavorite_movie">favorite_movie</string>
 
     <string-array name="pref_sort_option">
         <item>@string/pref_sort_option_mPopular_label</item>
         <item>@string/pref_sort_option_mTopRate_label</item>
+        <item>@string/pref_sort_option_mFavorite_movie_label</item>
     </string-array>
 
     <string-array name="pref_sort_option_value">
         <item>@string/pref_sort_option_mPopular</item>
         <item>@string/pref_sort_option_mTopRate</item>
+        <item>@string/pref_sort_option_mFavorite_movie</item>
     </string-array>
 
     <string name="detail_title_label">Movie Details</string>

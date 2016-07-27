@@ -20,7 +20,7 @@ import com.example.andriod.popularmoviev2.data.MovieContract.FavoriteMovies;
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     static final String DATABASE_NAME = "movieviewer.db";
 
@@ -101,6 +101,19 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_FAVORITE_MOVIE_TABLE = "CREATE TABLE " + FavoriteMovies.TABLE_NAME + " ( "+
                 FavoriteMovies.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "+
                 FavoriteMovies._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                FavoriteMovies.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                FavoriteMovies.COLUMN_ADULT + " BLOB NULL, " +
+                FavoriteMovies.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
+                FavoriteMovies.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                FavoriteMovies.COLUMN_GENRE_IDS + " TEXT NOT NULL, " +
+                FavoriteMovies.COLUMN_ORIGINAL_TITLE + " TEXT NULL, " +
+                FavoriteMovies.COLUMN_ORIGINAL_LANGUAGE + " TEXT NULL, " +
+                FavoriteMovies.COLUMN_TITLE + " TEXT NOT NULL, " +
+                FavoriteMovies.COLUMN_BACKDROP_PATH + " TEXT NOT NULL, " +
+                FavoriteMovies.COLUMN_POPULARITY + " REAL NULL, " +
+                FavoriteMovies.COLUMN_VOTE_COUNT + " REAL NULL, " +
+                FavoriteMovies.COLUMN_VIDEO + " BLOB NULL, " +
+                FavoriteMovies.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
 
                 " FOREIGN KEY (" + FavoriteMovies.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";

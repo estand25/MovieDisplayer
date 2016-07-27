@@ -129,14 +129,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // Initialize the custom movie adapter with necessary Curse adapter information
         movieAdapter = new MovieAdapter(getActivity(),null,0);
 
-        // Inflate all the items on the fragmen_main layout
+        // Inflate all the items on the fragment_main layout
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //  Find the GridView on the fragment_main layout and set it to the
-        // local representize
+        // Find the GridView on the fragment_main layout and set it to the
+        // local representation
         gridView = (GridView) rootView.findViewById(R.id.gridView);
 
-        //  Populare the GridView with the custom adapter information
+        //  Populate the GridView with the custom adapter information
         gridView.setAdapter(movieAdapter);
 
         // Check if device is landscape or portrait I got this working, but find a good post about it
@@ -154,8 +154,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // and populate the database with the selections information
         if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
             movieSyncUploader.getPopularMovieColl();
-        } else {
+        } else if (Utility.getPreferredMovieType(getContext()).equals("movie/top_rated")) {
             movieSyncUploader.getTopRateMovieColl();
+        } else {
+
         }
 
         // When one of the view on the GridView is click the below will happen
@@ -170,10 +172,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // if it cannot seek to that position
                 if(cursor != null){
 
+                    movieSyncUploader.chkFavoriteMovie(cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getGenreInfo(cursor.getString(COL_MOVIE_GENRE_IDS),cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
-
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
                 }
