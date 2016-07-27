@@ -150,14 +150,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         movieSyncUploader = new MovieSyncUploader(getContext(), true);
 
-        // Check which display option is being used  and display the information
+        // Check which display option is being used and display the information
         // and populate the database with the selections information
         if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
             movieSyncUploader.getPopularMovieColl();
         } else if (Utility.getPreferredMovieType(getContext()).equals("movie/top_rated")) {
             movieSyncUploader.getTopRateMovieColl();
-        } else {
-
+        } else if (Utility.getPreferredMovieType(getContext()).equals("favorite_movie")) {
+            movieSyncUploader.getFavoriteMovieColl();
         }
 
         // When one of the view on the GridView is click the below will happen

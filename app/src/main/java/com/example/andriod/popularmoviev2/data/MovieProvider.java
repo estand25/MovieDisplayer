@@ -35,7 +35,8 @@ public class MovieProvider extends ContentProvider {
     static final int REVIEW_FOR_MOVIE = 106;
     static final int TRAILER_FOR_MOVIE = 107;
     static final int FAVORITE_MOVIES = 108;
-    static final int MOVIE_DETAILS = 109;
+    static final int FAVORITE_MOVIES_ID = 109;
+    static final int MOVIE_DETAILS = 110;
 
     private static final SQLiteQueryBuilder sMovieWithReview;
     private static final SQLiteQueryBuilder sMovieWithTrailer;
@@ -158,7 +159,8 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
         matcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEW);
         matcher.addURI(authority, MovieContract.PATH_GENRE + "/*",GENRE_FOR_MOVIE);
-        matcher.addURI(authority, MovieContract.PATH_FAVORITE_MOVIES + "/*", FAVORITE_MOVIES);
+        matcher.addURI(authority, MovieContract.PATH_FAVORITE_MOVIES + "/*", FAVORITE_MOVIES_ID);
+        matcher.addURI(authority, MovieContract.PATH_FAVORITE_MOVIES, FAVORITE_MOVIES);
         matcher.addURI(authority, MovieContract.PATH_REVIEW + "/*",REVIEW_FOR_MOVIE);
         matcher.addURI(authority, MovieContract.PATH_TRAILER + "/*",TRAILER_FOR_MOVIE);
 
@@ -204,6 +206,8 @@ public class MovieProvider extends ContentProvider {
             case TRAILER_FOR_MOVIE:
                 return MovieContract.TrailerEntry.CONTENT_ITEM_TYPE;
             case FAVORITE_MOVIES:
+                return MovieContract.FavoriteMovies.CONTENT_ITEM_TYPE;
+            case FAVORITE_MOVIES_ID:
                 return MovieContract.FavoriteMovies.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri );
@@ -372,7 +376,19 @@ public class MovieProvider extends ContentProvider {
                 retCursor = getMovieTrailer(uri);
                 break;
             }
-            case FAVORITE_MOVIES:{
+            case FAVORITE_MOVIES: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.ReviewEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case FAVORITE_MOVIES_ID:{
                 retCursor = getFavoriteMovie(uri);
                 break;
             }
@@ -426,7 +442,7 @@ public class MovieProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
-            case FAVORITE_MOVIES:{
+            case FAVORITE_MOVIES_ID:{
                 long _id = db.insert(MovieContract.FavoriteMovies.TABLE_NAME, null, values);
                 if(_id > 0)
                     returnUri = MovieContract.FavoriteMovies.buildFavoriteMovieUri(_id);
@@ -497,6 +513,14 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
+            case FAVORITE_MOVIES_ID:{
+                rowsDeleted = db.delete(
+                        MovieContract.FavoriteMovies.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            }
             case FAVORITE_MOVIES:{
                 rowsDeleted = db.delete(
                         MovieContract.FavoriteMovies.TABLE_NAME,
@@ -559,6 +583,13 @@ public class MovieProvider extends ContentProvider {
             }
             case TRAILER:{
                 rowsUpdated = db.update(MovieContract.TrailerEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            }
+            case FAVORITE_MOVIES_ID:{
+                rowsUpdated = db.update(MovieContract.FavoriteMovies.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
@@ -633,6 +664,13 @@ public class MovieProvider extends ContentProvider {
                             break;
                         }
                         case FAVORITE_MOVIES: {
+                            _id = db.insert(MovieContract.FavoriteMovies.TABLE_NAME, null, value);
+                            if (_id != -1) {
+                                returnCount++;
+                            }
+                            break;
+                        }
+                        case FAVORITE_MOVIES_ID: {
                             _id = db.insert(MovieContract.FavoriteMovies.TABLE_NAME, null, value);
                             if (_id != -1) {
                                 returnCount++;

@@ -86,8 +86,11 @@ public class SettingActivity extends PreferenceActivity
         // and populate the database with the selections information
         if(Utility.getPreferredMovieType(getApplicationContext()).equals("movie/popular")) {
             movieSyncUploader.getPopularMovieColl();
-        }else{
+        }else if (Utility.getPreferredMovieType(getApplicationContext()).equals("movie/top_rated")) {
             movieSyncUploader.getTopRateMovieColl();
+        } else if (Utility.getPreferredMovieType(getApplicationContext()).equals("favorite_movie")) {
+            movieSyncUploader.getFavoriteMovieColl();
         }
+
     }
 }

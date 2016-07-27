@@ -4,6 +4,10 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -268,7 +272,7 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param context - The current context
          * @param cursor - The current cursor
          */
-        public void bindViews(Context context, final Cursor cursor) {
+        public void bindViews(final Context context, final Cursor cursor) {
             // Create an instance of AQuery and set it to the movieView item
             // Take the ImageView and add an Image from the post location and make it visible too
             // Replaced Picassa with AQuery per the below form post. The image were loading to slow
@@ -297,29 +301,37 @@ public class DetailMovieAdapter extends CursorAdapter {
             Log.v("String 0 ",scores[0]);
             final String endPart = scores[1];
             Log.v("String 1 ",scores[1]);
-
+            Log.v("vote ",String.valueOf(cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE)));
             // Loop through and populate the start images
-            for (int i = 0; i <= cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
+            for (int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
                 final ImageView starImages = new ImageView(context);
                 starImages.setImageResource(R.drawable.star);
-                mUserRatingLayout.addView(starImages);
-                //center_vertical 16 and Left 3
-                mUserRatingLayout.setVerticalGravity(16 | 3);
                 // https://guides.codepath.com/android/Working-with-the-ImageView
                 /*if(i == cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE)){
                     starImages.post(new Runnable() {
                         @Override
                         public void run() {
-                            int height = starImages.getHeight();
-                            int width = starImages.getWidth();
-
-                            RelativeLayout.LayoutParams rel = (RelativeLayout.LayoutParams)starImages.getLayoutParams();
-
-                            rel.height = height;
-                            rel.width = Integer.parseInt(endPart);
+                            int width = Integer.parseInt(endPart);
+                            Bitmap srcBmp = BitmapFactory.decodeResource(context.getResources(),R.drawable.star);
+                            Bitmap modBmp = Bitmap.createBitmap(
+                                    srcBmp,
+                                    0,
+                                    srcBmp.getHeight()/width,
+                                    srcBmp.getHeight(),
+                                    srcBmp.getHeight()
+                            );
+                            final ImageView lastStar = new ImageView(context);
+                            lastStar.setImageBitmap(modBmp);
+                            mUserRatingLayout.addView(lastStar);
+                            //center_vertical 16 and Left 3
+                            mUserRatingLayout.setVerticalGravity(16 | 3);
                         }
                     });
-                }*/
+                }else {*/
+                mUserRatingLayout.addView(starImages);
+                //center_vertical 16 and Left 3
+                mUserRatingLayout.setVerticalGravity(16 | 3);
+                //}
             }
 
             // Populates the Release Date & Genre id
@@ -338,7 +350,7 @@ public class DetailMovieAdapter extends CursorAdapter {
             final int movieId = Integer.parseInt(cursor.getString(COL_DETAIL_MOVIE_ID));
 
             // Create String array of movie stuff
-            final String[] movieStuff = new String[10];
+            final String[] movieStuff = new String[12];
 
             movieStuff[0] = cursor.getString(COL_DETAIL_MOVIE_ID);
             movieStuff[1] = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
@@ -349,7 +361,9 @@ public class DetailMovieAdapter extends CursorAdapter {
             movieStuff[6] = cursor.getString(COL_DETAIL_MOVIE_ORIG_LANGUAGE);
             movieStuff[7] = cursor.getString(COL_DETAIL_MOVIE_TITLE);
             movieStuff[8] = cursor.getString(COL_DETAIL_MOVIE_BACKDROP_PATH);
-            movieStuff[9] = cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE);
+            movieStuff[9] = cursor.getString(COL_DETAIL_MOVIE_POPULARITY);
+            movieStuff[10] = cursor.getString(COL_DETAIL_MOVIE_VOTE_COUNT);
+            movieStuff[11] = cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE);
 
             // onClickListener for favorite button to update movie type
             // and add it to favorite_movie type

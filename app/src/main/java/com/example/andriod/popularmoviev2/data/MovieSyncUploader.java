@@ -265,6 +265,52 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         });
     }
 
+    public void getFavoriteMovieColl(){
+        // Create cursor with all the current favorite movies
+        Cursor cursor = mContentResolver.query(MovieContract.FavoriteMovies.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+
+        cursor.moveToFirst();
+        Log.v("Favorite movie count ",String.valueOf(cursor.getCount()));
+
+        // ContentValue Array that I will past to bulkInsert
+        ContentValues[] bulkFavoriteMovies = new ContentValues[cursor.getCount()];
+
+        // Loop through added the individual favorite movie details to the ContentValue
+        for(int i = 0;i<= cursor.getCount();i++){
+
+            // Content that will hold favorite movie information
+            // retrieved from the favorite_movie table
+            ContentValues favoriteMovieContent = new ContentValues();
+
+            // Set the value of each column and insert the favorite movie for movie property
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, cursor.getString(0));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, cursor.getString(2));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_ADULT, cursor.getString(3));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, cursor.getString(4));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, cursor.getString(5));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_GENRE_IDS,  cursor.getString(6));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, cursor.getString(7));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE, cursor.getString(8));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_TITLE, cursor.getString(9));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, cursor.getString(10));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_POPULARITY, cursor.getString(11));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, cursor.getString(12));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_VIDEO, cursor.getString(13));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, cursor.getString(14));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, cursor.getString(15)); //blank if not favorite
+
+            // Add the favorite movie detail to the ContentValue array
+            bulkFavoriteMovies[i] = favoriteMovieContent;
+        }
+        cursor.close();
+        // Bulk insert all the favorite movies into the movie table to display
+        mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulkFavoriteMovies);
+    }
+
     /**
      * Update movie & add favorite_movie for the specific movie id for the favorite list
      * @param movieId - The movie id to update movie and add to the favorite_movie table
@@ -287,7 +333,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
      * @param movieStuff - Movie array of movie parts
      */
     public void insertFavoriteMovie(String[] movieStuff){
-
         // Content Value that holds the favorite movie information
         ContentValues favorites = new ContentValues();
 
@@ -301,10 +346,10 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         favorites.put(MovieContract.FavoriteMovies.COLUMN_ORIGINAL_LANGUAGE, movieStuff[6]);
         favorites.put(MovieContract.FavoriteMovies.COLUMN_TITLE, movieStuff[7]);
         favorites.put(MovieContract.FavoriteMovies.COLUMN_BACKDROP_PATH, movieStuff[8]);
-        favorites.put(MovieContract.FavoriteMovies.COLUMN_POPULARITY, "");
-        favorites.put(MovieContract.FavoriteMovies.COLUMN_VOTE_COUNT, "");
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_POPULARITY, movieStuff[9]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_VOTE_COUNT, movieStuff[10]);
         favorites.put(MovieContract.FavoriteMovies.COLUMN_VIDEO, "");
-        favorites.put(MovieContract.FavoriteMovies.COLUMN_VOTE_AVERAGE, movieStuff[9]);
+        favorites.put(MovieContract.FavoriteMovies.COLUMN_VOTE_AVERAGE, movieStuff[11]);
 
         // Insert the movie id into favorite table
         mContentResolver.insert(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(Integer.parseInt(movieStuff[0])),

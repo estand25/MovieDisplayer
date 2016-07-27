@@ -120,32 +120,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_FAVORITE_MOVIE_TABLE);
     }
 
-
-
-    /**
-     * Return Cursor with Genre name
-     * Note: Final a example that error checks inital SQLiteDatabase before
-     * doing anything so I used it.
-     * https://gist.github.com/mikeplate/9173040
-     * @param genreid
-     * @return
-     */
-    public Cursor getIndGenre(String genreid){
-        // Set a local SQLiteDatabase to use the rawQuery against
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        // Check if local db has anything in there if it does not return null
-        if(db == null){
-            return null;
-        }
-
-        // Set-up query string to pass to local cursor
-        String rawQuery = "SELECT name FROM genre WHERE genre_id = " +genreid;
-
-        // Return the cursor with the results of the query
-        return db.rawQuery(rawQuery,null);
-    }
-
     /**
      * When new database is create Old database will be deleted
      * @param sqLiteDatabase - Database object
