@@ -20,7 +20,7 @@ import com.example.andriod.popularmoviev2.data.MovieContract.FavoriteMovies;
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     static final String DATABASE_NAME = "movieviewer.db";
 
@@ -99,8 +99,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_TRAILER_TABLE);
 
         final String SQL_CREATE_FAVORITE_MOVIE_TABLE = "CREATE TABLE " + FavoriteMovies.TABLE_NAME + " ( "+
-                FavoriteMovies.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "+
                 FavoriteMovies._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                FavoriteMovies.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "+
                 FavoriteMovies.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
                 FavoriteMovies.COLUMN_ADULT + " BLOB NULL, " +
                 FavoriteMovies.COLUMN_OVERVIEW + " TEXT NOT NULL, " +

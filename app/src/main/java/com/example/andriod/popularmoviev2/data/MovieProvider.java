@@ -378,7 +378,7 @@ public class MovieProvider extends ContentProvider {
             }
             case FAVORITE_MOVIES: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.ReviewEntry.TABLE_NAME,
+                        MovieContract.FavoriteMovies.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,

@@ -295,43 +295,13 @@ public class DetailMovieAdapter extends CursorAdapter {
             // Add the user rating TextView to the user rating layout
             mUserRatingLayout.addView(mDetail_userRatingTextView);
 
-            String score = cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE);
-            String[] scores = score.split(Pattern.quote("."));
-
-            Log.v("String 0 ",scores[0]);
-            final String endPart = scores[1];
-            Log.v("String 1 ",scores[1]);
-            Log.v("vote ",String.valueOf(cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE)));
             // Loop through and populate the start images
             for (int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
                 final ImageView starImages = new ImageView(context);
                 starImages.setImageResource(R.drawable.star);
-                // https://guides.codepath.com/android/Working-with-the-ImageView
-                /*if(i == cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE)){
-                    starImages.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            int width = Integer.parseInt(endPart);
-                            Bitmap srcBmp = BitmapFactory.decodeResource(context.getResources(),R.drawable.star);
-                            Bitmap modBmp = Bitmap.createBitmap(
-                                    srcBmp,
-                                    0,
-                                    srcBmp.getHeight()/width,
-                                    srcBmp.getHeight(),
-                                    srcBmp.getHeight()
-                            );
-                            final ImageView lastStar = new ImageView(context);
-                            lastStar.setImageBitmap(modBmp);
-                            mUserRatingLayout.addView(lastStar);
-                            //center_vertical 16 and Left 3
-                            mUserRatingLayout.setVerticalGravity(16 | 3);
-                        }
-                    });
-                }else {*/
                 mUserRatingLayout.addView(starImages);
                 //center_vertical 16 and Left 3
                 mUserRatingLayout.setVerticalGravity(16 | 3);
-                //}
             }
 
             // Populates the Release Date & Genre id
@@ -339,7 +309,7 @@ public class DetailMovieAdapter extends CursorAdapter {
             mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
 
             // Check if movie is favorite or not
-            final boolean favoriteSetting = cursor.getString(COL_DETAIL_MOVIE_TYPE).isEmpty();
+            final boolean favoriteSetting = cursor.getString(COL_DETAIL_MOVIE_TYPE).contains("movie");
             if(favoriteSetting){
                 mFavorButton.setImageResource(R.drawable.unfavorite);
             }else{
@@ -352,6 +322,7 @@ public class DetailMovieAdapter extends CursorAdapter {
             // Create String array of movie stuff
             final String[] movieStuff = new String[12];
 
+            // Movie parts
             movieStuff[0] = cursor.getString(COL_DETAIL_MOVIE_ID);
             movieStuff[1] = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
             movieStuff[2] = cursor.getString(COL_DETAIL_MOVIE_OVERVIEW);

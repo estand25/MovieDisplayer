@@ -1,6 +1,5 @@
 package com.example.andriod.popularmoviev2.activity;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -8,13 +7,12 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.andriod.popularmoviev2.data.MovieDbHelper;
-import com.example.andriod.popularmoviev2.data.MovieProvider;
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.R;
 
 /**
+ * Setting activity option screen
  * Created by StandleyEugene on 6/30/2016.
  */
 public class SettingActivity extends PreferenceActivity
@@ -76,7 +74,6 @@ public class SettingActivity extends PreferenceActivity
         super.onStop();
         // Updated grid view after setting activity closes if not already displaying
         // the correct movie information
-        Log.v("Movie Type ", Utility.getPreferredMovieType(getApplicationContext()));
         MovieSyncUploader movieSyncUploader = new MovieSyncUploader(getApplicationContext(),false);
 
         // Remove all the information before populate new data

@@ -146,9 +146,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                 // Loop through added the individual movie details to the ContentValue
                 for(Movie movie : popularMovies){
-                    // local variable that holds favorite movie status
-                    String favorStatus = "";
-
                     // Content that holds all the popular movie information
                     // retrieved from the Movie DB API
                     ContentValues popularMovieContenter = new ContentValues();
@@ -168,7 +165,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO,movie.getVideo());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
-                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,favorStatus); //blank if not favorite
+                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,Utility.getPreferredMovieType(getContext())); //blank if not favorite
 
                     // Add movie details to the ContentValue array
                     bulkPopularMovies[i] = popularMovieContenter;
@@ -224,9 +221,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
                 // Loop through added the individual movie details to the ContentValue
                 for(Movie movie : topRatedMovies){
-                    // local variable that holds favorite movie status
-                    String favorStatus = "";
-
                     // Content that holds all the popular movie information
                     // retrieved from the Movie DB API
                     ContentValues topRatedMovieContenter = new ContentValues();
@@ -246,7 +240,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO,movie.getVideo());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
-                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,favorStatus); //blank if not favorite
+                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,Utility.getPreferredMovieType(getContext())); //blank if not favorite
 
                     // Add movie details to the ContentValue array
                     bulktopRatedMovies[i] = topRatedMovieContenter;
@@ -273,21 +267,29 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 null,
                 null);
 
-        cursor.moveToFirst();
         Log.v("Favorite movie count ",String.valueOf(cursor.getCount()));
+        Log.v("Favorite Column ",cursor.getColumnName(0));
+        Log.v("Favorite Column data ",cursor.getColumnName(1));
+        cursor.moveToPosition(0);
+        Log.v("Favorite movie Column ",cursor.getColumnName(2).toString());
 
         // ContentValue Array that I will past to bulkInsert
         ContentValues[] bulkFavoriteMovies = new ContentValues[cursor.getCount()];
 
+        // Set the movie type
+        String favor = "FAVOR";
+
         // Loop through added the individual favorite movie details to the ContentValue
-        for(int i = 0;i<= cursor.getCount();i++){
+        for(int i = 0;i<= (cursor.getCount()-1);i++){
+            Log.v("Favorite Count ",String.valueOf(i));
+            Log.v("Favorite Title ",cursor.getString(9));
 
             // Content that will hold favorite movie information
             // retrieved from the favorite_movie table
             ContentValues favoriteMovieContent = new ContentValues();
 
             // Set the value of each column and insert the favorite movie for movie property
-            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, cursor.getString(0));
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, cursor.getString(1));
             favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, cursor.getString(2));
             favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_ADULT, cursor.getString(3));
             favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, cursor.getString(4));
@@ -301,10 +303,13 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
             favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, cursor.getString(12));
             favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_VIDEO, cursor.getString(13));
             favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, cursor.getString(14));
-            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, cursor.getString(15)); //blank if not favorite
+            favoriteMovieContent.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, favor); //blank if not favorite
 
             // Add the favorite movie detail to the ContentValue array
             bulkFavoriteMovies[i] = favoriteMovieContent;
+
+            // Move to the next row in cursor
+            cursor.moveToNext();
         }
         cursor.close();
         // Bulk insert all the favorite movies into the movie table to display
