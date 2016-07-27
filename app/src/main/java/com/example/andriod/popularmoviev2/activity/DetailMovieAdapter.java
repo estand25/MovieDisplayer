@@ -13,12 +13,15 @@ import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.other.Utility;
+
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -288,13 +291,35 @@ public class DetailMovieAdapter extends CursorAdapter {
             // Add the user rating TextView to the user rating layout
             mUserRatingLayout.addView(mDetail_userRatingTextView);
 
+            String score = cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE);
+            String[] scores = score.split(Pattern.quote("."));
+
+            Log.v("String 0 ",scores[0]);
+            final String endPart = scores[1];
+            Log.v("String 1 ",scores[1]);
+
             // Loop through and populate the start images
-            for (int i = 0; i < cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
-                ImageView starImages = new ImageView(context);
+            for (int i = 0; i <= cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE); i++) {
+                final ImageView starImages = new ImageView(context);
                 starImages.setImageResource(R.drawable.star);
                 mUserRatingLayout.addView(starImages);
                 //center_vertical 16 and Left 3
                 mUserRatingLayout.setVerticalGravity(16 | 3);
+                // https://guides.codepath.com/android/Working-with-the-ImageView
+                /*if(i == cursor.getInt(COL_DETAIL_MOVIE_VOTE_AVERAGE)){
+                    starImages.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            int height = starImages.getHeight();
+                            int width = starImages.getWidth();
+
+                            RelativeLayout.LayoutParams rel = (RelativeLayout.LayoutParams)starImages.getLayoutParams();
+
+                            rel.height = height;
+                            rel.width = Integer.parseInt(endPart);
+                        }
+                    });
+                }*/
             }
 
             // Populates the Release Date & Genre id
