@@ -185,7 +185,6 @@ public class DetailMovieAdapter extends CursorAdapter {
         // Switch to the correct viewHolder based on the view type
         switch(viewType){
             case VIEW_TYPE_MOVIE_DETAIL:{
-                //cursor.moveToNext();
                 // Set the local viewHolder with the previous tag information
                 DetailMovieViewHolder detailMovieViewHolder = (DetailMovieViewHolder) view.getTag();
                 // Bind cursor data to the view
@@ -200,7 +199,6 @@ public class DetailMovieAdapter extends CursorAdapter {
                 break;
             }
             case VIEW_TYPE_MOVIE_TRAILER:{
-                //cursor.getColumnIndex("_id");
 
                 // Set the local viewHolder with the previous tag information
                 TrailerViewHolder trailerViewHolder = (TrailerViewHolder) view.getTag();
@@ -310,6 +308,7 @@ public class DetailMovieAdapter extends CursorAdapter {
 
             // Check if movie is favorite or not
             final boolean favoriteSetting = cursor.getString(COL_DETAIL_MOVIE_TYPE).contains("movie");
+            Log.v("Movie Type ",cursor.getString(COL_DETAIL_MOVIE_TYPE));
             if(favoriteSetting){
                 mFavorButton.setImageResource(R.drawable.unfavorite);
             }else{
@@ -370,7 +369,6 @@ public class DetailMovieAdapter extends CursorAdapter {
      * Class that holds the View elements for the Review section
      */
     static class ReviewViewHolder {
-        static boolean display = false;
         // Set the static local Review elements
         @BindView(R.id.review_author) TextView mReview_Author;
         @BindView(R.id.review_content) TextView mReview_Content;

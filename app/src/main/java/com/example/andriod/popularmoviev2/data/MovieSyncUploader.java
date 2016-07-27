@@ -405,9 +405,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                                        new String[]{MovieContract.MovieEntry.getMovieID(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId))});
 
         // Check if row was deleted then notify ContentValue of the change
-        if(i != 0){
+        //if(i != 0){
             getContext().getContentResolver().notifyChange(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),null);
-        }
+        //}
     }
 
     /**
