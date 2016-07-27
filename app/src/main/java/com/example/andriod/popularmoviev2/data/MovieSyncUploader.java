@@ -185,7 +185,7 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
     }
 
     /**
-     * Populated movie with top rated movie
+     * Populated movie with top rated movies
      */
     public void getTopRateMovieColl(){
         // Remove all the information before populating new data
@@ -259,6 +259,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
         });
     }
 
+    /**
+     * Populated movie with favorite movies
+     */
     public void getFavoriteMovieColl(){
         // Create cursor with all the current favorite movies
         Cursor cursor = mContentResolver.query(MovieContract.FavoriteMovies.CONTENT_URI,
@@ -267,11 +270,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 null,
                 null);
 
-        Log.v("Favorite movie count ",String.valueOf(cursor.getCount()));
-        Log.v("Favorite Column ",cursor.getColumnName(0));
-        Log.v("Favorite Column data ",cursor.getColumnName(1));
+        // Move to position 0 in cursor
         cursor.moveToPosition(0);
-        Log.v("Favorite movie Column ",cursor.getColumnName(2).toString());
 
         // ContentValue Array that I will past to bulkInsert
         ContentValues[] bulkFavoriteMovies = new ContentValues[cursor.getCount()];
@@ -281,9 +281,6 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
 
         // Loop through added the individual favorite movie details to the ContentValue
         for(int i = 0;i<= (cursor.getCount()-1);i++){
-            Log.v("Favorite Count ",String.valueOf(i));
-            Log.v("Favorite Title ",cursor.getString(9));
-
             // Content that will hold favorite movie information
             // retrieved from the favorite_movie table
             ContentValues favoriteMovieContent = new ContentValues();
@@ -311,7 +308,9 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
             // Move to the next row in cursor
             cursor.moveToNext();
         }
+        // Close cursor
         cursor.close();
+
         // Bulk insert all the favorite movies into the movie table to display
         mContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,bulkFavoriteMovies);
     }
@@ -320,11 +319,11 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
      * Update movie & add favorite_movie for the specific movie id for the favorite list
      * @param movieId - The movie id to update movie and add to the favorite_movie table
      */
-    public void updateMovieFavorite(int movieId){
+    public void updateMovieFavorite(int movieId, String input){
         // Content Value that holds the movie type (Blank or Favor)
         // Note: FAVOR movie will appear in movie list
         ContentValues movieTypeContent = new ContentValues();
-        movieTypeContent.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,"FAVOR");
+        movieTypeContent.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE,input);
 
         // Update the movie type field in movie
         mContentResolver.update(MovieContract.MovieEntry.CONTENT_URI,
@@ -374,12 +373,12 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                 null,
                 null);
 
-        Log.v("Favorite row count ",String.valueOf(cursor.getCount()));
-
         // Set boolean based on if cursor can moveToFirst
         boolean result = cursor.moveToFirst();
+
         // Close the cursor before return
         cursor.close();
+
         // Return result of move to first for cursor
         return result;
     }
@@ -391,15 +390,21 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
     public void chkFavoriteMovie(int movieId){
         // Check if movie is in the favorite_movie table
         if(queryFavoriteMovie(movieId)){
-            updateMovieFavorite(movieId);
+            updateMovieFavorite(movieId,"FAVOR");
         }
     }
 
+    /**
+     * Delete movie from favorite_movie
+     * @param movieId - The movie id to delete from the table
+     */
     public void deleteFavoriteMovie(int movieId){
+        // ContentResolver that deletes the specified movie from the favorite_movie table
         int i = mContentResolver.delete(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),
-                                                MovieContract.FavoriteMovies.TABLE_NAME + "." + MovieContract.FavoriteMovies.COLUMN_MOVIE_ID + " = ? ",
-                                                new String[]{MovieContract.MovieEntry.getMovieID(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId))});
+                                       MovieContract.FavoriteMovies.TABLE_NAME + "." + MovieContract.FavoriteMovies.COLUMN_MOVIE_ID + " = ? ",
+                                       new String[]{MovieContract.MovieEntry.getMovieID(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId))});
 
+        // Check if row was deleted then notify ContentValue of the change
         if(i != 0){
             getContext().getContentResolver().notifyChange(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),null);
         }

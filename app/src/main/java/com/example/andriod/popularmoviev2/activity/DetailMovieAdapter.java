@@ -341,12 +341,25 @@ public class DetailMovieAdapter extends CursorAdapter {
             mFavorButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mFavorButton.setImageResource(R.drawable.favorite);
-                    movieSyncUploader.updateMovieFavorite(movieId);
+                    // Check if movie is on favorite list then
+                    //  change the button image and updates the movie_type to FAVOR
+                    //  then check if movie is already in favorite table if not
+                    //  added to the favorite table otherwise nothing happens
+                    // Otherwise I change the button image then
+                    //  update the movie_type to blank and delete the movie from the
+                    //  favorite movie table
+                    if(favoriteSetting){
+                        mFavorButton.setImageResource(R.drawable.favorite);
+                        movieSyncUploader.updateMovieFavorite(movieId,"FAVOR");
 
-                    // Check if movie already in favorite_movie table
-                    if(!movieSyncUploader.queryFavoriteMovie(movieId)) {
-                        movieSyncUploader.insertFavoriteMovie(movieStuff);
+                        // Check if movie already in favorite_movie table
+                        if(!movieSyncUploader.queryFavoriteMovie(movieId)) {
+                            movieSyncUploader.insertFavoriteMovie(movieStuff);
+                        }
+                    }else {
+                        mFavorButton.setImageResource(R.drawable.unfavorite);
+                        movieSyncUploader.updateMovieFavorite(movieId,"");
+                        movieSyncUploader.deleteFavoriteMovie(movieId);
                     }
                 }
             });

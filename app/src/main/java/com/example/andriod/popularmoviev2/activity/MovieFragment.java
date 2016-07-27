@@ -61,6 +61,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     static final int COL_MOVIE_GENRE_IDS = 6;
     static final int COL_MOVIE_TITLE = 9;
 
+    // Create the local copy of movieSyncUploader
     MovieSyncUploader movieSyncUploader;
 
     /**
@@ -148,6 +149,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             gridView.setNumColumns(2);
         }
 
+        // Set up the MovieSyncUploader to populate the information
         movieSyncUploader = new MovieSyncUploader(getContext(), true);
 
         // Check which display option is being used and display the information
@@ -172,10 +174,16 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // if it cannot seek to that position
                 if(cursor != null){
 
+                    // Populate the movie detail information
+                    // Genre id -> Genre Name
+                    // Review Information for movie
+                    // Trailer Information for movie
                     movieSyncUploader.chkFavoriteMovie(cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getGenreInfo(cursor.getString(COL_MOVIE_GENRE_IDS),cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
                     movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
+
+                    // Route to onItemSelect in main activity
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
                 }
@@ -193,7 +201,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
-
         return  rootView;
     }
 
