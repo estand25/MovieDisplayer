@@ -1,17 +1,14 @@
 package com.example.andriod.popularmoviev2.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 
 import com.example.andriod.popularmoviev2.R;
 
 /**
  * DetailActivity that holds the tablayout for the three detail
+ *
  * fragement
  */
 public class DetailActivity extends AppCompatActivity{

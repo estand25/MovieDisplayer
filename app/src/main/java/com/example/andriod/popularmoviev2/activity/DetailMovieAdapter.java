@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.other.Utility;
 

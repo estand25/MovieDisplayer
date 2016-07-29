@@ -54,7 +54,7 @@ public class TrailerInfoService extends IntentService{
         mContentResolver = getApplicationContext().getContentResolver();
 
         // Set the current context content Resolver
-        mContentResolver.delete(MovieContract.GenreEntry.CONTENT_URI,"",new String[]{});
+        mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"",new String[]{});
 
         final int movie_id = movieIntent.getIntExtra(Constants.TRAILER,0);
         // Create an instance of the framework that created the Uri and converter the json to gson

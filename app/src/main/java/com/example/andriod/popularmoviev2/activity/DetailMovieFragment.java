@@ -1,23 +1,17 @@
 package com.example.andriod.popularmoviev2.activity;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.ShareActionProvider;
 
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
@@ -32,20 +26,8 @@ import com.example.andriod.popularmoviev2.data.MovieContract.ReviewEntry;
 public class DetailMovieFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // Local class Log tag variable
-    private final String LOG_TAG = DetailMovieFragment.class.getSimpleName();
-
     // String constent for the MovieDetailFragment
     static final String MOVIE_DETAIL_URI = "URI";
-
-    // String constent for movie share hashtag
-    private static final String MOVIE_SHARE_HASHTAG = " #MovieDisplayerApp";
-
-    // ShareActionProvider for Movie Detail App
-    private ShareActionProvider mShareActionProvider;
-
-    // String that will display in share tag
-    private String mMovieDetail;
 
     // Local Uri identify
     private Uri mUri;
@@ -127,7 +109,7 @@ public class DetailMovieFragment extends Fragment
 
         // Get the loader manager start for this calls
         getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
-        Log.v("Loader Name "," Detail Movie, trailers, & reviews");
+
         super.onCreate(savedInstanceState);
     }
 
@@ -159,23 +141,6 @@ public class DetailMovieFragment extends Fragment
 
         // Returns the view with all the information
         return rootView;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        /*inflater.inflate(R.menu.detailfragment, menu);
-
-        // Retrieve the share menu item
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-
-        // Get the provider and hold onto it to set/change the share intent.
-        mShareActionProvider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-
-        // If onLoadFinished happens before this, we can go ahead and set the share intent now.
-        if (mForecast != null) {
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
-        }*/
     }
 
     /**
