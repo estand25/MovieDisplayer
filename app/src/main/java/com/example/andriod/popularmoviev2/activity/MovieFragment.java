@@ -18,7 +18,7 @@ import android.widget.GridView;
 
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
+import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.other.Constants;
 import com.example.andriod.popularmoviev2.other.Utility;
@@ -66,7 +66,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     static final int COL_MOVIE_TITLE = 9;
 
     // Create the local copy of movieSyncUploader
-    MovieSyncUploader movieSyncUploader;
+    MovieTableSync movieTableSync;
     private Intent mServiceIntent;
 
     /**
@@ -155,7 +155,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         }
 
         // Set up the MovieSyncUploader to populate the information
-        movieSyncUploader = new MovieSyncUploader(getContext(), true);
+        movieTableSync = new MovieTableSync(getContext());
 
         // Check which display option is being used and display the information
         // and populate the database with the selections information
@@ -183,11 +183,11 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 if(cursor != null){
 
                     // Populate the movie detail information
-                    movieSyncUploader.chkFavoriteMovie(cursor.getInt(COL_MOVIE_ID));
+                    movieTableSync.chkFavoriteMovie(cursor.getInt(COL_MOVIE_ID));
 
                     // Review Information Service for movie from The Movie DB API
-                    getActivity().startService(new Intent(getActivity(), ReviewInfoService.class).
-                                putExtra(Constants.REVIEW,cursor.getInt(COL_MOVIE_ID)));
+                    getActivity().startService(new Intent(getActivity(), ReviewInfoService.class)
+                            .putExtra(Constants.REVIEW,cursor.getInt(COL_MOVIE_ID)));
 
                     // Trailer Information Service for movie from the Movie DB API
                     getActivity().startService(new Intent(getContext(), TrailerInfoService.class)

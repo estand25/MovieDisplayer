@@ -44,6 +44,10 @@ public class ReviewInfoService extends IntentService{
         super("ReviewInfoService");
     }
 
+    /**
+     * Populate through contentResolver the review table for the movie
+     * @param movieIdIntent - Service intent that passes service necessary information
+     */
     @Override
     protected void onHandleIntent(Intent movieIdIntent){
         // Set the current context content Resolver
@@ -54,8 +58,6 @@ public class ReviewInfoService extends IntentService{
 
         // Get the data from the movieIdIntent
         final int movie_id = movieIdIntent.getIntExtra(Constants.REVIEW,0);
-
-        Log.v("Movie Id for Review ","1");
 
         // Create an instance of the framework that create the Uri and converter the json to gson
         final Retrofit retrofit = new Retrofit.Builder()

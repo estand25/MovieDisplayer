@@ -44,7 +44,10 @@ public class TrailerInfoService extends IntentService{
         super("TrailerInfoService");
     }
 
-
+    /**
+     *  Populate through contentResolver the trailer table for the movie
+     * @param movieIntent - Service intent that passes service necessary information
+     */
     @Override
     protected void onHandleIntent(Intent movieIntent){
         // Set the current context content Resolver

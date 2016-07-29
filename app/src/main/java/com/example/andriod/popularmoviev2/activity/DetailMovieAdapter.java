@@ -4,12 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.ClipDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +12,12 @@ import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
-import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
+import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.other.Utility;
-
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,7 +68,7 @@ public class DetailMovieAdapter extends CursorAdapter {
     static final int COL_REVIEW_AUTHOR = 3;
     static final int COL_REVIEW_CONTENT = 4;
     static final int COL_REVIEW_URL = 5;
-    static MovieSyncUploader movieSyncUploader;
+    static MovieTableSync movieTableSync;
 
     private static final int VIEW_TYPE_MOVIE_DETAIL = 0;
     private static final int VIEW_TYPE_MOVIE_REVIEWS = 1;
@@ -98,7 +90,7 @@ public class DetailMovieAdapter extends CursorAdapter {
         myContext = context;
 
         // Local movie sync uploader
-        movieSyncUploader = new MovieSyncUploader(context, true);
+        movieTableSync = new MovieTableSync(context);
     }
 
     /**
@@ -350,16 +342,16 @@ public class DetailMovieAdapter extends CursorAdapter {
                     //  favorite movie table
                     if(favoriteSetting){
                         mFavorButton.setImageResource(R.drawable.favorite);
-                        movieSyncUploader.updateMovieFavorite(movieId,"FAVOR");
+                        movieTableSync.updateMovieFavorite(movieId,"FAVOR");
 
                         // Check if movie already in favorite_movie table
-                        if(!movieSyncUploader.queryFavoriteMovie(movieId)) {
-                            movieSyncUploader.insertFavoriteMovie(movieStuff);
+                        if(!movieTableSync.queryFavoriteMovie(movieId)) {
+                            movieTableSync.insertFavoriteMovie(movieStuff);
                         }
                     }else {
                         mFavorButton.setImageResource(R.drawable.unfavorite);
-                        movieSyncUploader.updateMovieFavorite(movieId,"");
-                        movieSyncUploader.deleteFavoriteMovie(movieId);
+                        movieTableSync.updateMovieFavorite(movieId,"");
+                        movieTableSync.deleteFavoriteMovie(movieId);
                     }
                 }
             });

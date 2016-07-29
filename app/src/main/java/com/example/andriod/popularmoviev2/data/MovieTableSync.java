@@ -1,106 +1,29 @@
 package com.example.andriod.popularmoviev2.data;
 
-import android.accounts.Account;
-import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SyncResult;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.widget.Toast;
-
-import com.example.andriod.popularmoviev2.BuildConfig;
-import com.example.andriod.popularmoviev2.activity.DetailMovieFragment;
-import com.example.andriod.popularmoviev2.model.Genre;
-import com.example.andriod.popularmoviev2.model.Genres;
-import com.example.andriod.popularmoviev2.model.Movie;
-import com.example.andriod.popularmoviev2.model.MovieColl;
-import com.example.andriod.popularmoviev2.model.Review;
-import com.example.andriod.popularmoviev2.model.ReviewColl;
-import com.example.andriod.popularmoviev2.model.Trailer;
-import com.example.andriod.popularmoviev2.model.TrailerColl;
-import com.example.andriod.popularmoviev2.other.Utility;
-import com.example.andriod.popularmoviev2.service.TheMovieDBAPIService;
-
-import java.util.HashMap;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Note: Got the information for a initial idea from a thread posts below
- * I didn't want to do an IntentService so AbstractThreadSyncAdapter was the only
- * option post below:
- * http://blog.mediarain.com/2013/05/building-a-better-rest-client/
- * https://discussions.udacity.com/t/after-sync-not-all-movies-inserted-to-database/161971
- * https://developer.android.com/training/sync-adapters/creating-sync-adapter.html
+ * Helper class used during a couple of times during the app to update or delete tables
  *
- * Followed this training
- * https://developer.android.com/training/sync-adapters/creating-sync-adapter.html#CreateSyncAdapter
- *
- * Helper class used during a couple of time during the app to popular
- * specific tables and get the initial information for the db.
  * Created by StandleyEugene on 7/10/2016.
  */
-public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
-    private static String movieRoot = "http://api.themoviedb.org/3/";
-    protected final String TAG = getClass().getSimpleName();
-    // List of current movie
-    List<Movie> popularMovie;
-
-    // Global variable
+public class MovieTableSync {
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
-    Uri mUri;
-
-    /**
-     * Set up the sync adatper
-     * @param context - Get the current Context
-     * @param autoInitialize - Boolean from auto initialize
-     */
-    public MovieSyncUploader(Context context, boolean autoInitialize){
-        super(context,autoInitialize);
-
-        mContentResolver = context.getContentResolver();
-    }
+    Context myContext;
 
     /**
      * Set up the sync adatper. This form of the constructor
      * maintains compatibility with Android 3.0 and later platform
      *
      * @param context - Get the current Context
-     * @param autoInitialize - Boolean from auto initialize
-     * @param allowParallelSyncs - Boolean from allow paralle sync
      */
-    public MovieSyncUploader(Context context,
-                             boolean autoInitialize,
-                             boolean allowParallelSyncs){
-        super(context,autoInitialize,allowParallelSyncs);
-
+    public MovieTableSync(Context context){
         mContentResolver = context.getContentResolver();
-    }
-
-    /*
-        Specify the code you want to run in the sync adapter. The entire
-        sync adapter run a background thread, so you don't have to set
-        up your own back processing
-     */
-    @Override
-    public void onPerformSync(
-            Account account,
-            Bundle extras,
-            String authority,
-            ContentProviderClient provider,
-            SyncResult syncResult) {
+        myContext = context;
     }
 
     /**
@@ -193,8 +116,8 @@ public class MovieSyncUploader extends AbstractThreadedSyncAdapter {
                                        new String[]{MovieContract.MovieEntry.getMovieID(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId))});
 
         // Updated the notifyChange to update  the content provide for favorite_move and movie table
-        getContext().getContentResolver().notifyChange(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),null);
-        getContext().getContentResolver().notifyChange(MovieContract.MovieEntry.CONTENT_URI,null);
+        myContext.getContentResolver().notifyChange(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),null);
+        myContext.getContentResolver().notifyChange(MovieContract.MovieEntry.CONTENT_URI,null);
     }
 
      /**

@@ -9,6 +9,7 @@ import com.example.andriod.popularmoviev2.R;
 
 /**
  * Utilities class with utility methods
+ *
  * Created by StandleyEugene on 7/11/2016.
  */
 public class Utility {

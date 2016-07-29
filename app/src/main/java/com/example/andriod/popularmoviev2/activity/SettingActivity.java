@@ -7,7 +7,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
+import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.service.FavoriteMovieService;
@@ -77,10 +77,10 @@ public class SettingActivity extends PreferenceActivity
         super.onStop();
         // Updated grid view after setting activity closes if not already displaying
         // the correct movie information
-        MovieSyncUploader movieSyncUploader = new MovieSyncUploader(getApplicationContext(),false);
+        MovieTableSync movieTableSync = new MovieTableSync(getApplicationContext());
 
         // Remove all the information before populate new data
-        movieSyncUploader.deleteAllOtherTable();
+        movieTableSync.deleteAllOtherTable();
 
         // Check which display option is being used  and display the information
         // and populate the database with the selections information

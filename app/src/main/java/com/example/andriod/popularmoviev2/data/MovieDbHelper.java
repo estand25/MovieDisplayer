@@ -15,12 +15,13 @@ import com.example.andriod.popularmoviev2.data.MovieContract.FavoriteMovies;
 /**
  * Note: Base on SunShine App
  * MovieViewerDBHelper class create the Database and
- * create the individual tables (Movie, Review, Trailer, and Genre tables)
+ * create the individual tables (Movie, Review, Trailer, Genre, and Favorite_movie tables)
+ *
  * Created by StandleyEugene on 7/10/2016.
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     static final String DATABASE_NAME = "movieviewer.db";
 
@@ -77,10 +78,11 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";
         sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
 
+        /*
         final String SQL_CREATE_GENRE_TABLE = "CREATE TABLE " + GenreEntry.TABLE_NAME + " ( " +
                 GenreEntry.COLUMN_GENRE_ID + " INTEGER PRIMARY KEY, " +
                 GenreEntry.COLUMN_NAME + " TEXT NOT NULL); ";
-        sqLiteDatabase.execSQL(SQL_CREATE_GENRE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_GENRE_TABLE);*/
 
         final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerEntry.TABLE_NAME + " ( "+
                 TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -130,7 +132,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ReviewEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + GenreEntry.TABLE_NAME);
+        //sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + GenreEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TrailerEntry.TABLE_NAME);
     }
 }

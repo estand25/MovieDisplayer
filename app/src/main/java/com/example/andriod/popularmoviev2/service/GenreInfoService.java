@@ -44,7 +44,8 @@ public class GenreInfoService extends IntentService{
     }
 
     /**
-     *  Populate through contentResolver the movie specific genre (decode from id -> name)d
+     *  Populate through contentResolver the movie specific genre (decode from id -> name)
+     * @param movieIntent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent movieIntent){
@@ -89,16 +90,13 @@ public class GenreInfoService extends IntentService{
                 // and put it in a local list variable
                 HashMap<Integer,String> movieGenres = response.body().genreMap();
 
-                // Content Value Array that I will pass to bulk insert genre
-                ContentValues[] bulkMovieGenre = new ContentValues[movieGenres.size()];
-
                 // Blank the genreName field to start
                 String genreName = "";
 
                 // Loop through the movie's genre names
                 for(int i = 0; i <= genres.length-1;i++) {
                     // Get all the Genre Name and update Genre id in the Movie
-                    if(genreName == ""){
+                    if(genreName.equals("")){
                         genreName = movieGenres.get(Integer.parseInt(genres[i]));
                     }else{
                         genreName = genreName + "|" + movieGenres.get(Integer.parseInt(genres[i]));

@@ -34,6 +34,7 @@ public class FavoriteMovieService extends IntentService{
 
     /**
      * Populate through contentResolver movie with favorite movies
+     * @param favorIntent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent favorIntent){

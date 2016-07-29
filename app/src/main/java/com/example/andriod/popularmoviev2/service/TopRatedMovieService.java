@@ -47,6 +47,7 @@ public class TopRatedMovieService extends IntentService {
 
     /**
      * Populate SQLiteDatabase through contentResolver with the Movie DB API for top rated movies
+     * @param topRatedIntent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent topRatedIntent){
@@ -107,6 +108,7 @@ public class TopRatedMovieService extends IntentService {
                     mContentResolver.insert(MovieContract.MovieEntry.CONTENT_URI,topRatedMovieContenter);
 
                     // Changes Genre id -> Genre Name by passing genre id list and movie id
+                    // right after inserting the movie record
                     startService(new Intent(getApplicationContext(), GenreInfoService.class).
                             putExtra(Constants.GENRE_ID, new String[] {movie.getGenreIds().toString(),movie.getId().toString()}));
                 }
