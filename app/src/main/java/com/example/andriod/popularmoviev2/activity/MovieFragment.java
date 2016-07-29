@@ -1,16 +1,15 @@
 package com.example.andriod.popularmoviev2.activity;
 
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +18,15 @@ import android.widget.GridView;
 
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieProvider;
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.model.Movie;
+import com.example.andriod.popularmoviev2.other.Constants;
 import com.example.andriod.popularmoviev2.other.Utility;
+import com.example.andriod.popularmoviev2.service.FavoriteMovieService;
+import com.example.andriod.popularmoviev2.service.PopularMovieService;
+import com.example.andriod.popularmoviev2.service.ReviewInfoService;
+import com.example.andriod.popularmoviev2.service.TopRatedMovieService;
+import com.example.andriod.popularmoviev2.service.TrailerInfoService;
 
 import java.util.ArrayList;
 
@@ -63,6 +67,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     // Create the local copy of movieSyncUploader
     MovieSyncUploader movieSyncUploader;
+    private Intent mServiceIntent;
 
     /**
      * Empty construction
@@ -155,11 +160,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // Check which display option is being used and display the information
         // and populate the database with the selections information
         if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
-            movieSyncUploader.getPopularMovieColl();
+            // Popular Movie Service from The Movie DB API
+            getActivity().startService(new Intent(getActivity(),PopularMovieService.class));
         } else if (Utility.getPreferredMovieType(getContext()).equals("movie/top_rated")) {
-            movieSyncUploader.getTopRateMovieColl();
+            // Top Rated Movie Service from The Movie DB API
+            getActivity().startService(new Intent(getActivity(), TopRatedMovieService.class));
         } else if (Utility.getPreferredMovieType(getContext()).equals("favorite_movie")) {
-            movieSyncUploader.getFavoriteMovieColl();
+            // Favorite Movie Service that populate the movie table from the favorite_movie table
+            getActivity().startService(new Intent(getActivity(), FavoriteMovieService.class));
         }
 
         // When one of the view on the GridView is click the below will happen
@@ -175,13 +183,15 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 if(cursor != null){
 
                     // Populate the movie detail information
-                    // Genre id -> Genre Name
-                    // Review Information for movie
-                    // Trailer Information for movie
                     movieSyncUploader.chkFavoriteMovie(cursor.getInt(COL_MOVIE_ID));
-                    movieSyncUploader.getGenreInfo(cursor.getString(COL_MOVIE_GENRE_IDS),cursor.getInt(COL_MOVIE_ID));
-                    movieSyncUploader.getReviewInfor(cursor.getInt(COL_MOVIE_ID));
-                    movieSyncUploader.getTrailerInfor(cursor.getInt(COL_MOVIE_ID));
+
+                    // Review Information Service for movie from The Movie DB API
+                    getActivity().startService(new Intent(getActivity(), ReviewInfoService.class).
+                                putExtra(Constants.REVIEW,cursor.getInt(COL_MOVIE_ID)));
+
+                    // Trailer Information Service for movie from the Movie DB API
+                    getActivity().startService(new Intent(getContext(), TrailerInfoService.class)
+                            .putExtra(Constants.TRAILER,cursor.getInt(COL_MOVIE_ID)));
 
                     // Route to onItemSelect in main activity
                     ((Callback) getActivity())

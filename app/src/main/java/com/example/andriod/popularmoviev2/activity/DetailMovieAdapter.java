@@ -256,6 +256,7 @@ public class DetailMovieAdapter extends CursorAdapter {
         @BindView(R.id.detail_UserRateingLayout) LinearLayout mUserRatingLayout;
         @BindView(R.id.detail_favoriteMovieLayout) LinearLayout mFavoriteMovieLayout;
         @BindView(R.id.detail_favorButton) ImageButton mFavorButton;
+        String trigger;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -307,8 +308,8 @@ public class DetailMovieAdapter extends CursorAdapter {
             mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
 
             // Check if movie is favorite or not
-            final boolean favoriteSetting = cursor.getString(COL_DETAIL_MOVIE_TYPE).contains("movie");
-            Log.v("Movie Type ",cursor.getString(COL_DETAIL_MOVIE_TYPE));
+            final boolean favoriteSetting =cursor.getString(COL_DETAIL_MOVIE_TYPE).contains("movie");
+
             if(favoriteSetting){
                 mFavorButton.setImageResource(R.drawable.unfavorite);
             }else{

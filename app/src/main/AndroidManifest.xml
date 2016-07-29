@@ -42,15 +42,23 @@ package="com.example.andriod.popularmoviev2">
         android:authorities = "com.example.andriod.popularmoviev2"
         android:name=".data.MovieProvider"/>
     <service
-        android:name="com.example.andriod.popularmoviev2.data.SyncMovieService"
-        android:exported="true"
-        android:process=":sync">
-        <intent-filter>
-            <action android:name="android.content.SyncAdapter"/>
-        </intent-filter>
-        <meta-data android:name="android.content.SyncAdapter"
-            android:resource="@xml/authenticator" />
-    </service>
+        android:name=".service.PopularMovieService"
+        android:exported="false" />
+    <service
+        android:name=".service.TopRatedMovieService"
+        android:exported="false" />
+    <service
+        android:name=".service.FavoriteMovieService"
+        android:exported="false" />
+    <service
+        android:name=".service.GenreInfoService"
+        android:exported="false" />
+    <service
+        android:name=".service.ReviewInfoService"
+        android:exported="false" />
+    <service
+        android:name=".service.TrailerInfoService"
+        android:exported="false" />
 </application>
 
 </manifest>

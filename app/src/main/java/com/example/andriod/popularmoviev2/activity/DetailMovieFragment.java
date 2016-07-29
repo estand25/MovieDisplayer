@@ -190,7 +190,6 @@ public class DetailMovieFragment extends Fragment
             // Cursor Loader that point to MovieDetail
             // which includes selection movie, movie's review, and movie's trailer information
             Uri allDetail = MovieContract.MovieEntry.buildMovieDetailAllSection(MovieContract.MovieEntry.getIntegerMovieID(mUri));
-            Log.v("All Section Detail ",allDetail.toString());
 
             return new CursorLoader(
                     getActivity(),

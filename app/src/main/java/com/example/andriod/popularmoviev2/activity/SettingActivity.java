@@ -1,15 +1,18 @@
 package com.example.andriod.popularmoviev2.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.example.andriod.popularmoviev2.data.MovieSyncUploader;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.service.FavoriteMovieService;
+import com.example.andriod.popularmoviev2.service.PopularMovieService;
+import com.example.andriod.popularmoviev2.service.TopRatedMovieService;
 
 /**
  * Setting activity option screen
@@ -82,11 +85,11 @@ public class SettingActivity extends PreferenceActivity
         // Check which display option is being used  and display the information
         // and populate the database with the selections information
         if(Utility.getPreferredMovieType(getApplicationContext()).equals("movie/popular")) {
-            movieSyncUploader.getPopularMovieColl();
+            startService(new Intent(this, PopularMovieService.class));
         }else if (Utility.getPreferredMovieType(getApplicationContext()).equals("movie/top_rated")) {
-            movieSyncUploader.getTopRateMovieColl();
+            startService(new Intent(this, TopRatedMovieService.class));
         } else if (Utility.getPreferredMovieType(getApplicationContext()).equals("favorite_movie")) {
-            movieSyncUploader.getFavoriteMovieColl();
+            startService(new Intent(this, FavoriteMovieService.class));
         }
 
     }

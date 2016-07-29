@@ -3,7 +3,6 @@ package com.example.andriod.popularmoviev2.activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,6 @@ import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * MovieAdapter that will handle and display the cursor data on the screen
@@ -86,13 +82,19 @@ public class MovieAdapter extends CursorAdapter {
 
         // Get the post information from the curse (get the row/column of information
         // from the db)
-        String poster = cursor.getString(MovieFragment.COL_MOVIE_POSTER_PATH);
-
-        // Take the ImageView and add an Image from the post location and
-        // make it visible too
-        aq.id(viewHolder.movieView).image(poster).visible();
+        String poster;
+        if(cursor.getString(MovieFragment.COL_MOVIE_POSTER_PATH) == null){
+            //viewHolder.movieView.setImageResource(R.drawable.poster_not_available);
+            aq.id(viewHolder.movieView).image("https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg").visible();
+        }else{
+            poster = cursor.getString(MovieFragment.COL_MOVIE_POSTER_PATH);
+            // Take the ImageView and add an Image from the post location and
+            // make it visible too
+            aq.id(viewHolder.movieView).image(poster).visible();
+        }
 
         // Set the title description for the movie title
         viewHolder.titleView.setText(cursor.getString(MovieFragment.COL_MOVIE_TITLE));
+
     }
 }
