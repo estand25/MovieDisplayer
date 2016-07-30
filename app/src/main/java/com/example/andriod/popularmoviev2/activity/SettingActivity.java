@@ -13,6 +13,7 @@ import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.service.FavoriteMovieService;
 import com.example.andriod.popularmoviev2.service.PopularMovieService;
 import com.example.andriod.popularmoviev2.service.TopRatedMovieService;
+import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
 /**
  * Setting activity option screen
@@ -82,15 +83,18 @@ public class SettingActivity extends PreferenceActivity
         // Remove all the information before populate new data
         movieTableSync.deleteAllOtherTable();
 
+        // SyncAdapter method that immediately runs the movie s
+        MovieSyncAdapter.syncImmediately(getApplicationContext());
+
         // Check which display option is being used  and display the information
         // and populate the database with the selections information
-        if(Utility.getPreferredMovieType(getApplicationContext()).equals("movie/popular")) {
+        /*if(Utility.getPreferredMovieType(getApplicationContext()).equals("movie/popular")) {
             startService(new Intent(this, PopularMovieService.class));
         }else if (Utility.getPreferredMovieType(getApplicationContext()).equals("movie/top_rated")) {
             startService(new Intent(this, TopRatedMovieService.class));
         } else if (Utility.getPreferredMovieType(getApplicationContext()).equals("favorite_movie")) {
             startService(new Intent(this, FavoriteMovieService.class));
-        }
+        }*/
 
     }
 }

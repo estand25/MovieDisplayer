@@ -23,7 +23,7 @@ public class Utility {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
-        // Popular the location field with the current sort option for the App
+        // Popular the type of movie field with the current sort option for the App
         return sharedPref.getString(
                 context.getString(R.string.pref_sort_option_key),
                 context.getString(R.string.pref_sort_option_default));

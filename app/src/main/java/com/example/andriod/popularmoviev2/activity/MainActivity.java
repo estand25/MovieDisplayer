@@ -9,10 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.other.Utility;
 
 public class MainActivity extends AppCompatActivity implements MovieFragment.Callback{
     private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
     public boolean mTwoPane;
+    private String mMovieType;
 
     /**
      * On Create set-up the Toolbar and determine if we using 1 or 2 pane for the app
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mMovieType = Utility.getPreferredMovieType(this);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,6 +89,30 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        String movieT = Utility.getPreferredMovieType(this);
+        if(movieT != null && !movieT.equals(mMovieType)){
+            MovieFragment mf = (MovieFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.container);
+
+            if(null != mf){
+                mf.onMovieChanged();
+            }
+
+            DetailMovieFragment df = (DetailMovieFragment) getSupportFragmentManager()
+                    .findFragmentByTag(MOVIEDETAILFRAGMENT_TAG);
+
+            if(null != df){
+                df.onMovieChanged(movieT);
+            }
+
+            mMovieType = movieT;
+        }
     }
 
     /**

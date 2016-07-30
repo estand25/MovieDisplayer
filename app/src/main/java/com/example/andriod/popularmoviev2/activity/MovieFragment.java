@@ -27,6 +27,7 @@ import com.example.andriod.popularmoviev2.service.PopularMovieService;
 import com.example.andriod.popularmoviev2.service.ReviewInfoService;
 import com.example.andriod.popularmoviev2.service.TopRatedMovieService;
 import com.example.andriod.popularmoviev2.service.TrailerInfoService;
+import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
 import java.util.ArrayList;
 
@@ -67,8 +68,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     // Create the local copy of movieSyncUploader
     MovieTableSync movieTableSync;
-    private Intent mServiceIntent;
-
     /**
      * Empty construction
      */
@@ -154,22 +153,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             gridView.setNumColumns(2);
         }
 
-        // Set up the MovieSyncUploader to populate the information
-        movieTableSync = new MovieTableSync(getContext());
-
-        // Check which display option is being used and display the information
-        // and populate the database with the selections information
-        if (Utility.getPreferredMovieType(getContext()).equals("movie/popular")) {
-            // Popular Movie Service from The Movie DB API
-            getActivity().startService(new Intent(getActivity(),PopularMovieService.class));
-        } else if (Utility.getPreferredMovieType(getContext()).equals("movie/top_rated")) {
-            // Top Rated Movie Service from The Movie DB API
-            getActivity().startService(new Intent(getActivity(), TopRatedMovieService.class));
-        } else if (Utility.getPreferredMovieType(getContext()).equals("favorite_movie")) {
-            // Favorite Movie Service that populate the movie table from the favorite_movie table
-            getActivity().startService(new Intent(getActivity(), FavoriteMovieService.class));
-        }
-
         // When one of the view on the GridView is click the below will happen
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -181,6 +164,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position
                 if(cursor != null){
+                    // Set up the MovieSyncUploader to populate the information
+                    movieTableSync = new MovieTableSync(getContext());
 
                     // Populate the movie detail information
                     movieTableSync.chkFavoriteMovie(cursor.getInt(COL_MOVIE_ID));
@@ -226,6 +211,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    /**
+     * On Movie change run the syncAdapter immediately
+     */
+    void onMovieChanged(){
+        MovieSyncAdapter.syncImmediately(getActivity());
+        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
 
     /**

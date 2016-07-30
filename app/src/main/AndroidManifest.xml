@@ -40,7 +40,22 @@ package="com.example.andriod.popularmoviev2">
     </activity>
     <provider
         android:authorities = "com.example.andriod.popularmoviev2"
-        android:name=".data.MovieProvider"/>
+        android:name=".data.MovieProvider"
+        android:exported="false"
+        android:syncable="true" />
+
+    <!-- SyncAdapter's dummy authentication service -->
+    <service
+        android:name=".sync.MovieAuthenticatorService"
+        >
+        <intent-filter>
+            <action android:name="android.accounts.AccountAuthenticator" />
+        </intent-filter>
+        <meta-data
+            android:name="android.accounts.AccountAuthenticator"
+            android:resource="@xml/authenticator" />
+    </service>
+
     <service
         android:name=".service.PopularMovieService"
         android:exported="false" />
@@ -59,6 +74,19 @@ package="com.example.andriod.popularmoviev2">
     <service
         android:name=".service.TrailerInfoService"
         android:exported="false" />
+
+    <!-- The SyncAdapter service -->
+    <service
+        android:name=".sync.MovieSyncService"
+        android:exported="false"
+        >
+        <intent-filter>
+            <action android:name="android.content.SyncAdapter" />
+        </intent-filter>
+        <meta-data
+            android:name="android.content.SyncAdapter"
+            android:resource="@xml/syncadapter" />
+    </service>
 </application>
 
 </manifest>

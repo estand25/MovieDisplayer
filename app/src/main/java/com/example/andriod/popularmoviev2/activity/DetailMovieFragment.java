@@ -18,6 +18,7 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieContract.MovieEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.TrailerEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.ReviewEntry;
+import com.example.andriod.popularmoviev2.data.MovieTableSync;
 
 /**
  * DetailMovieFragment (Detail Movie Fragment) shows general information
@@ -107,9 +108,6 @@ public class DetailMovieFragment extends Fragment
             mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
         }
 
-        // Get the loader manager start for this calls
-        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
-
         super.onCreate(savedInstanceState);
     }
 
@@ -143,6 +141,31 @@ public class DetailMovieFragment extends Fragment
         return rootView;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        // Get the loader manager start for this calls
+        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    /**
+     * I should be doing something I'm not sure what yet
+     * @param newMovieType
+     */
+    void onMovieChanged(String newMovieType){
+        // replace the uri, since the movie type has change (taken from Sunshine)
+        /*Uri uri = mUri;
+        if(null != uri){
+            if(newMovieType.equals("movie/popular")){
+                Uri updatedUri = MovieContract.MovieEntry.
+            }else if(newMovieType.equals("movie/top_rated")){
+
+            } else if(newMovieType.equals("favorite_movie")){
+
+            }
+        }*/
+    }
+
     /**
      * Get the table data information from the content provider
      * @param id - Loader number for the individual movie detail elements
@@ -152,6 +175,9 @@ public class DetailMovieFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (null != mUri) {
+
+            Log.v("Uri create DMF 2 ",mUri.toString());
+
             // Cursor Loader that point to MovieDetail
             // which includes selection movie, movie's review, and movie's trailer information
             Uri allDetail = MovieContract.MovieEntry.buildMovieDetailAllSection(MovieContract.MovieEntry.getIntegerMovieID(mUri));
@@ -178,6 +204,8 @@ public class DetailMovieFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
+
+            Log.v("Uri create DMF 3 ",mUri.toString());
             // Add the new cursor data to the adapter
             mDetailMovieAdapter.swapCursor(data);
         }
