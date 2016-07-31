@@ -38,6 +38,11 @@ public class FavoriteMovieService extends IntentService{
         // Set the current context content Resolver
         mContentResolver = getApplicationContext().getContentResolver();
 
+        // Delete all the other tables associated to the correct GridView display
+        mContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,"", new String[]{});
+        mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
+        mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"", new String[]{});
+
         // Create cursor with all the current favorite movies
         Cursor cursor = mContentResolver.query(MovieContract.FavoriteMovies.CONTENT_URI,
                 null,
