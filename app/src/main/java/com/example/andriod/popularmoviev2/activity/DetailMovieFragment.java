@@ -124,9 +124,9 @@ public class DetailMovieFragment extends Fragment
             Uri updateUri = uri;
             if(movieType.contains("popular")){
                 updateUri = MovieContract.MovieEntry.buildMovieIDUri(MovieEntry.getIntegerMovieID(uri));
-            }else if(movieType.contains("top")){
+            }else if(movieType.contains("top_rated")){
                 updateUri = MovieContract.MovieEntry.buildMovieIDUri(MovieEntry.getIntegerMovieID(uri));
-            }else if(movieType.contains("favor")){
+            }else {
                 updateUri = MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(Integer.parseInt(MovieContract.FavoriteMovies.getFavoriteMovieID(uri)));
             }
             mUri = updateUri;
