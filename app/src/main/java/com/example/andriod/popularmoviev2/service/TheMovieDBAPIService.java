@@ -12,6 +12,7 @@ import retrofit2.http.Query;
 
 /**
  * The Movie DB API connect strings interface
+ *
  * Created by StandleyEugene on 7/6/2016.
  */
 public interface TheMovieDBAPIService {

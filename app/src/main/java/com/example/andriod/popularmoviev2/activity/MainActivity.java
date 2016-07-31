@@ -5,11 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.other.Constants;
 import com.example.andriod.popularmoviev2.other.Utility;
+import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
 public class MainActivity extends AppCompatActivity implements MovieFragment.Callback{
     private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
@@ -23,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.v("Create ","MainActivity");
         mMovieType = Utility.getPreferredMovieType(this);
         setContentView(R.layout.activity_main);
 
@@ -56,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.fragment));
         }
+
+        MovieSyncAdapter.syncImmediately(getApplicationContext());
     }
 
     /**
@@ -65,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.v("Create ","MainActivity - onCreateOptionsMenu");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -93,17 +101,21 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
 
     @Override
     protected void onResume(){
+        Log.v("Create ","MainActivity - onResume");
         super.onResume();
 
         String movieT = Utility.getPreferredMovieType(this);
         if(movieT != null && !movieT.equals(mMovieType)){
             MovieFragment mf = (MovieFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.container);
+            Log.v("Create ","MainActivity - onResume - outside MovieFragment");
 
             if(null != mf){
+               Log.v("Create ","MainActivity - onResume - MovieFragment");
                 mf.onMovieChanged();
             }
 
+            //Not necessary I'm update load data on settingActivity destroy
             DetailMovieFragment df = (DetailMovieFragment) getSupportFragmentManager()
                     .findFragmentByTag(MOVIEDETAILFRAGMENT_TAG);
 
@@ -121,12 +133,13 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
      */
     @Override
     public void onItemSelected(Uri contentUri){
+        Log.v("Create ","MainActivity - onItemSelected");
         if(mTwoPane){
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment usig a
             // fragment transaction.
             Bundle args = new Bundle();
-            args.putParcelable(DetailMovieFragment.MOVIE_DETAIL_URI,contentUri);
+            args.putParcelable(Constants.MOVIE_DETAIL_URI,contentUri);
 
             DetailMovieFragment fragment = new DetailMovieFragment();
                 fragment.setArguments(args);
@@ -138,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             Intent intent = new Intent(this, DetailActivity.class)
                         .setData(contentUri);
             startActivity(intent);
+
         }
     }
 }

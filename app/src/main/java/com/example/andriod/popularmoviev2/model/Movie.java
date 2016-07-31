@@ -12,6 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Review object used by retrofit library to represent one review
+ *
+ * Created by StandleyEugene on 7/6/2016.
+ */
 public class Movie implements Parcelable {
 
     @SerializedName("poster_path")

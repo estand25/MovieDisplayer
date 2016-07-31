@@ -88,7 +88,7 @@ public class ReviewInfoService extends IntentService{
 
                 // Loop through added the individual movie details to the ContentValue
                 for(Review review : movieReview){
-                    // Content that holds all the populated movie information
+                    // Content that holds all the popular movie information
                     // retrieved from the Movie DB API
                     ContentValues reviewContent = new ContentValues();
 
@@ -105,6 +105,8 @@ public class ReviewInfoService extends IntentService{
                     // Increment index
                     i++;
                 }
+
+                // Insert the content array to our local DB
                 mContentResolver.bulkInsert(MovieContract.ReviewEntry.CONTENT_URI,bulkMovieReview);
             }
 

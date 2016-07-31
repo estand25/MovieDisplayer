@@ -22,13 +22,15 @@ import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 public class SettingActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
-    // Taken from Sun-shine app (SetttingsActivity.java file)
+    /**
+     * Taken from Sun-shine app (SettingsActivity.java file)
+     * @param savedInstanceState
+     */
     @Override @SuppressWarnings("deprecation")
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.pref_general);
-
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_sort_option_key)));
     }
 
@@ -37,7 +39,7 @@ public class SettingActivity extends PreferenceActivity
      * Also fires the listener once, to initialize the summary (so it shows up before the value
      * is changed.)
      *
-     // Taken from Sun-shine app (SetttingsActivity.java file)
+     * Taken from Sun-shine app (SetttingsActivity.java file)
      */
     @SuppressWarnings("deprecation")
     private void bindPreferenceSummaryToValue(Preference preference) {
@@ -52,8 +54,12 @@ public class SettingActivity extends PreferenceActivity
                         .getString(preference.getKey(), ""));
     }
 
-
-    // Taken from Sun-shine app (SetttingsActivity.java file)
+    /**
+     * Taken from Sun-shine app (SetttingsActivity.java file)
+     * @param preference
+     * @param value
+     * @return
+     */
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
         String stringValue = value.toString();
@@ -73,28 +79,21 @@ public class SettingActivity extends PreferenceActivity
         return true;
     }
 
+    /**
+     * What happens when the SettingActivity stop we deleted all the tables
+     * and Sync with the database
+     */
     @Override
     protected void onStop(){
         super.onStop();
         // Updated grid view after setting activity closes if not already displaying
         // the correct movie information
-        MovieTableSync movieTableSync = new MovieTableSync(getApplicationContext());
+        //MovieTableSync movieTableSync = new MovieTableSync(getApplicationContext());
 
         // Remove all the information before populate new data
-        movieTableSync.deleteAllOtherTable();
+        //movieTableSync.deleteAllOtherTable();
 
         // SyncAdapter method that immediately runs the movie s
-        MovieSyncAdapter.syncImmediately(getApplicationContext());
-
-        // Check which display option is being used  and display the information
-        // and populate the database with the selections information
-        /*if(Utility.getPreferredMovieType(getApplicationContext()).equals("movie/popular")) {
-            startService(new Intent(this, PopularMovieService.class));
-        }else if (Utility.getPreferredMovieType(getApplicationContext()).equals("movie/top_rated")) {
-            startService(new Intent(this, TopRatedMovieService.class));
-        } else if (Utility.getPreferredMovieType(getApplicationContext()).equals("favorite_movie")) {
-            startService(new Intent(this, FavoriteMovieService.class));
-        }*/
-
+        //MovieSyncAdapter.syncImmediately(getApplicationContext());
     }
 }

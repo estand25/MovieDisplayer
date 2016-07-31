@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Trailer Collection object (list of Trailers) used by retrofit library to group trailers
+ *
  * Created by StandleyEugene on 7/6/2016.
  */
 public class TrailerColl {

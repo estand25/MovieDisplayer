@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Movie Collection object (list of Movies) used by retrofit library to group reviews
+ *
  * Created by StandleyEugene on 7/6/2016.
  */
 public class MovieColl {

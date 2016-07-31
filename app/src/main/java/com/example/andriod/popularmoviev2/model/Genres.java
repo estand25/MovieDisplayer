@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * Genre Collection object (list of movie genres) used by retrofit library to group genre
+ *
  * Created by StandleyEugene on 7/6/2016.
  */
 public class Genres {

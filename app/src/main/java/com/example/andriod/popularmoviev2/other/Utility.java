@@ -30,7 +30,8 @@ public class Utility {
     }
 
     /**
-     * Determine what type of screen is being used got it from this post
+     * Determine what type of screen is being used
+     * Got it from this post
      * (http://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet)
      *
      * @param context - Context information

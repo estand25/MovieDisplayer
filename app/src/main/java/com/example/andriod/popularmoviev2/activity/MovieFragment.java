@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +24,8 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.other.Constants;
-import com.example.andriod.popularmoviev2.other.Utility;
-import com.example.andriod.popularmoviev2.service.FavoriteMovieService;
-import com.example.andriod.popularmoviev2.service.PopularMovieService;
+import com.example.andriod.popularmoviev2.service.GenreInfoService;
 import com.example.andriod.popularmoviev2.service.ReviewInfoService;
-import com.example.andriod.popularmoviev2.service.TopRatedMovieService;
 import com.example.andriod.popularmoviev2.service.TrailerInfoService;
 import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
@@ -44,20 +44,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private ArrayList<Movie> movieList;
     private int mPosition = gridView.INVALID_POSITION;
     private boolean mTablet;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private static final String SELECTED_KEY = "selected_position";
-
-    // Unique identify for they specific load
-    private static final int MOVIE_LOADER = 0;
-
-    // String[] of movie columns
-    private static final String[] MOVIE_COLUMNS ={
-            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
-            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_GENRE_IDS,
-            MovieContract.MovieEntry.COLUMN_TITLE
-    };
 
     // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
     static final int COL_ID = 0;
@@ -95,11 +83,12 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onCreate(savedInstanceState);
 
         if(savedInstanceState == null || !savedInstanceState.containsKey("movies")){
-            movieList = new ArrayList<Movie>(new ArrayList<Movie>());
+            movieList = new ArrayList<>(new ArrayList<Movie>());
         }
         else {
             movieList = savedInstanceState.getParcelableArrayList("movies");
         }
+        Log.v("Create ","MovieFragment");
     }
 
     /**
@@ -108,11 +97,12 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onSaveInstanceState(Bundle outState){
+        Log.v("Create ","MovieFragment - onSaveInstanceState");
         // When tablets rotate, the currently selected list item needs to be saved.
         // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
         // so check for that before storing.
         if (mPosition != GridView.INVALID_POSITION) {
-            outState.putInt(SELECTED_KEY, mPosition);
+            outState.putInt(Constants.SELECTED_KEY, mPosition);
         }
         outState.putParcelableArrayList("movies",movieList);
         super.onSaveInstanceState(outState);
@@ -130,28 +120,42 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v("Create ","MovieFragment - onCreateView");
 
         // Initialize the custom movie adapter with necessary Curse adapter information
         movieAdapter = new MovieAdapter(getActivity(),null,0);
 
         // Inflate all the items on the fragment_main layout
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
 
         // Find the GridView on the fragment_main layout and set it to the
         // local representation
         gridView = (GridView) rootView.findViewById(R.id.gridView);
 
-        //  Populate the GridView with the custom adapter information
-        gridView.setAdapter(movieAdapter);
+        // Set-up gridView & gridView column
+        setupAdapter();
 
-        // Check if device is landscape or portrait I got this working, but find a good post about it
-        // so I add it as a reference just in case it can be used later
-        // http://stackoverflow.com/questions/3674933/find-out-if-android-device-is-portrait-or-landscape-for-normal-usage
-        if(Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation){
-            gridView.setNumColumns(3);
-        }else{
-            gridView.setNumColumns(2);
-        }
+        // Set-up the SwipeRefreshLayout color order
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorDarkGray,R.color.colorBlack,R.color.colorLTGray);
+        // Set-up the SwipeRefreshLayout pull-down response
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Sync the Content Provide data with internal SQL db's
+                        MovieSyncAdapter.syncImmediately(getActivity());
+                        // re-connect the adapter to the gridView
+                        setupAdapter();
+                        // Show the progress of the refresh per the color scheme above
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                },250);// wait 25 seconds
+            }
+        });
 
         // When one of the view on the GridView is click the below will happen
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -191,12 +195,29 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // does crazy lifecycle related things.  It should feel like some stuff stretched out,
         // or magically appeared to take advantage of room, but data or place in the app was never
         // actually *lost*.
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(Constants.SELECTED_KEY)) {
             // The gradView probably hasn't even been populated yet.  Actually perform the
             // swapout in onLoadFinished.
-            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+            mPosition = savedInstanceState.getInt(Constants.SELECTED_KEY);
         }
         return  rootView;
+    }
+
+    /**
+     * Set-up Adapter to GridView and set-up column number based on device rotation
+     */
+    private void setupAdapter(){
+        //  Populate the GridView with the custom adapter information
+        gridView.setAdapter(movieAdapter);
+
+        // Check if device is landscape or portrait I got this working, but find a good post about it
+        // so I add it as a reference just in case it can be used later
+        // http://stackoverflow.com/questions/3674933/find-out-if-android-device-is-portrait-or-landscape-for-normal-usage
+        if(Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation){
+            gridView.setNumColumns(3);
+        }else{
+            gridView.setNumColumns(2);
+        }
     }
 
     /**
@@ -209,7 +230,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        Log.v("Create ","MovieFragment - onActivityCreated");
+        getLoaderManager().initLoader(Constants.MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -217,8 +239,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      * On Movie change run the syncAdapter immediately
      */
     void onMovieChanged(){
+        Log.v("Create ","MovieFragment - onMovieChanged");
         MovieSyncAdapter.syncImmediately(getActivity());
-        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
+        getLoaderManager().restartLoader(Constants.MOVIE_LOADER, null, this);
     }
 
     /**
@@ -229,6 +252,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.v("Create ","MovieFragment - onCreateLoader");
         // return Cursor loader with all th movie poster images
         return new CursorLoader(getActivity(),
                 MovieContract.MovieEntry.CONTENT_URI,
@@ -246,6 +270,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v("Create ","MovieFragment - onLoadFinished");
         if (mPosition != GridView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
@@ -260,6 +285,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.v("Create ","MovieFragment - onLoaderReset");
         movieAdapter.swapCursor(null);
     }
 
@@ -269,6 +295,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      * @param layout - the layout of the gridview
      */
     public void setLayout(boolean layout){
+        Log.v("Create ","MovieFragment - setLayout");
         mTablet = layout;
     }
 }

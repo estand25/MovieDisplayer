@@ -17,7 +17,6 @@ import com.example.andriod.popularmoviev2.R;
  * Created by StandleyEugene on 6/30/2016.
  */
 public class MovieAdapter extends CursorAdapter {
-    private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
 
     /**
      * MovieAdapter constructor the set-up outside stuff inside
@@ -58,7 +57,7 @@ public class MovieAdapter extends CursorAdapter {
         // Inflate the movie_item (view in the grid
         View view = LayoutInflater.from(context).inflate(R.layout.movie_item, parent, false);
 
-        // Create an stance of View Holder and get the Tags for the display items
+        // Create an stance of View Holder and get the tags for the display items
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
 
@@ -82,16 +81,11 @@ public class MovieAdapter extends CursorAdapter {
 
         // Get the post information from the curse (get the row/column of information
         // from the db)
-        String poster;
-        if(cursor.getString(MovieFragment.COL_MOVIE_POSTER_PATH) == null){
-            //viewHolder.movieView.setImageResource(R.drawable.poster_not_available);
-            aq.id(viewHolder.movieView).image("https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg").visible();
-        }else{
-            poster = cursor.getString(MovieFragment.COL_MOVIE_POSTER_PATH);
-            // Take the ImageView and add an Image from the post location and
-            // make it visible too
-            aq.id(viewHolder.movieView).image(poster).visible();
-        }
+        String poster = cursor.getString(MovieFragment.COL_MOVIE_POSTER_PATH);
+
+        // Take the ImageView and add an Image from the post location and
+        // make it visible too
+        aq.id(viewHolder.movieView).image(poster).visible();
 
         // Set the title description for the movie title
         viewHolder.titleView.setText(cursor.getString(MovieFragment.COL_MOVIE_TITLE));

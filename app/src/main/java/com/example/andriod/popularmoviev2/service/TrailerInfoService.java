@@ -69,7 +69,7 @@ public class TrailerInfoService extends IntentService{
         // Call the service for movie's trailer
         Call<TrailerColl> jsonTrailerColl = service.getMovieTrailer(movie_id, BuildConfig.THE_MOVIE_DB_API);
 
-        // Start the connect up and see if it successed and you have a response
+        // Start the connect up and see if it success and you have a response
         // or if you failure and you got nothing
         jsonTrailerColl.enqueue(new Callback<TrailerColl>() {
             @Override
@@ -78,7 +78,7 @@ public class TrailerInfoService extends IntentService{
                 // and put it in a local list variable
                 List<Trailer> movieTrailer = response.body().getTrailers();
 
-                // ContentValue Array that I will past to bulkinsert
+                // ContentValue Array that I will past to bulk insert
                 ContentValues[] bulkMovieTrailer = new ContentValues[movieTrailer.size()];
 
                 // Index counter
@@ -107,6 +107,8 @@ public class TrailerInfoService extends IntentService{
                     // Increment index
                     i++;
                 }
+
+                // Insert the content array to our local DB
                 mContentResolver.bulkInsert(MovieContract.TrailerEntry.CONTENT_URI,bulkMovieTrailer);
             }
 

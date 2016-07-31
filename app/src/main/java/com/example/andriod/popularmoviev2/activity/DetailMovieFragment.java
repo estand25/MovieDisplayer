@@ -1,12 +1,15 @@
 package com.example.andriod.popularmoviev2.activity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,9 @@ import com.example.andriod.popularmoviev2.data.MovieContract.MovieEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.TrailerEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.ReviewEntry;
 import com.example.andriod.popularmoviev2.data.MovieTableSync;
+import com.example.andriod.popularmoviev2.other.Constants;
+import com.example.andriod.popularmoviev2.service.GenreInfoService;
+import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
 /**
  * DetailMovieFragment (Detail Movie Fragment) shows general information
@@ -27,65 +33,14 @@ import com.example.andriod.popularmoviev2.data.MovieTableSync;
 public class DetailMovieFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // String constent for the MovieDetailFragment
-    static final String MOVIE_DETAIL_URI = "URI";
-
     // Local Uri identify
     private Uri mUri;
 
-    // Three detail adapters (Movie details, Trailers, and Reviews)
+    // Three section adapters (Movie details, Trailers, and Reviews)
     private DetailMovieAdapter mDetailMovieAdapter;
 
-    // Movie Detail Loader for DetailMovieFragment
-    private static final int DETAIL_MOVIE_LOADER = 0;
-
-    // String constent for the MovieDetailFragment
-    public static final String MOVIE_DETAIL = "MOVIE_DETAIL";
-
-    // Movie String[] for Detail Fragment
-    public static final String[] DETAIL_MOVIE_COLUMNS = {
-            MovieEntry.TABLE_NAME + "." + MovieEntry._ID,
-            MovieEntry.COLUMN_MOVIE_ID,
-            MovieEntry.COLUMN_POSTER_PATH,
-            MovieEntry.COLUMN_ADULT,
-            MovieEntry.COLUMN_OVERVIEW,
-            MovieEntry.COLUMN_RELEASE_DATE,
-            MovieEntry.COLUMN_GENRE_IDS,
-            MovieEntry.COLUMN_ORIGINAL_TITLE,
-            MovieEntry.COLUMN_ORIGINAL_LANGUAGE,
-            MovieEntry.COLUMN_TITLE,
-            MovieEntry.COLUMN_BACKDROP_PATH,
-            MovieEntry.COLUMN_POPULARITY,
-            MovieEntry.COLUMN_VOTE_COUNT,
-            MovieEntry.COLUMN_VIDEO,
-            MovieEntry.COLUMN_VOTE_AVERAGE,
-            MovieEntry.COLUMN_MOVIE_TYPE
-    };
-
-    // Trailer String[] for Detail Trailer Fragment
-    public static final String[] TRAILER_MOVIE_COLUMNS = {
-            TrailerEntry.TABLE_NAME + "." + TrailerEntry._ID,
-            TrailerEntry.COLUMN_TRAILER_ID,
-            MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_MOVIE_ID,
-            MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_TITLE,
-            TrailerEntry.COLUMN_ISO_6391,
-            TrailerEntry.COLUMN_ISO_31661,
-            TrailerEntry.COLUMN_KEY,
-            TrailerEntry.COLUMN_NAME,
-            TrailerEntry.COLUMN_SITE,
-            TrailerEntry.COLUMN_SIZE,
-            TrailerEntry.COLUMN_TYPE
-    };
-
-    // Review String[] for Detail Review Fragment
-    public static final String[] REVIEW_MOVIE_COLUMNS = {
-            ReviewEntry.TABLE_NAME + "." + ReviewEntry._ID,
-            ReviewEntry.COLUMN_REVIEW_ID,
-            ReviewEntry.COLUMN_MOVIE_ID,
-            ReviewEntry.COLUMN_AUTHOR,
-            ReviewEntry.COLUMN_CONTENT,
-            ReviewEntry.COLUMN_URL
-    };
+    // ListView holder the movie detail adapter
+    private ListView movieListView;
 
     /**
      * Empty construction
@@ -105,7 +60,7 @@ public class DetailMovieFragment extends Fragment
         // Check if new bundle is populated or null
         // then set class level Uri or do nothing
         if(arguments != null){
-            mUri = arguments.getParcelable(DetailMovieFragment.MOVIE_DETAIL_URI);
+            mUri = arguments.getParcelable(Constants.MOVIE_DETAIL_URI);
         }
 
         super.onCreate(savedInstanceState);
@@ -132,38 +87,52 @@ public class DetailMovieFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         // Find the ListViews on the fragment_detail layout
-        ListView movieListView = (ListView) rootView.findViewById(R.id.detail_MovieDetaiListView);
+        movieListView = (ListView) rootView.findViewById(R.id.detail_MovieDetaiListView);
 
-        // Set the ListView to the specific adapter
-        movieListView.setAdapter(mDetailMovieAdapter);
+        setupAdapter();
 
         // Returns the view with all the information
         return rootView;
     }
 
+    /**
+     * Set-up Adapter to GridView and set-up column number based on device rotation
+     */
+    private void setupAdapter(){
+        // Set the ListView to the specific adapter
+        movieListView.setAdapter(mDetailMovieAdapter);
+    }
+
+    /**
+     * Start the loadManager after the activity has been created
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         // Get the loader manager start for this calls
-        getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
+        getLoaderManager().initLoader(Constants.DETAIL_MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
     /**
-     * I should be doing something I'm not sure what yet
-     * @param newMovieType
+     * On Movie change run the syncAdapter immediately
      */
-    void onMovieChanged(String newMovieType){
-        // replace the uri, since the movie type has change (taken from Sunshine)
-        /*Uri uri = mUri;
-        if(null != uri){
-            if(newMovieType.equals("movie/popular")){
-                Uri updatedUri = MovieContract.MovieEntry.
-            }else if(newMovieType.equals("movie/top_rated")){
-
-            } else if(newMovieType.equals("favorite_movie")){
-
+    void onMovieChanged(String movieType){
+        Log.v("Create ","MovieFragment - onMovieChanged");
+        Uri uri = mUri;
+        if(mUri != null) {
+            Uri updateUri = uri;
+            if(movieType.contains("popular")){
+                updateUri = MovieContract.MovieEntry.buildMovieIDUri(MovieEntry.getIntegerMovieID(uri));
+            }else if(movieType.contains("top")){
+                updateUri = MovieContract.MovieEntry.buildMovieIDUri(MovieEntry.getIntegerMovieID(uri));
+            }else if(movieType.contains("favor")){
+                updateUri = MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(Integer.parseInt(MovieContract.FavoriteMovies.getFavoriteMovieID(uri)));
             }
-        }*/
+            mUri = updateUri;
+            MovieSyncAdapter.syncImmediately(getActivity());
+            getLoaderManager().restartLoader(Constants.DETAIL_MOVIE_LOADER, null, this);
+        }
     }
 
     /**
@@ -176,10 +145,8 @@ public class DetailMovieFragment extends Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (null != mUri) {
 
-            Log.v("Uri create DMF 2 ",mUri.toString());
-
-            // Cursor Loader that point to MovieDetail
-            // which includes selection movie, movie's review, and movie's trailer information
+            // Cursor Loader that point to MovieDetail which includes selection
+            // movie, movie's review, and movie's trailer information
             Uri allDetail = MovieContract.MovieEntry.buildMovieDetailAllSection(MovieContract.MovieEntry.getIntegerMovieID(mUri));
 
             return new CursorLoader(
@@ -204,8 +171,6 @@ public class DetailMovieFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
-
-            Log.v("Uri create DMF 3 ",mUri.toString());
             // Add the new cursor data to the adapter
             mDetailMovieAdapter.swapCursor(data);
         }

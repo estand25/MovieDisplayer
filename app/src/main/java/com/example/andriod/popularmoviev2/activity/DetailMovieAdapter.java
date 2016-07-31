@@ -18,7 +18,9 @@ import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieTableSync;
+import com.example.andriod.popularmoviev2.other.Constants;
 import com.example.andriod.popularmoviev2.other.Utility;
+import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,8 +31,6 @@ import butterknife.ButterKnife;
  * Created by StandleyEugene on 7/17/2016.
  */
 public class DetailMovieAdapter extends CursorAdapter {
-    private static final String LOG_TAG = DetailMovieAdapter.class.getSimpleName();
-
     // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
     static final int COL_DETAIL_ID = 0;
     static final int COL_DETAIL_MOVIE_ID = 1;
@@ -71,11 +71,15 @@ public class DetailMovieAdapter extends CursorAdapter {
     static final int COL_REVIEW_URL = 5;
     static MovieTableSync movieTableSync;
 
+    // ListView adapter view type
     private static final int VIEW_TYPE_MOVIE_DETAIL = 0;
     private static final int VIEW_TYPE_MOVIE_REVIEWS = 1;
     private static final int VIEW_TYPE_MOVIE_TRAILER = 2;
+
+    // ListView view count
     private static final int VIEW_TYPE_COUNT = 3;
 
+    // Local version of context
     private Context myContext;
 
     /**
@@ -213,7 +217,7 @@ public class DetailMovieAdapter extends CursorAdapter {
         int ret = -1;
 
         // Get the cursorCount from the passed in cursor
-        int[] cursorCount = getCursor().getExtras().getIntArray(DetailMovieFragment.MOVIE_DETAIL);
+        int[] cursorCount = getCursor().getExtras().getIntArray(Constants.MOVIE_DETAIL);
 
         // Determine which viewType should be used based on unique columns in each of the table
         if(cursorCount[0] == position){
@@ -249,7 +253,6 @@ public class DetailMovieAdapter extends CursorAdapter {
         @BindView(R.id.detail_UserRateingLayout) LinearLayout mUserRatingLayout;
         @BindView(R.id.detail_favoriteMovieLayout) LinearLayout mFavoriteMovieLayout;
         @BindView(R.id.detail_favorButton) ImageButton mFavorButton;
-        String trigger;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -353,6 +356,9 @@ public class DetailMovieAdapter extends CursorAdapter {
                         mFavorButton.setImageResource(R.drawable.unfavorite);
                         movieTableSync.updateMovieFavorite(movieId,"");
                         movieTableSync.deleteFavoriteMovie(movieId);
+                        // MovieSyncAdapter.syncImmediately(context);
+                        // DetailMovieFragment dmf = (DetailMovieFragment) context.
+                        // dmf.reset();
                     }
                 }
             });

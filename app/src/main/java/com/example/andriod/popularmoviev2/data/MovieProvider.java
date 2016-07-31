@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.example.andriod.popularmoviev2.activity.DetailMovieFragment;
 import com.example.andriod.popularmoviev2.model.Movie;
+import com.example.andriod.popularmoviev2.other.Constants;
 
 /**
  * Note: Base on SunShine App
@@ -28,13 +29,15 @@ public class MovieProvider extends ContentProvider {
 
     static final int MOVIE = 100;
     static final int MOVIE_WITH_MOVIE_ID = 101;
-    static final int REVIEW = 102;
-    static final int TRAILER = 103;
-    static final int REVIEW_FOR_MOVIE = 104;
-    static final int TRAILER_FOR_MOVIE = 105;
-    static final int FAVORITE_MOVIES = 106;
-    static final int FAVORITE_MOVIES_ID = 107;
-    static final int MOVIE_DETAILS = 109;
+    static final int GENRE = 102;
+    static final int REVIEW = 103;
+    static final int TRAILER = 104;
+    static final int GENRE_FOR_MOVIE = 105;
+    static final int REVIEW_FOR_MOVIE = 106;
+    static final int TRAILER_FOR_MOVIE = 107;
+    static final int FAVORITE_MOVIES = 108;
+    static final int FAVORITE_MOVIES_ID = 109;
+    static final int MOVIE_DETAILS = 110;
 
     private static final SQLiteQueryBuilder sMovieWithReview;
     private static final SQLiteQueryBuilder sMovieWithTrailer;
@@ -153,8 +156,10 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_WITH_MOVIE_ID);
         matcher.addURI(authority, "movie_detail/*",MOVIE_DETAILS);
+        matcher.addURI(authority, MovieContract.PATH_GENRE, GENRE);
         matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
         matcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEW);
+        matcher.addURI(authority, MovieContract.PATH_GENRE + "/*",GENRE_FOR_MOVIE);
         matcher.addURI(authority, MovieContract.PATH_FAVORITE_MOVIES + "/*", FAVORITE_MOVIES_ID);
         matcher.addURI(authority, MovieContract.PATH_FAVORITE_MOVIES, FAVORITE_MOVIES);
         matcher.addURI(authority, MovieContract.PATH_REVIEW + "/*",REVIEW_FOR_MOVIE);
@@ -191,6 +196,12 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.MovieEntry.CONTENT_TYPE;
             case MOVIE_DETAILS:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
+            case GENRE:
+                Log.v("Match ","Genre only");
+                return MovieContract.GenreEntry.CONTENT_TYPE;
+            case GENRE_FOR_MOVIE:
+                Log.v("Match ","Genre for movie");
+                return MovieContract.GenreEntry.CONTENT_ITEM_TYPE;
             case REVIEW:
                 return MovieContract.ReviewEntry.CONTENT_TYPE;
             case TRAILER:
@@ -239,7 +250,7 @@ public class MovieProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,
-                        MovieProvider.sMovieIdSettingSelection,
+                        sMovieIdSettingSelection,
                         new String[]{MovieContract.MovieEntry.getMovieID(uri)},
                         null,
                         null,
@@ -264,7 +275,7 @@ public class MovieProvider extends ContentProvider {
                 // Set the first entry in the cursor with the movie details
                 cursors[0]= query(
                         uri,
-                        DetailMovieFragment.DETAIL_MOVIE_COLUMNS,
+                        Constants.DETAIL_MOVIE_COLUMNS,
                         null,
                         null,
                         null);
@@ -278,7 +289,7 @@ public class MovieProvider extends ContentProvider {
                 // Set the second entry in the cursor with the review details
                 cursors[1] = query(
                         uri,
-                        DetailMovieFragment.REVIEW_MOVIE_COLUMNS,
+                        Constants.REVIEW_MOVIE_COLUMNS,
                         null,
                         null,
                         null);
@@ -292,7 +303,7 @@ public class MovieProvider extends ContentProvider {
                 // Set the third entry in the cursor with the review
                 cursors[2] = query(
                         MovieContract.TrailerEntry.buildTrailerMovieIDUri(MovieContract.MovieEntry.getIntegerMovieID(uri)),
-                        DetailMovieFragment.TRAILER_MOVIE_COLUMNS,
+                        Constants.TRAILER_MOVIE_COLUMNS,
                         null,
                         null,
                         null);
@@ -308,10 +319,22 @@ public class MovieProvider extends ContentProvider {
                 Bundle arg = new Bundle();
 
                 // Add additional information with key and value pair
-                arg.putIntArray(DetailMovieFragment.MOVIE_DETAIL,cursorsCount);
+                arg.putIntArray(Constants.MOVIE_DETAIL,cursorsCount);
 
                 // Set an extra bite of information into the cursor
                 retCursor.setExtras(arg);
+                break;
+            }
+            case GENRE: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.GenreEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
                 break;
             }
             case REVIEW: {
@@ -332,6 +355,18 @@ public class MovieProvider extends ContentProvider {
                         projection,
                         selection,
                         selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case GENRE_FOR_MOVIE: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.GenreEntry.TABLE_NAME,
+                        new String[]{"genre_id","name"},
+                        sGenreIdSettingSelection,
+                        new String[]{MovieContract.GenreEntry.getGenreID(uri)},
                         null,
                         null,
                         sortOrder
@@ -384,6 +419,14 @@ public class MovieProvider extends ContentProvider {
                 long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null,values);
                 if(_id > 0 )
                     returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case GENRE:{
+                long _id = db.insert(MovieContract.GenreEntry.TABLE_NAME, null,values);
+                if(_id > 0)
+                    returnUri = MovieContract.GenreEntry.buildGenreUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -446,6 +489,14 @@ public class MovieProvider extends ContentProvider {
             case MOVIE_WITH_MOVIE_ID:{
                 rowsDeleted = db.delete(
                         MovieContract.MovieEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            }
+            case GENRE:{
+                rowsDeleted = db.delete(
+                        MovieContract.GenreEntry.TABLE_NAME,
                         selection,
                         selectionArgs
                 );
@@ -521,6 +572,13 @@ public class MovieProvider extends ContentProvider {
                         selectionArgs);
                 break;
             }
+            case GENRE:{
+                rowsUpdated = db.update(MovieContract.GenreEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            }
             case REVIEW:{
                 rowsUpdated = db.update(MovieContract.ReviewEntry.TABLE_NAME,
                         values,
@@ -584,6 +642,13 @@ public class MovieProvider extends ContentProvider {
                         }
                         case MOVIE_WITH_MOVIE_ID: {
                             _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                            if (_id != -1) {
+                                returnCount++;
+                            }
+                            break;
+                        }
+                        case GENRE: {
+                            _id = db.insert(MovieContract.GenreEntry.TABLE_NAME, null, value);
                             if (_id != -1) {
                                 returnCount++;
                             }

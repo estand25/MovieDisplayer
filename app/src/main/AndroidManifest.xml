@@ -45,9 +45,7 @@ package="com.example.andriod.popularmoviev2">
         android:syncable="true" />
 
     <!-- SyncAdapter's dummy authentication service -->
-    <service
-        android:name=".sync.MovieAuthenticatorService"
-        >
+    <service android:name=".sync.MovieAuthenticatorService">
         <intent-filter>
             <action android:name="android.accounts.AccountAuthenticator" />
         </intent-filter>
@@ -67,6 +65,9 @@ package="com.example.andriod.popularmoviev2">
         android:exported="false" />
     <service
         android:name=".service.GenreInfoService"
+        android:exported="false" />
+    <service
+        android:name=".service.GenreDecodeService"
         android:exported="false" />
     <service
         android:name=".service.ReviewInfoService"

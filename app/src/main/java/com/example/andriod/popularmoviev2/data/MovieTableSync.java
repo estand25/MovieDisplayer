@@ -6,7 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 /**
- * Helper class used during a couple of times during the app to update or delete tables
+ * Helper class used a couple of times during the app to update or delete tables
  *
  * Created by StandleyEugene on 7/10/2016.
  */
@@ -116,8 +116,11 @@ public class MovieTableSync {
                                        new String[]{MovieContract.MovieEntry.getMovieID(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId))});
 
         // Updated the notifyChange to update  the content provide for favorite_move and movie table
-        myContext.getContentResolver().notifyChange(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId),null);
-        myContext.getContentResolver().notifyChange(MovieContract.MovieEntry.CONTENT_URI,null);
+        // Because a null deletes all rows
+        if (i != 0) {
+            myContext.getContentResolver().notifyChange(MovieContract.MovieEntry.CONTENT_URI,null);
+            myContext.getContentResolver().notifyChange(MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(movieId), null);
+        }
     }
 
      /**
@@ -127,6 +130,22 @@ public class MovieTableSync {
         mContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,"", new String[]{});
         mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
         mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"", new String[]{});
+    }
+
+    /**
+     * Get the current row information for one movie
+     * @param movieID - Specific movie id to look for
+     * @return - Cursor with current movie row information
+     */
+    public Cursor getMovieType(int movieID){
+        Cursor cursor = mContentResolver.query(MovieContract.MovieEntry.buildMovieIDUri(movieID),
+                null,//new String[]{"movie_type"},
+                null,
+                null,
+                null
+        );
+        cursor.moveToPosition(0);
+        return cursor;
     }
 
 }

@@ -109,7 +109,7 @@ public class TopRatedMovieService extends IntentService {
 
                     // Changes Genre id -> Genre Name by passing genre id list and movie id
                     // right after inserting the movie record
-                    startService(new Intent(getApplicationContext(), GenreInfoService.class).
+                    startService(new Intent(getApplicationContext(), GenreDecodeService.class).
                             putExtra(Constants.GENRE_ID, new String[] {movie.getGenreIds().toString(),movie.getId().toString()}));
                 }
             }

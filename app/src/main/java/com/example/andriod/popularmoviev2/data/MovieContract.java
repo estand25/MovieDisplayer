@@ -125,6 +125,8 @@ public class MovieContract {
         // The type of data I will be sending if retrieved
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GENRE;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GENRE;
 
         // Uri for the specific Genre row in the genre table
         public static Uri buildGenreUri(long id){

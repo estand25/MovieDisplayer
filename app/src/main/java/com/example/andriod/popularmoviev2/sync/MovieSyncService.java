@@ -6,6 +6,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 /**
+ * Service that handle the user of the MovieSyncAdapter
+ *
  * Created by StandleyEugene on 7/29/2016.
  */
 public class MovieSyncService extends Service {

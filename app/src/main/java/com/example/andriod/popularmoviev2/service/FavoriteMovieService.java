@@ -17,9 +17,6 @@ public class FavoriteMovieService extends IntentService{
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
 
-    // Protected string for class simple
-    protected final String TAG = getClass().getSimpleName();
-
     /**
      * An IntentService must always have a constructor that calls super
      * constructor. The string supplied to the super constructor is used to give

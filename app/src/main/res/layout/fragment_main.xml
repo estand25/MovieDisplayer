@@ -10,11 +10,20 @@
     android:paddingRight="1dp"
     android:paddingBottom="1dp"
     tools:showIn="@layout/activity_main">
-    <GridView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/gridView"
-        android:layout_gravity="fill"
-        android:scaleType="fitXY"
-        android:numColumns="auto_fit"/>
+
+    <!-- Blog on swipe to refresh - https://www.bignerdranch.com/blog/implementing-swipe-to-refresh/ -->
+    <!--Example of swipe to refresh project - https://github.com/mutexkid/swipe-to-refresh-demo.git -->
+    <android.support.v4.widget.SwipeRefreshLayout
+       android:id="@+id/activity_main_swipe_refresh_layout"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/gridView"
+            android:layout_gravity="fill"
+            android:scaleType="fitXY"
+            android:numColumns="auto_fit"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </FrameLayout>

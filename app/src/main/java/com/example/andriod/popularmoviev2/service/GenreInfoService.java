@@ -8,10 +8,12 @@ import android.util.Log;
 
 import com.example.andriod.popularmoviev2.BuildConfig;
 import com.example.andriod.popularmoviev2.data.MovieContract;
+import com.example.andriod.popularmoviev2.model.Genre;
 import com.example.andriod.popularmoviev2.model.Genres;
 import com.example.andriod.popularmoviev2.other.Constants;
 
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,20 +57,6 @@ public class GenreInfoService extends IntentService{
         // Set the current context content Resolver
         mContentResolver.delete(MovieContract.GenreEntry.CONTENT_URI,"",new String[]{});
 
-        // Get data from the movieIntent
-        final String[] movieGenreIDs = movieIntent.getStringArrayExtra(Constants.GENRE_ID);
-
-        // String[] of comma separate genre id
-        final String[] genres = getIndividualGenreID(movieGenreIDs[0]);
-
-        // Check if genres has already been replaced with genre name
-        // I look around for a little weight solution instead of loop or something else
-        // Note: Found this post while I was looking
-        // http://stackoverflow.com/questions/14206768/how-to-check-if-a-string-is-numeric
-        if(!genres[0].matches("[-+]?\\d*\\.?\\d+")){
-            return;
-        }
-
         // Create an instance of the framework that creates the Uri and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.movieRoot)
@@ -88,30 +76,31 @@ public class GenreInfoService extends IntentService{
             public void onResponse(Call<Genres> call, Response<Genres> response) {
                 // Grab the response (the list of genres) from the API
                 // and put it in a local list variable
-                HashMap<Integer,String> movieGenres = response.body().genreMap();
+                List<Genre> movieGenres = response.body().getGenres();
 
-                // Blank the genreName field to start
-                String genreName = "";
+                // Content Value Array that I will pass to bulk insert
+                ContentValues[] bulkMovieGenre = new ContentValues[movieGenres.size()];
 
-                // Loop through the movie's genre names
-                for(int i = 0; i <= genres.length-1;i++) {
-                    // Get all the Genre Name and update Genre id in the Movie
-                    if(genreName.equals("")){
-                        genreName = movieGenres.get(Integer.parseInt(genres[i]));
-                    }else{
-                        genreName = genreName + "|" + movieGenres.get(Integer.parseInt(genres[i]));
-                    }
+                // Index counter
+                int i = 0;
+
+                // Loop through added the individual genres details to the content
+                for(Genre genre : movieGenres){
+                    // Content that holds all the genres information
+                    // retrieved from the Movie DB API
+                    ContentValues genreContent = new ContentValues();
+
+                    // Set the value of each column and inserts the genre property
+                    genreContent.put(MovieContract.GenreEntry.COLUMN_GENRE_ID,genre.getId());
+                    genreContent.put(MovieContract.GenreEntry.COLUMN_NAME,genre.getName());
+
+                    // Add genre details to the contentValue array
+                    bulkMovieGenre[i] = genreContent;
+
+                    // Increment index
+                    i++;
                 }
-                // Content that holds all the genre name information
-                // retrieved from the Movie DB API
-                ContentValues movieIdNameContent = new ContentValues();
-                movieIdNameContent.put(MovieContract.MovieEntry.COLUMN_GENRE_IDS,genreName);
-
-                // Update the Genre ids field in movie from genre id to genre name plus | in-between
-                mContentResolver.update(MovieContract.MovieEntry.CONTENT_URI,
-                        movieIdNameContent,
-                        "movie.movie_id = ?",
-                        new String[]{movieGenreIDs[1]});
+                mContentResolver.bulkInsert(MovieContract.GenreEntry.CONTENT_URI,bulkMovieGenre);
             }
 
             @Override
@@ -121,19 +110,4 @@ public class GenreInfoService extends IntentService{
         });
     }
 
-    /**
-     * Remove first and end brackets then splits the line by comma
-     * @param line - String of genre id with brackets
-     * @return - String[] of genres id without brackets
-     */
-    public String[] getIndividualGenreID(String line){
-        String result = "";
-        result = line.substring(1, line.length()-1);
-
-        // Note: I know is little regression pattern, but I'm not that good
-        // so I had to search around to found this one
-        // http://stackoverflow.com/questions/15633228/how-to-remove-all-white-spaces-in-java
-        result = result.replaceAll("\\s+","");
-        return result.split(",");
-    }
 }

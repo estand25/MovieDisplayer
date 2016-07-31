@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * Movie object used by retrofit library to represent one movie
+ *
  * Created by StandleyEugene on 7/6/2016.
  */
 public class Genre {
