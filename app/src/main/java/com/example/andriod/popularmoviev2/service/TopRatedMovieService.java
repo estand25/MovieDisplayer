@@ -102,7 +102,7 @@ public class TopRatedMovieService extends IntentService {
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO,movie.getVideo());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
-                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, Utility.getPreferredMovieType(getApplicationContext())); //blank if not favorite
+                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, "movie/top_rated"); //blank if not favorite
 
                     // Insert single movie records into SQLiteDatabase contentResolver
                     mContentResolver.insert(MovieContract.MovieEntry.CONTENT_URI,topRatedMovieContenter);

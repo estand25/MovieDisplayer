@@ -11,6 +11,7 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.model.Review;
 import com.example.andriod.popularmoviev2.model.ReviewColl;
 import com.example.andriod.popularmoviev2.other.Constants;
+import com.example.andriod.popularmoviev2.other.Utility;
 
 import java.util.List;
 
@@ -98,6 +99,7 @@ public class ReviewInfoService extends IntentService{
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_MOVIE_TYPE, Utility.getPreferredMovieType(getApplicationContext())); //blank if not favorite
 
                     // Add review detail to the ContentValue array
                     bulkMovieReview[i] = reviewContent;

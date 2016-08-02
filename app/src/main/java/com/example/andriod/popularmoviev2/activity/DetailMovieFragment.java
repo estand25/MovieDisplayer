@@ -62,7 +62,6 @@ public class DetailMovieFragment extends Fragment
         if(arguments != null){
             mUri = arguments.getParcelable(Constants.MOVIE_DETAIL_URI);
         }
-
         super.onCreate(savedInstanceState);
     }
 
@@ -118,7 +117,7 @@ public class DetailMovieFragment extends Fragment
      * On Movie change run the syncAdapter immediately
      */
     void onMovieChanged(String movieType){
-        Log.v("Create ","MovieFragment - onMovieChanged");
+        /*Log.v("Create ","MovieFragment - onMovieChanged");
         Uri uri = mUri;
         if(mUri != null) {
             Uri updateUri = uri;
@@ -132,7 +131,7 @@ public class DetailMovieFragment extends Fragment
             mUri = updateUri;
             MovieSyncAdapter.syncImmediately(getActivity());
             getLoaderManager().restartLoader(Constants.DETAIL_MOVIE_LOADER, null, this);
-        }
+        }*/
     }
 
     /**
@@ -150,12 +149,12 @@ public class DetailMovieFragment extends Fragment
             Uri allDetail = MovieContract.MovieEntry.buildMovieDetailAllSection(MovieContract.MovieEntry.getIntegerMovieID(mUri));
 
             return new CursorLoader(
-                    getActivity(),
-                    allDetail,
-                    null,
-                    null,
-                    null,
-                    null);
+                                getActivity(),
+                                allDetail,
+                                null,
+                                null,
+                                null,
+                                null);
         }
 
         // Return null if bundle argument has not been populated
@@ -171,6 +170,7 @@ public class DetailMovieFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
+            //setNotificationUri(ContentResolver cr, Uri uri)
             // Add the new cursor data to the adapter
             mDetailMovieAdapter.swapCursor(data);
         }

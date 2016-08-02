@@ -102,7 +102,7 @@ public class PopularMovieService extends IntentService{
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO,movie.getVideo());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
-                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, Utility.getPreferredMovieType(getApplicationContext())); //blank if not favorite
+                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, "movie/popular"); //blank if not favorite
 
                     // Insert single movie records into SQLiteDatabase using contentResolver
                     mContentResolver.insert(MovieContract.MovieEntry.CONTENT_URI,popularMovieContenter);

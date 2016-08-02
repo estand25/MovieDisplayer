@@ -11,6 +11,7 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.model.Trailer;
 import com.example.andriod.popularmoviev2.model.TrailerColl;
 import com.example.andriod.popularmoviev2.other.Constants;
+import com.example.andriod.popularmoviev2.other.Utility;
 
 import java.util.List;
 
@@ -100,6 +101,7 @@ public class TrailerInfoService extends IntentService{
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_SITE,trailer.getSite());
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_SIZE,trailer.getSize());
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_TYPE,trailer.getType());
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_MOVIE_TYPE, Utility.getPreferredMovieType(getApplicationContext())); //blank if not favorite
 
                     // Add trailer details to the ContentValue array
                     bulkMovieTrailer[i] = trailerContent;

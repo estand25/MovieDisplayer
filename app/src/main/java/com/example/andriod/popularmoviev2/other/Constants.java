@@ -27,7 +27,7 @@ public final class Constants {
     public static final String MOVIE_DETAIL = "MOVIE_DETAIL";
 
     // Movie Detail Loader for DetailMovieFragment
-    public static final int DETAIL_MOVIE_LOADER = 0;
+    public static final int DETAIL_MOVIE_LOADER = 1;
 
     // Unique identify for they specific load
     public static final int MOVIE_LOADER = 0;

@@ -1,6 +1,5 @@
 package com.example.andriod.popularmoviev2.activity;
 
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -24,10 +23,9 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.other.Constants;
-import com.example.andriod.popularmoviev2.service.GenreInfoService;
+import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.service.ReviewInfoService;
 import com.example.andriod.popularmoviev2.service.TrailerInfoService;
-import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
 import java.util.ArrayList;
 
@@ -46,7 +44,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private boolean mTablet;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-
     // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
     static final int COL_ID = 0;
     static final int COL_MOVIE_ID = 1;
@@ -56,6 +53,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     // Create the local copy of movieSyncUploader
     MovieTableSync movieTableSync;
+
     /**
      * Empty construction
      */
@@ -84,10 +82,13 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         if(savedInstanceState == null || !savedInstanceState.containsKey("movies")){
             movieList = new ArrayList<>(new ArrayList<Movie>());
+            Log.v("MovieType","Set " + Utility.getPreferredMovieType(getContext()));
         }
         else {
             movieList = savedInstanceState.getParcelableArrayList("movies");
+            Log.v("MovieType","Get " + savedInstanceState.getString("movie_type"));
         }
+
         Log.v("Create ","MovieFragment");
     }
 
@@ -98,13 +99,18 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onSaveInstanceState(Bundle outState){
         Log.v("Create ","MovieFragment - onSaveInstanceState");
+
         // When tablets rotate, the currently selected list item needs to be saved.
         // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
         // so check for that before storing.
         if (mPosition != GridView.INVALID_POSITION) {
             outState.putInt(Constants.SELECTED_KEY, mPosition);
+            onMovieChanged();
         }
+
         outState.putParcelableArrayList("movies",movieList);
+
+        Log.v("MovieType","Put " + Utility.getPreferredMovieType(getContext()));
         super.onSaveInstanceState(outState);
     }
 
@@ -122,6 +128,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                              Bundle savedInstanceState) {
         Log.v("Create ","MovieFragment - onCreateView");
 
+
         // Initialize the custom movie adapter with necessary Curse adapter information
         movieAdapter = new MovieAdapter(getActivity(),null,0);
 
@@ -135,27 +142,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         // Set-up gridView & gridView column
         setupAdapter();
-
-        // Set-up the SwipeRefreshLayout color order
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorDarkGray,R.color.colorBlack,R.color.colorLTGray);
-        // Set-up the SwipeRefreshLayout pull-down response
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Sync the Content Provide data with internal SQL db's
-                        MovieSyncAdapter.syncImmediately(getActivity());
-                        // re-connect the adapter to the gridView
-                        setupAdapter();
-                        // Show the progress of the refresh per the color scheme above
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                },250);// wait 25 seconds
-            }
-        });
 
         // When one of the view on the GridView is click the below will happen
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -197,9 +183,32 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // actually *lost*.
         if (savedInstanceState != null && savedInstanceState.containsKey(Constants.SELECTED_KEY)) {
             // The gradView probably hasn't even been populated yet.  Actually perform the
-            // swapout in onLoadFinished.
+            // swap out in onLoadFinished.
             mPosition = savedInstanceState.getInt(Constants.SELECTED_KEY);
         }
+
+        // Set-up the SwipeRefreshLayout color order
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorBlack,R.color.colorDarkGray,R.color.colorLTGray);
+
+        // Set-up the SwipeRefreshLayout pull-down response
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Sync the Content Provide data with internal SQL db's
+                        onMovieChanged();
+                        // re-connect the adapter to the gridView
+                        setupAdapter();
+                        // Show the progress of the refresh per the color scheme above
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                },250);// wait 25 seconds
+            }
+        });
+
         return  rootView;
     }
 
@@ -230,17 +239,20 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.v("Create ","MovieFragment - onActivityCreated");
+        Log.v("Create","MovieFragment - onActivityCreated");
+
         getLoaderManager().initLoader(Constants.MOVIE_LOADER, null, this);
+        Log.v("MovieType","getLoaderManager InitLoader");
+
         super.onActivityCreated(savedInstanceState);
     }
 
     /**
      * On Movie change run the syncAdapter immediately
      */
-    void onMovieChanged(){
+    public void onMovieChanged(){
+        setupAdapter();
         Log.v("Create ","MovieFragment - onMovieChanged");
-        MovieSyncAdapter.syncImmediately(getActivity());
         getLoaderManager().restartLoader(Constants.MOVIE_LOADER, null, this);
     }
 
@@ -248,17 +260,18 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      * Get the Cursor from the loader
      * @param i -
      * @param bundle - Bundle for fragment
-     * @return - Retrun a loader specific cursor
+     * @return - Return a loader specific cursor
      */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Log.v("Create ","MovieFragment - onCreateLoader");
-        // return Cursor loader with all th movie poster images
-        return new CursorLoader(getActivity(),
+        // return Cursor loader with the specific type of movie
+        return new CursorLoader(
+                getActivity(),
                 MovieContract.MovieEntry.CONTENT_URI,
                 null,
-                null,
-                null,
+                "movie.movie_type = ?",
+                new String[] {Utility.getPreferredMovieType(getContext())},
                 null);
     }
 
@@ -266,17 +279,16 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      * When the retrieving of the movie is finished updating
      * the XML layout with the information
      * @param loader - The loader the queries the movie content resolver
-     * @param data - The cursor that is retrun from the loader and content resolver
+     * @param data - The cursor that is return from the loader and content resolver
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.v("Create ","MovieFragment - onLoadFinished");
+        movieAdapter.swapCursor(data);
         if (mPosition != GridView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
             gridView.smoothScrollToPosition(mPosition);
         }
-        movieAdapter.swapCursor(data);
     }
 
     /**
@@ -285,14 +297,13 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.v("Create ","MovieFragment - onLoaderReset");
         movieAdapter.swapCursor(null);
     }
 
     /**
-     * Set the layout for the gridview
+     * Set the layout for the gridView
      * True - for tablet and false - for phone
-     * @param layout - the layout of the gridview
+     * @param layout - the layout of the gridView
      */
     public void setLayout(boolean layout){
         Log.v("Create ","MovieFragment - setLayout");

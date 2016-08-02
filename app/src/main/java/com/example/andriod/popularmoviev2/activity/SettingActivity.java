@@ -6,17 +6,12 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-
-import com.example.andriod.popularmoviev2.data.MovieTableSync;
-import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.R;
-import com.example.andriod.popularmoviev2.service.FavoriteMovieService;
-import com.example.andriod.popularmoviev2.service.PopularMovieService;
-import com.example.andriod.popularmoviev2.service.TopRatedMovieService;
-import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
+import com.example.andriod.popularmoviev2.StarterReceiver;
 
 /**
  * Setting activity option screen
+ *
  * Created by StandleyEugene on 6/30/2016.
  */
 public class SettingActivity extends PreferenceActivity
@@ -86,14 +81,6 @@ public class SettingActivity extends PreferenceActivity
     @Override
     protected void onStop(){
         super.onStop();
-        // Updated grid view after setting activity closes if not already displaying
-        // the correct movie information
-        //MovieTableSync movieTableSync = new MovieTableSync(getApplicationContext());
 
-        // Remove all the information before populate new data
-        //movieTableSync.deleteAllOtherTable();
-
-        // SyncAdapter method that immediately runs the movie s
-        //MovieSyncAdapter.syncImmediately(getApplicationContext());
     }
 }

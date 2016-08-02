@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.andriod.popularmoviev2.R;
+import com.example.andriod.popularmoviev2.StarterReceiver;
 import com.example.andriod.popularmoviev2.other.Constants;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
     private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
     public boolean mTwoPane;
     private String mMovieType;
+    private MovieFragment movieFragment;
 
     /**
      * On Create set-up the Toolbar and determine if we using 1 or 2 pane for the app
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
 
             // Create new instance of the MovieFragment, but get the MovieFragment from
             // the getSupportFragmentManager found fragment
-            MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
+            movieFragment = ((MovieFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.container));
         } else {
             mTwoPane = false;
@@ -58,11 +60,10 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
 
             // Create new instance of the MovieFragment, but get the MovieFragment from
             // the getSupportFragmentManager found fragment
-            MovieFragment movieFragment = ((MovieFragment) getSupportFragmentManager()
+            movieFragment = ((MovieFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.fragment));
         }
-
-        MovieSyncAdapter.syncImmediately(getApplicationContext());
+        sendBroadcast(new Intent(this, StarterReceiver.class));
     }
 
     /**
@@ -122,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             if(null != df){
                 df.onMovieChanged(movieT);
             }
-
             mMovieType = movieT;
         }
     }
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         Log.v("Create ","MainActivity - onItemSelected");
         if(mTwoPane){
             // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment usig a
+            // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle args = new Bundle();
             args.putParcelable(Constants.MOVIE_DETAIL_URI,contentUri);

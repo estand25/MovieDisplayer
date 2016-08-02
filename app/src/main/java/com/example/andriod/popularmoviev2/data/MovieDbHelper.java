@@ -22,7 +22,7 @@ import com.example.andriod.popularmoviev2.model.Genre;
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     static final String DATABASE_NAME = "movieviewer.db";
 
@@ -72,6 +72,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
                 ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +
                 ReviewEntry.COLUMN_URL + " TEXT NOT NULL, " +
+                ReviewEntry.COLUMN_MOVIE_TYPE +" TEXT NOT NULL, " +
 
                 " FOREIGN KEY (" + ReviewEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";
@@ -94,6 +95,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 TrailerEntry.COLUMN_SITE + " TEXT NOT NULL, " +
                 TrailerEntry.COLUMN_SIZE + " INTEGER NOT NULL, " +
                 TrailerEntry.COLUMN_TYPE + " TEXT NOT NULL, " +
+                TrailerEntry.COLUMN_MOVIE_TYPE +" TEXT NOT NULL, " +
 
                 " FOREIGN KEY (" + TrailerEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";

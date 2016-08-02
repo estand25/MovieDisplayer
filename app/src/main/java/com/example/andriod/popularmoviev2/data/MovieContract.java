@@ -113,6 +113,7 @@ public class MovieContract {
         public static final String COLUMN_AUTHOR = "author";
         public static final String COLUMN_CONTENT = "content";
         public static final String COLUMN_URL = "url";
+        public static final String COLUMN_MOVIE_TYPE = "movie_type";
     }
 
     // Class that creates the Genre (GenreEntry) table
@@ -188,6 +189,7 @@ public class MovieContract {
         public static final String COLUMN_SITE = "site";
         public static final String COLUMN_SIZE = "size";
         public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_MOVIE_TYPE = "movie_type";
     }
 
     // Class that creates the Favorite Movie (FavoriteMovies) table

@@ -346,7 +346,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                     //  favorite movie table
                     if(favoriteSetting){
                         mFavorButton.setImageResource(R.drawable.favorite);
-                        movieTableSync.updateMovieFavorite(movieId,"FAVOR");
+                        movieTableSync.updateMovieFavorite(movieId,Utility.getPreferredMovieType(context));
 
                         // Check if movie already in favorite_movie table
                         if(!movieTableSync.queryFavoriteMovie(movieId)) {
@@ -356,9 +356,6 @@ public class DetailMovieAdapter extends CursorAdapter {
                         mFavorButton.setImageResource(R.drawable.unfavorite);
                         movieTableSync.updateMovieFavorite(movieId,"");
                         movieTableSync.deleteFavoriteMovie(movieId);
-                        // MovieSyncAdapter.syncImmediately(context);
-                        // DetailMovieFragment dmf = (DetailMovieFragment) context.
-                        // dmf.reset();
                     }
                 }
             });

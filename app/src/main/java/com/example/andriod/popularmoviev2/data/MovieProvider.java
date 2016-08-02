@@ -315,7 +315,7 @@ public class MovieProvider extends ContentProvider {
                 // the Merge cursor
                 retCursor = new MergeCursor(cursors);
 
-                // Created and Initize a new bundle
+                // Created and initize a new bundle
                 Bundle arg = new Bundle();
 
                 // Add additional information with key and value pair
