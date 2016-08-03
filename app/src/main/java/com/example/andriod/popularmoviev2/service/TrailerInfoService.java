@@ -46,18 +46,29 @@ public class TrailerInfoService extends IntentService{
     }
 
     /**
+     * On the IntentService create I set-up the ContentResolver for us by the
+     * onHandleIntent for the services work
+     */
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Set the current context content Resolver
+        mContentResolver = getApplicationContext().getContentResolver();
+    }
+
+    /**
      *  Populate through contentResolver the trailer table for the movie
      * @param movieIntent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent movieIntent){
         // Set the current context content Resolver
-        mContentResolver = getApplicationContext().getContentResolver();
-
-        // Set the current context content Resolver
         mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"",new String[]{});
 
+        // Get the data from the movieIdIntent
         final int movie_id = movieIntent.getIntExtra(Constants.TRAILER,0);
+
         // Create an instance of the framework that created the Uri and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.movieRoot)
@@ -91,7 +102,7 @@ public class TrailerInfoService extends IntentService{
                     // retrieved from the Movie DB API
                     ContentValues trailerContent = new ContentValues();
 
-                    // Set the value of each column and insert the movie property
+                    // Set the value of each column and insert the trailer properties
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID,trailer.getId());
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID,movie_id);
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_ISO_6391,trailer.getIso6391());
@@ -119,6 +130,5 @@ public class TrailerInfoService extends IntentService{
                 Log.e(TAG,"Retrofit 2 failed to populate movie trailer table!!");
             }
         });
-
     }
 }

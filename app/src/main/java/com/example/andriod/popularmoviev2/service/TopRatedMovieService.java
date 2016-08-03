@@ -46,18 +46,27 @@ public class TopRatedMovieService extends IntentService {
     }
 
     /**
+     * On the IntentService create I set-up the ContentResolver for us by the
+     * onHandleIntent for the services work
+     */
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Set the current context content Resolver
+        mContentResolver = getApplicationContext().getContentResolver();
+    }
+
+    /**
      * Populate SQLiteDatabase through contentResolver with the Movie DB API for top rated movies
      * @param topRatedIntent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent topRatedIntent){
-        // Set the current context content Resolver
-        mContentResolver = getApplicationContext().getContentResolver();
-
         // Delete all the other tables associated to the correct GridView display
-        mContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,"", new String[]{});
-        mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
-        mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"", new String[]{});
+        mContentResolver.delete(
+                MovieContract.MovieEntry.CONTENT_URI,"movie.movie_type = ?",
+                new String[]{"movie/top_rated"});
 
         // Create an instance of the framework that creates the Url and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
@@ -76,7 +85,6 @@ public class TopRatedMovieService extends IntentService {
         jsonMovieColl.enqueue(new Callback<MovieColl>() {
             @Override
             public void onResponse(Call<MovieColl> call, Response<MovieColl> response) {
-
                 // Grab the response (the List of movies) from the API
                 // and put it in a local list variable
                 List<Movie> topRatedMovies = response.body().getMovies();
@@ -98,10 +106,10 @@ public class TopRatedMovieService extends IntentService {
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE, movie.getOriginalLanguage());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
-                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_POPULARITY,movie.getPopularity());
+                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_POPULARITY, movie.getPopularity());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
-                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO,movie.getVideo());
-                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
+                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO, movie.getVideo());
+                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, "movie/top_rated"); //blank if not favorite
 
                     // Insert single movie records into SQLiteDatabase contentResolver

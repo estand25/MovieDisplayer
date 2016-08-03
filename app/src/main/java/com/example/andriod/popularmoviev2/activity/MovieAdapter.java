@@ -46,7 +46,7 @@ public class MovieAdapter extends CursorAdapter {
     }
 
     /**
-     * Inflators the movie_item layout and setting the viewHolder to the current view tags
+     * Inflaters the movie_item layout and setting the viewHolder to the current view tags
      * @param context - Current context for view
      * @param cursor - Current cursor information
      * @param parent - ViewGroup of the view

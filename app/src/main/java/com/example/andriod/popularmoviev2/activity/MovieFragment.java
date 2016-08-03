@@ -20,9 +20,9 @@ import android.widget.GridView;
 
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
-import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.other.Constants;
+import com.example.andriod.popularmoviev2.other.LastActivity;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.service.ReviewInfoService;
 import com.example.andriod.popularmoviev2.service.TrailerInfoService;
@@ -42,7 +42,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private ArrayList<Movie> movieList;
     private int mPosition = gridView.INVALID_POSITION;
     private boolean mTablet;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    public SwipeRefreshLayout mSwipeRefreshLayout;
 
     // These indices are tied to MOVIE_COLUMNS. If MOVIE_COLUMNS change, these need change too
     static final int COL_ID = 0;
@@ -50,9 +50,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     static final int COL_MOVIE_POSTER_PATH = 2;
     static final int COL_MOVIE_GENRE_IDS = 6;
     static final int COL_MOVIE_TITLE = 9;
-
-    // Create the local copy of movieSyncUploader
-    MovieTableSync movieTableSync;
 
     /**
      * Empty construction
@@ -82,11 +79,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         if(savedInstanceState == null || !savedInstanceState.containsKey("movies")){
             movieList = new ArrayList<>(new ArrayList<Movie>());
-            Log.v("MovieType","Set " + Utility.getPreferredMovieType(getContext()));
         }
         else {
             movieList = savedInstanceState.getParcelableArrayList("movies");
-            Log.v("MovieType","Get " + savedInstanceState.getString("movie_type"));
         }
 
         Log.v("Create ","MovieFragment");
@@ -108,9 +103,20 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             onMovieChanged();
         }
 
+        // Add the movieList Array to the outState Bundle
         outState.putParcelableArrayList("movies",movieList);
 
-        Log.v("MovieType","Put " + Utility.getPreferredMovieType(getContext()));
+        // Check if LastActivity is SettingActivity then restartLoader then change LastActivity
+        if(LastActivity.getInstance().getStringKey().equals("SettingActivity")){
+            // Set the LastActivity String
+            LastActivity.getInstance().setStringKey("MovieFragment");
+            // Refresh using the SwipeRefreshLayout
+            refreshContent();
+            // Restart the loader
+            //getLoaderManager().restartLoader(Constants.MOVIE_LOADER, null, this);
+        }
+
+        // Pass the outState Bundle to the original OnSaveInstanceState
         super.onSaveInstanceState(outState);
     }
 
@@ -127,7 +133,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.v("Create ","MovieFragment - onCreateView");
-
 
         // Initialize the custom movie adapter with necessary Curse adapter information
         movieAdapter = new MovieAdapter(getActivity(),null,0);
@@ -154,19 +159,17 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position
                 if(cursor != null){
-                    // Set up the MovieSyncUploader to populate the information
-                    movieTableSync = new MovieTableSync(getContext());
 
-                    // Populate the movie detail information
-                    movieTableSync.chkFavoriteMovie(cursor.getInt(COL_MOVIE_ID));
+                    // Only get the Movie's reviews & trailers if the movie isn't in the favorites table
+                    if(!Utility.getPreferredMovieType(getContext()).equals("favorite_movie")){
+                        // Review Information Service for movie from The Movie DB API
+                        getActivity().startService(new Intent(getActivity(), ReviewInfoService.class)
+                                .putExtra(Constants.REVIEW,cursor.getInt(COL_MOVIE_ID)));
 
-                    // Review Information Service for movie from The Movie DB API
-                    getActivity().startService(new Intent(getActivity(), ReviewInfoService.class)
-                            .putExtra(Constants.REVIEW,cursor.getInt(COL_MOVIE_ID)));
-
-                    // Trailer Information Service for movie from the Movie DB API
-                    getActivity().startService(new Intent(getContext(), TrailerInfoService.class)
-                            .putExtra(Constants.TRAILER,cursor.getInt(COL_MOVIE_ID)));
+                        // Trailer Information Service for movie from the Movie DB API
+                        getActivity().startService(new Intent(getContext(), TrailerInfoService.class)
+                                .putExtra(Constants.TRAILER,cursor.getInt(COL_MOVIE_ID)));
+                    }
 
                     // Route to onItemSelect in main activity
                     ((Callback) getActivity())
@@ -188,28 +191,39 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         }
 
         // Set-up the SwipeRefreshLayout color order
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorBlack,R.color.colorDarkGray,R.color.colorLTGray);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorBlack,R.color.colorGray,R.color.colorDarkGray);
 
         // Set-up the SwipeRefreshLayout pull-down response
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Sync the Content Provide data with internal SQL db's
-                        onMovieChanged();
-                        // re-connect the adapter to the gridView
-                        setupAdapter();
-                        // Show the progress of the refresh per the color scheme above
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                },250);// wait 25 seconds
+                refreshContent();
             }
         });
 
         return  rootView;
+    }
+
+    /**
+     * Handles the refresh functionality for the SwipRefreshLayout
+     * I wasn't sure I could do this so I look around for a couple of examples
+     * I found this one
+     *
+     * https://www.bignerdranch.com/blog/implementing-swipe-to-refresh/
+     */
+    private void refreshContent(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Sync the Content Provide data with internal SQL db's
+                onMovieChanged();
+                // re-connect the adapter to the gridView
+                setupAdapter();
+                // Show the progress of the refresh per the color scheme above
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+        },250);// wait 25 seconds
     }
 
     /**
@@ -264,13 +278,29 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.v("Create ","MovieFragment - onCreateLoader");
+        Log.v("Create ","MovieFragment - onCreateLoader " + Utility.getPreferredMovieType(getContext()));
+
+        // Initials the Uri & selection
+        Uri uri;
+        String selection = null;
+
+        // Check the Uri either pointing to the favorite_movie table based on the preferred option
+        // Or points to the movie table
+        if(Utility.getPreferredMovieType(getContext()).equals("favorite_movie")){
+            uri = MovieContract.FavoriteMovies.CONTENT_URI;
+            selection = "favorite_movies.movie_type = ?";
+
+        }else {
+            uri = MovieContract.MovieEntry.CONTENT_URI;
+            selection = "movie.movie_type = ?";
+        }
+
         // return Cursor loader with the specific type of movie
         return new CursorLoader(
                 getActivity(),
-                MovieContract.MovieEntry.CONTENT_URI,
+                uri,
                 null,
-                "movie.movie_type = ?",
+                selection,
                 new String[] {Utility.getPreferredMovieType(getContext())},
                 null);
     }
@@ -283,7 +313,11 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v("Create ","MovieFragment - onLoadFinished " + Utility.getPreferredMovieType(getContext()));
+
         movieAdapter.swapCursor(data);
+        movieAdapter.notifyDataSetChanged();
+
         if (mPosition != GridView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
@@ -297,6 +331,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.v("Create ","MovieFragment - onLoaderReset " + Utility.getPreferredMovieType(getContext()));
         movieAdapter.swapCursor(null);
     }
 

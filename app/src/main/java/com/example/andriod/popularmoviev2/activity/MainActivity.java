@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.StarterReceiver;
 import com.example.andriod.popularmoviev2.other.Constants;
+import com.example.andriod.popularmoviev2.other.LastActivity;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.v("Create ","MainActivity - onCreateOptionsMenu");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -105,11 +105,15 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         Log.v("Create ","MainActivity - onResume");
         super.onResume();
 
+        // Set the LastActivity value for the app
+        LastActivity.getInstance().setStringKey("MainActivity");
+
         String movieT = Utility.getPreferredMovieType(this);
         if(movieT != null && !movieT.equals(mMovieType)){
             MovieFragment mf = (MovieFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.container);
             Log.v("Create ","MainActivity - onResume - outside MovieFragment");
+
 
             if(null != mf){
                Log.v("Create ","MainActivity - onResume - MovieFragment");

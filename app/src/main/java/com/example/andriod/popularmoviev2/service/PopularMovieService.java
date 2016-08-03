@@ -47,18 +47,27 @@ public class PopularMovieService extends IntentService{
     }
 
     /**
+     * On the IntentService create I set-up the ContentResolver for us by the
+     * onHandleIntent for the services work
+     */
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Set the current context content Resolver
+        mContentResolver = getApplicationContext().getContentResolver();
+    }
+
+    /**
      * Populate SQLiteDatabase through contentResolver with the Movie DB API for popular movies
      * @param pMovieIntent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent pMovieIntent){
-        // Set the current context content Resolver
-        mContentResolver = getApplicationContext().getContentResolver();
-
         // Delete all the other tables associated to the correct GridView display
-        mContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,"", new String[]{});
-        mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
-        mContentResolver.delete(MovieContract.TrailerEntry.CONTENT_URI,"", new String[]{});
+        mContentResolver.delete(
+                MovieContract.MovieEntry.CONTENT_URI,"movie.movie_type = ?",
+                new String[]{"movie/popular"});
 
         // Create an instance of the framework that creates the Url and converter the json to gson
         Retrofit retrofit = new Retrofit.Builder()
@@ -98,10 +107,10 @@ public class PopularMovieService extends IntentService{
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE, movie.getOriginalLanguage());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
-                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_POPULARITY,movie.getPopularity());
+                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_POPULARITY, movie.getPopularity());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
-                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO,movie.getVideo());
-                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
+                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO, movie.getVideo());
+                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, "movie/popular"); //blank if not favorite
 
                     // Insert single movie records into SQLiteDatabase using contentResolver

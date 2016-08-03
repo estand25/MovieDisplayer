@@ -46,14 +46,23 @@ public class ReviewInfoService extends IntentService{
     }
 
     /**
+     * On the IntentService create I set-up the ContentResolver for us by the
+     * onHandleIntent for the services work
+     */
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Set the current context content Resolver
+        mContentResolver = getApplicationContext().getContentResolver();
+    }
+
+    /**
      * Populate through contentResolver the review table for the movie
      * @param movieIdIntent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent movieIdIntent){
-        // Set the current context content Resolver
-        mContentResolver = getApplicationContext().getContentResolver();
-
         // Set the current context content Resolver
         mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
 
@@ -93,7 +102,7 @@ public class ReviewInfoService extends IntentService{
                     // retrieved from the Movie DB API
                     ContentValues reviewContent = new ContentValues();
 
-                    // Set the value of each column and insert the movie property
+                    // Set the value of each column and insert the review properties
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movie_id);
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID,review.getId());
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());

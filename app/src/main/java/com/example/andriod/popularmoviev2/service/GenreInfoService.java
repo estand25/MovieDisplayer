@@ -46,14 +46,23 @@ public class GenreInfoService extends IntentService{
     }
 
     /**
+     * On the IntentService create I set-up the ContentResolver for us by the
+     * onHandleIntent for the services work
+     */
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Set the current context content Resolver
+        mContentResolver = getApplicationContext().getContentResolver();
+    }
+
+    /**
      *  Populate through contentResolver the movie specific genre (decode from id -> name)
      * @param movieIntent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent movieIntent){
-        // Set the current context content Resolver
-        mContentResolver = getApplicationContext().getContentResolver();
-
         // Set the current context content Resolver
         mContentResolver.delete(MovieContract.GenreEntry.CONTENT_URI,"",new String[]{});
 

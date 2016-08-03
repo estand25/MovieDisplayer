@@ -1,8 +1,6 @@
 package com.example.andriod.popularmoviev2.data;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -11,7 +9,8 @@ import com.example.andriod.popularmoviev2.data.MovieContract.GenreEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.ReviewEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.TrailerEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.FavoriteMovies;
-import com.example.andriod.popularmoviev2.model.Genre;
+import com.example.andriod.popularmoviev2.data.MovieContract.FavoriteReviewEntry;
+import com.example.andriod.popularmoviev2.data.MovieContract.FavoriteTrailerEntry;
 
 /**
  * Note: Base on SunShine App
@@ -22,7 +21,7 @@ import com.example.andriod.popularmoviev2.model.Genre;
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 12;
 
     static final String DATABASE_NAME = "movieviewer.db";
 
@@ -57,7 +56,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_VOTE_COUNT + " REAL NOT NULL, " +
                 MovieEntry.COLUMN_VIDEO + " BLOB NOT NULL, " +
                 MovieEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
-                MovieEntry.COLUMN_MOVIE_TYPE +" TEXT NOT NULL, " +
+                MovieEntry.COLUMN_MOVIE_TYPE + " TEXT NOT NULL, " +
 
                 // To assure the application have just one movie entry
                 // it's created a UNIQUE constraint with REPLACE strategy
@@ -67,12 +66,12 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME +" ( " +
                 ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ReviewEntry.COLUMN_REVIEW_ID + " INTEGER NOT NULL, " +
+                ReviewEntry.COLUMN_REVIEW_ID + " TEXT NOT NULL, " +
                 ReviewEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
                 ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +
                 ReviewEntry.COLUMN_URL + " TEXT NOT NULL, " +
-                ReviewEntry.COLUMN_MOVIE_TYPE +" TEXT NOT NULL, " +
+                ReviewEntry.COLUMN_MOVIE_TYPE + " TEXT NOT NULL, " +
 
                 " FOREIGN KEY (" + ReviewEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";
@@ -86,7 +85,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerEntry.TABLE_NAME + " ( "+
                 TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                TrailerEntry.COLUMN_TRAILER_ID + " INTEGER NOT NULL, "+
+                TrailerEntry.COLUMN_TRAILER_ID + " TEXT NOT NULL, "+
                 TrailerEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 TrailerEntry.COLUMN_ISO_6391 + " TEXT NOT NULL, " +
                 TrailerEntry.COLUMN_ISO_31661 + " TEXT NOT NULL, " +
@@ -95,7 +94,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 TrailerEntry.COLUMN_SITE + " TEXT NOT NULL, " +
                 TrailerEntry.COLUMN_SIZE + " INTEGER NOT NULL, " +
                 TrailerEntry.COLUMN_TYPE + " TEXT NOT NULL, " +
-                TrailerEntry.COLUMN_MOVIE_TYPE +" TEXT NOT NULL, " +
+                TrailerEntry.COLUMN_MOVIE_TYPE + " TEXT NOT NULL, " +
 
                 " FOREIGN KEY (" + TrailerEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";
@@ -117,10 +116,42 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 FavoriteMovies.COLUMN_VOTE_COUNT + " REAL NULL, " +
                 FavoriteMovies.COLUMN_VIDEO + " BLOB NULL, " +
                 FavoriteMovies.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
+                FavoriteMovies.COLUMN_MOVIE_TYPE + " TEXT NOT NULL, " +
 
                 " FOREIGN KEY (" + FavoriteMovies.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry.COLUMN_MOVIE_ID + ")); ";
         sqLiteDatabase.execSQL(SQL_CREATE_FAVORITE_MOVIE_TABLE);
+
+
+        final String SQL_CREATE_FAVORITE_REVIEW_TABLE = "CREATE TABLE " + FavoriteReviewEntry.TABLE_NAME +" ( " +
+                FavoriteReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                FavoriteReviewEntry.COLUMN_REVIEW_ID + " TEXT NOT NULL, " +
+                FavoriteReviewEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                FavoriteReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
+                FavoriteReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +
+                FavoriteReviewEntry.COLUMN_URL + " TEXT NOT NULL, " +
+                FavoriteReviewEntry.COLUMN_MOVIE_TYPE + " TEXT NOT NULL, " +
+
+                " FOREIGN KEY (" + FavoriteReviewEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
+                FavoriteMovies.TABLE_NAME + " (" + FavoriteMovies.COLUMN_MOVIE_ID + ")); ";
+        sqLiteDatabase.execSQL(SQL_CREATE_FAVORITE_REVIEW_TABLE);
+
+        final String SQL_CREATE_FAVORITE_TRAILER_TABLE = "CREATE TABLE " + FavoriteTrailerEntry.TABLE_NAME + " ( "+
+                FavoriteTrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                FavoriteTrailerEntry.COLUMN_TRAILER_ID + " TEXT NOT NULL, "+
+                FavoriteTrailerEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                FavoriteTrailerEntry.COLUMN_ISO_6391 + " TEXT NOT NULL, " +
+                FavoriteTrailerEntry.COLUMN_ISO_31661 + " TEXT NOT NULL, " +
+                FavoriteTrailerEntry.COLUMN_KEY + " TEXT NOT NULL, " +
+                FavoriteTrailerEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                FavoriteTrailerEntry.COLUMN_SITE + " TEXT NOT NULL, " +
+                FavoriteTrailerEntry.COLUMN_SIZE + " INTEGER NOT NULL, " +
+                FavoriteTrailerEntry.COLUMN_TYPE + " TEXT NOT NULL, " +
+                FavoriteTrailerEntry.COLUMN_MOVIE_TYPE + " TEXT NOT NULL, " +
+
+                " FOREIGN KEY (" + FavoriteTrailerEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
+                FavoriteMovies.TABLE_NAME + " (" + FavoriteMovies.COLUMN_MOVIE_ID + ")); ";
+        sqLiteDatabase.execSQL(SQL_CREATE_FAVORITE_TRAILER_TABLE);
     }
 
     /**

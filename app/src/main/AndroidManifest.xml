@@ -62,9 +62,6 @@ package="com.example.andriod.popularmoviev2">
         android:name=".service.TopRatedMovieService"
         android:exported="false" />
     <service
-        android:name=".service.FavoriteMovieService"
-        android:exported="false" />
-    <service
         android:name=".service.GenreInfoService"
         android:exported="false" />
     <service

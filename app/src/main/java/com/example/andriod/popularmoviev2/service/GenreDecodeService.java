@@ -45,11 +45,24 @@ public class GenreDecodeService extends IntentService{
         super("GenreDecodeService");
     }
 
+    /**
+     * On the IntentService create I set-up the ContentResolver for us by the
+     * onHandleIntent for the services work
+     */
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onCreate() {
+        super.onCreate();
+
         // Set the current context content Resolver
         mContentResolver = getApplicationContext().getContentResolver();
+    }
 
+    /**
+     * Populate through contentResolver the movie genre id for movie (decode from id -> name)
+     * @param intent - Service intent that passes service necessary information
+     */
+    @Override
+    protected void onHandleIntent(Intent intent) {
         // Get data from the movieIntent
         final String[] movieGenreIDs = intent.getStringArrayExtra(Constants.GENRE_ID);
 

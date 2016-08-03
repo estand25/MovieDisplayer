@@ -25,6 +25,8 @@ public class MovieContract {
     public static final String PATH_GENRE = "genre";
     public static final String PATH_TRAILER = "trailer";
     public static final String PATH_FAVORITE_MOVIES = "favorite_movies";
+    public static final String PATH_FAVORITE_REVIEW = "favorite_review";
+    public static final String PATH_FAVORITE_TRAILER = "favorite_trailer";
 
     // Class that creates the Movie (MovieEntry) table
     public static final class MovieEntry implements BaseColumns{
@@ -213,6 +215,15 @@ public class MovieContract {
         public static Uri buildFavoriteMovieIDUri(int MovieID){
             return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
         }
+        public static Uri buildFavoriteMovieDetailAllSection(int MovieId){
+            return BASE_CONTENT_URI.buildUpon().appendPath("movie_detail_favor")
+                    .appendPath(Integer.toString(MovieId)).build();
+        }
+
+        // Uri for getting the favorite movie id
+        public static int getIntegerFavoriteMovieID(Uri uri){
+            return Integer.parseInt(uri.getPathSegments().get(1));
+        }
 
         // Uri for getting the movie id
         public static String getFavoriteMovieID(Uri uri){
@@ -237,5 +248,79 @@ public class MovieContract {
         public static final String COLUMN_VOTE_COUNT = "vote_count";
         public static final String COLUMN_VIDEO = "video";
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
+        public static final String COLUMN_MOVIE_TYPE = "movie_type";
+    }
+
+    // Class that creates the Favorite Review table
+    public static final class FavoriteReviewEntry implements BaseColumns{
+        // Location for the specific table (used to access table data)
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE_REVIEW).build();
+
+        // The type of data I will be sending if retrieved
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE_REVIEW;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE_REVIEW;
+
+        // Uri for the Favorite Review row in the review table
+        public static Uri buildFavoriteReviewUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI,id);
+        }
+
+        // Uri all favorite review for a Movie in the movie table
+        public static Uri buildFavoriteReviewMovieIDUri(int MovieID){
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
+        }
+
+        // String holding the table name
+        public static final String TABLE_NAME = "favorite_review";
+
+        // Columns in the Favorite Review DB
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_REVIEW_ID = "review_id";
+        public static final String COLUMN_AUTHOR = "author";
+        public static final String COLUMN_CONTENT = "content";
+        public static final String COLUMN_URL = "url";
+        public static final String COLUMN_MOVIE_TYPE = "movie_type";
+    }
+
+
+    // Class that creates the Favorite Trailer table
+    public static final class FavoriteTrailerEntry implements BaseColumns{
+        // Location for the specific table (used to access table data)
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE_TRAILER).build();
+
+        // The type of data I will be sending if retrieved
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE_TRAILER;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +PATH_FAVORITE_TRAILER;
+
+        // Uri for the favorite trailer row in the trailer Table
+        public static Uri buildFavoriteTrailerUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI,id);
+        }
+
+        // Uri all favorite trailers for a Movie in the movie table
+        public static Uri buildFavoriteTrailerMovieIDUri(int MovieID){
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(MovieID)).build();
+        }
+
+        // String holding the table name
+        public static final String TABLE_NAME = "favorite_trailer";
+
+        // Columns in the Favorite Trailer DB
+        public static final String COLUMN_TRAILER_ID = "trailer_id";
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_ISO_6391 = "iso_6391";
+        public static final String COLUMN_ISO_31661 = "iso_3166_1";
+        public static final String COLUMN_KEY = "key";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_SITE = "site";
+        public static final String COLUMN_SIZE = "size";
+        public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_MOVIE_TYPE = "movie_type";
     }
 }

@@ -5,6 +5,8 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.andriod.popularmoviev2.other.Constants;
+
 /**
  * IntentService that populates both types of movies Popular Movie & Top Rate Movie
  * plus Genre information
@@ -55,7 +57,7 @@ public class PopulateAllMovies extends IntentService {
         getApplicationContext().startService(new Intent(getApplicationContext(), GenreInfoService.class));
 
         // Popular Movie Service from The Movie DB API
-        getApplicationContext().startService(new Intent(getApplicationContext(),PopularMovieService.class));
+        getApplicationContext().startService(new Intent(getApplicationContext(), PopularMovieService.class));
 
         // Top Rated Movie Service from The Movie DB API
         getApplicationContext().startService(new Intent(getApplicationContext(), TopRatedMovieService.class));

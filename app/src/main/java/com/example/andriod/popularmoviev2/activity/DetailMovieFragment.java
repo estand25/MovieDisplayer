@@ -23,6 +23,7 @@ import com.example.andriod.popularmoviev2.data.MovieContract.TrailerEntry;
 import com.example.andriod.popularmoviev2.data.MovieContract.ReviewEntry;
 import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.other.Constants;
+import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.service.GenreInfoService;
 import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
@@ -143,10 +144,26 @@ public class DetailMovieFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (null != mUri) {
+            // Initials Uri for Cursor Loader
+            Uri allDetail;
 
-            // Cursor Loader that point to MovieDetail which includes selection
-            // movie, movie's review, and movie's trailer information
-            Uri allDetail = MovieContract.MovieEntry.buildMovieDetailAllSection(MovieContract.MovieEntry.getIntegerMovieID(mUri));
+            // Check the Uri either pointing to the favorite_movie table based on the preferred option
+            // Or points to the movie table
+            if(Utility.getPreferredMovieType(getContext()).equals("favorite_movie")){
+                // Cursor Loader that point to MOVIE_DETAILS_FAVORITE which includes selected
+                // favorite movie's, favorite  movie's review, favorite movie's trailer information
+                allDetail = MovieContract.FavoriteMovies.buildFavoriteMovieDetailAllSection(
+                        MovieContract.FavoriteMovies.getIntegerFavoriteMovieID(mUri));
+
+                Log.v("onCreateLoader"," favorites table");
+            }else {
+                // Cursor Loader that point to MOVIE_DETAILS_NORMAL which includes selection
+                // movie, movie's review, and movie's trailer information
+                allDetail = MovieContract.MovieEntry.buildMovieDetailAllSection(
+                        MovieContract.MovieEntry.getIntegerMovieID(mUri));
+
+                Log.v("onCreateLoader"," movie table");
+            }
 
             return new CursorLoader(
                                 getActivity(),
@@ -173,6 +190,7 @@ public class DetailMovieFragment extends Fragment
             //setNotificationUri(ContentResolver cr, Uri uri)
             // Add the new cursor data to the adapter
             mDetailMovieAdapter.swapCursor(data);
+            mDetailMovieAdapter.notifyDataSetChanged();
         }
     }
 

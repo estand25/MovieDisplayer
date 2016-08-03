@@ -1,13 +1,21 @@
 package com.example.andriod.popularmoviev2.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.StarterReceiver;
+import com.example.andriod.popularmoviev2.other.Constants;
+import com.example.andriod.popularmoviev2.other.LastActivity;
+import com.example.andriod.popularmoviev2.service.FavoriteMovieService;
+import com.example.andriod.popularmoviev2.service.PopularMovieService;
+import com.example.andriod.popularmoviev2.service.TopRatedMovieService;
 
 /**
  * Setting activity option screen
@@ -27,6 +35,8 @@ public class SettingActivity extends PreferenceActivity
 
         addPreferencesFromResource(R.xml.pref_general);
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_sort_option_key)));
+
+        Log.v("Create", "SettingActivity - onCreate");
     }
 
     /**
@@ -34,7 +44,7 @@ public class SettingActivity extends PreferenceActivity
      * Also fires the listener once, to initialize the summary (so it shows up before the value
      * is changed.)
      *
-     * Taken from Sun-shine app (SetttingsActivity.java file)
+     * Taken from Sun-shine app (SettingsActivity.java file)
      */
     @SuppressWarnings("deprecation")
     private void bindPreferenceSummaryToValue(Preference preference) {
@@ -74,6 +84,18 @@ public class SettingActivity extends PreferenceActivity
         return true;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Log.v("Create", "SettingActivity - onPause");
+        //SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
+        //SharedPreferences.Editor editor = prefs.edit();
+        //editor.putString("lastActivity", getClass().getName());
+        //editor.commit();
+        LastActivity.getInstance().setStringKey("SettingActivity");
+    }
+
     /**
      * What happens when the SettingActivity stop we deleted all the tables
      * and Sync with the database
@@ -81,6 +103,14 @@ public class SettingActivity extends PreferenceActivity
     @Override
     protected void onStop(){
         super.onStop();
+        Log.v("Create", "SettingActivity - onStop");
+        // Set the LastActivity value for the app
+        LastActivity.getInstance().setStringKey("SettingActivity");
 
+        // Popular Movie Service from The Movie DB API
+        getApplicationContext().startService(new Intent(getApplicationContext(),PopularMovieService.class));
+
+        // Top Rated Movie Service from The Movie DB API
+        getApplicationContext().startService(new Intent(getApplicationContext(), TopRatedMovieService.class));
     }
 }

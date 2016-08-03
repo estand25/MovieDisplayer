@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,7 @@ public class DetailMovieAdapter extends CursorAdapter {
     private static final int VIEW_TYPE_COUNT = 3;
 
     // Local version of context
-    private Context myContext;
+    public Context myContext;
 
     /**
      * MovieAdapter constructor the set-up outside stuff inside
@@ -267,7 +268,7 @@ public class DetailMovieAdapter extends CursorAdapter {
          * @param context - The current context
          * @param cursor - The current cursor
          */
-        public void bindViews(final Context context, final Cursor cursor) {
+        public void bindViews(Context context, Cursor cursor) {
             // Create an instance of AQuery and set it to the movieView item
             // Take the ImageView and add an Image from the post location and make it visible too
             // Replaced Picassa with AQuery per the below form post. The image were loading to slow
@@ -304,33 +305,27 @@ public class DetailMovieAdapter extends CursorAdapter {
             mDetail_genreTextView.setText(cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS));
 
             // Check if movie is favorite or not
-            final boolean favoriteSetting =cursor.getString(COL_DETAIL_MOVIE_TYPE).contains("movie");
+            final Cursor favoriteCursor =  context.getContentResolver().query(
+                    MovieContract.FavoriteMovies.buildFavoriteMovieIDUri(cursor.getInt(COL_DETAIL_MOVIE_ID)),
+                    null,
+                    null,
+                    null,
+                    null
+            );
 
-            if(favoriteSetting){
+            favoriteCursor.moveToPosition(0);
+
+            // Check if cursor can move to position zero mean movie is in favorite table
+            if(!favoriteCursor.moveToFirst()){
+                Log.v("Insert","Not Favorite");
                 mFavorButton.setImageResource(R.drawable.unfavorite);
             }else{
+                Log.v("Insert","Favorite");
                 mFavorButton.setImageResource(R.drawable.favorite);
             }
 
             // Set local variable for movie id
             final int movieId = Integer.parseInt(cursor.getString(COL_DETAIL_MOVIE_ID));
-
-            // Create String array of movie stuff
-            final String[] movieStuff = new String[12];
-
-            // Movie parts
-            movieStuff[0] = cursor.getString(COL_DETAIL_MOVIE_ID);
-            movieStuff[1] = cursor.getString(COL_DETAIL_MOVIE_POSTER_PATH);
-            movieStuff[2] = cursor.getString(COL_DETAIL_MOVIE_OVERVIEW);
-            movieStuff[3] = cursor.getString(COL_DETAIL_MOVIE_RELEASE_DATE);
-            movieStuff[4] = cursor.getString(COL_DETAIL_MOVIE_GENRE_IDS);
-            movieStuff[5] = cursor.getString(COL_DETAIL_MOVIE_ORIG_TITLE);
-            movieStuff[6] = cursor.getString(COL_DETAIL_MOVIE_ORIG_LANGUAGE);
-            movieStuff[7] = cursor.getString(COL_DETAIL_MOVIE_TITLE);
-            movieStuff[8] = cursor.getString(COL_DETAIL_MOVIE_BACKDROP_PATH);
-            movieStuff[9] = cursor.getString(COL_DETAIL_MOVIE_POPULARITY);
-            movieStuff[10] = cursor.getString(COL_DETAIL_MOVIE_VOTE_COUNT);
-            movieStuff[11] = cursor.getString(COL_DETAIL_MOVIE_VOTE_AVERAGE);
 
             // onClickListener for favorite button to update movie type
             // and add it to favorite_movie type
@@ -344,21 +339,23 @@ public class DetailMovieAdapter extends CursorAdapter {
                     // Otherwise I change the button image then
                     //  update the movie_type to blank and delete the movie from the
                     //  favorite movie table
-                    if(favoriteSetting){
+                    if(!favoriteCursor.moveToFirst()){
+                        Log.v("Insert","Button Click non-Favorite");
                         mFavorButton.setImageResource(R.drawable.favorite);
-                        movieTableSync.updateMovieFavorite(movieId,Utility.getPreferredMovieType(context));
 
                         // Check if movie already in favorite_movie table
                         if(!movieTableSync.queryFavoriteMovie(movieId)) {
-                            movieTableSync.insertFavoriteMovie(movieStuff);
+                            movieTableSync.insertFavoriteMovie(movieId);
                         }
                     }else {
+                        Log.v("Insert","Button Click Favorite");
                         mFavorButton.setImageResource(R.drawable.unfavorite);
-                        movieTableSync.updateMovieFavorite(movieId,"");
                         movieTableSync.deleteFavoriteMovie(movieId);
                     }
                 }
             });
+            // Close favorite cursor after using
+            favoriteCursor.close();
         }
     }
 
