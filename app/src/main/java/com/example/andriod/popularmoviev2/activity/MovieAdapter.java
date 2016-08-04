@@ -6,7 +6,9 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
@@ -20,6 +22,7 @@ public class MovieAdapter extends CursorAdapter {
 
     /**
      * MovieAdapter constructor the set-up outside stuff inside
+     *
      * @param context - The current app context
      * @param cursor - The current app cursor
      * @param flags - The current flag
@@ -47,6 +50,7 @@ public class MovieAdapter extends CursorAdapter {
 
     /**
      * Inflaters the movie_item layout and setting the viewHolder to the current view tags
+     *
      * @param context - Current context for view
      * @param cursor - Current cursor information
      * @param parent - ViewGroup of the view
@@ -67,6 +71,7 @@ public class MovieAdapter extends CursorAdapter {
 
     /**
      * Populate the view with Cursor retrieved data
+     *
      * @param view - Current view information
      * @param context - Current context for view
      * @param cursor - Current cursor information
@@ -89,6 +94,5 @@ public class MovieAdapter extends CursorAdapter {
 
         // Set the title description for the movie title
         viewHolder.titleView.setText(cursor.getString(MovieFragment.COL_MOVIE_TITLE));
-
     }
 }

@@ -14,10 +14,13 @@ import android.util.Log;
 public class MovieTableSync {
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
+
+    // The current Context for the app
     Context myContext;
 
     /**
      * Construction for the MovieTableSync class
+     *
      * @param context - Get the current Context
      */
     public MovieTableSync(Context context){
@@ -27,6 +30,7 @@ public class MovieTableSync {
 
     /**
      * Insert movie id into the favorite_movie, favorite_review, & favorite_trailer tables
+     *
      * @param movieId - The movie id to update movie and add to the favorite_movie table
      */
     public void insertFavoriteMovie(int movieId){
@@ -86,8 +90,6 @@ public class MovieTableSync {
             // Content Value that holds the favorite movie information
             ContentValues favoriteReview = new ContentValues();
 
-            Log.v("Insert","Review Movie - " + movieCursor.getString(9) + " Review Author - " + reviewCursor.getString(3));
-
             // Set the value of each column and insert the review properties
             favoriteReview.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID, reviewCursor.getString(1));
             favoriteReview.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, reviewCursor.getInt(2));
@@ -128,8 +130,6 @@ public class MovieTableSync {
             // Content Value that holds the favorite movie information
             ContentValues favoriteTrailer = new ContentValues();
 
-            Log.v("Insert","Movie Trailer - " + movieCursor.getString(9) + " Trailer Name - " + trailerCursor.getString(7));
-
             // Set the value of each column and insert the trailer properties
             favoriteTrailer.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID, trailerCursor.getString(1));
             favoriteTrailer.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, trailerCursor.getInt(2));
@@ -161,6 +161,7 @@ public class MovieTableSync {
 
     /**
      * Query favorite_movie and see if movie already there
+     *
      * @param movieId - The movie id to check for
      * @return - Returns true if movie id already exists and false if it doesn't
      */
@@ -185,6 +186,7 @@ public class MovieTableSync {
 
     /**
      * Delete movie from favorite_movie, favorite_review, & favorite_trailer
+     *
      * @param movieId - The movie id to delete from the table
      */
     public void deleteFavoriteMovie(int movieId){

@@ -17,7 +17,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/trailer_icon"/>
+            android:id="@+id/trailer_icon"
+            android:padding="1dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,5 +46,13 @@
             android:layout_toRightOf="@+id/trailer_icon"
             android:layout_below="@+id/trailer_type"
             android:padding="1dp"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailer_option"
+            android:src="@drawable/ic_action_vert"
+            android:background="@null"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

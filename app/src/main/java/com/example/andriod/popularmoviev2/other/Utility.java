@@ -15,6 +15,7 @@ import com.example.andriod.popularmoviev2.R;
 public class Utility {
     /**
      * Get the current prefer for the app
+     *
      * @param context - Context information
      * @return - Return static String with temperature key
      */

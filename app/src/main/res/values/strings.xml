@@ -2,6 +2,14 @@
     <string name="app_name">Movie Displayer</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="action_movie_favorite">Favorite</string>
+
+    <string name="action_trailer_launch_web">Watch Internet</string>
+    <string name="action_trailer_launch_youtube">Watch YouTube</string>
+    <string name="action_trailer_share">Share</string>
+
+    <string name="action_review_launch_web">Read on Internet</string>
+    <string name="action_review_share">Share</string>
 
     <string name="pref_sort_option_mPopular_label">Most Popular</string>
     <string name="pref_sort_option_mTopRate_label">Top Rated</string>

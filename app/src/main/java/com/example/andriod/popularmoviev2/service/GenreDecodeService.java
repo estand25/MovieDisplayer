@@ -59,11 +59,12 @@ public class GenreDecodeService extends IntentService{
 
     /**
      * Populate through contentResolver the movie genre id for movie (decode from id -> name)
+     *
      * @param intent - Service intent that passes service necessary information
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        // Get data from the movieIntent
+        // Get movie genre ids from the movieIntent
         final String[] movieGenreIDs = intent.getStringArrayExtra(Constants.GENRE_ID);
 
         // String[] of comma separate genre id
@@ -118,6 +119,7 @@ public class GenreDecodeService extends IntentService{
 
     /**
      * Remove first and end brackets then splits the line by comma
+     *
      * @param line - String of genre id with brackets
      * @return - String[] of genres id without brackets
      */
@@ -125,9 +127,10 @@ public class GenreDecodeService extends IntentService{
         String result = "";
         result = line.substring(1, line.length()-1);
 
-        // Note: I know is little regression pattern, but I'm not that good
-        // so I had to search around to found this one
-        // http://stackoverflow.com/questions/15633228/how-to-remove-all-white-spaces-in-java
+        // Note: I know a little about regression pattern, but I'm not that good
+        //       so I had to search around to found this pattern
+        //
+        //http://stackoverflow.com/questions/15633228/how-to-remove-all-white-spaces-in-java
         result = result.replaceAll("\\s+","");
         return result.split(",");
     }

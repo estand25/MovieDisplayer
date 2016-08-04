@@ -10,6 +10,7 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
  * Created by StandleyEugene on 7/28/2016.
  */
 public final class Constants {
+    // Static Context used by LastSelectedMovieType
     public static Context cConetext;
 
     // Set the movie root
@@ -29,9 +30,6 @@ public final class Constants {
 
     // String constant for the MovieDetailFragment
     public static final String MOVIE_DETAIL = "MOVIE_DETAIL";
-
-    // String constant for the NONE_DELETED
-    public static final String NONE_DELETED = "NONE_DELETED";
 
     // Movie Detail Loader for DetailMovieFragment
     public static final int DETAIL_MOVIE_LOADER = 1;

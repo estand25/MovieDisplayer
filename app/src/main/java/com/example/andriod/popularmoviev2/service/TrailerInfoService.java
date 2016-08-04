@@ -59,6 +59,7 @@ public class TrailerInfoService extends IntentService{
 
     /**
      *  Populate through contentResolver the trailer table for the movie
+     *
      * @param movieIntent - Service intent that passes service necessary information
      */
     @Override
@@ -112,7 +113,7 @@ public class TrailerInfoService extends IntentService{
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_SITE,trailer.getSite());
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_SIZE,trailer.getSize());
                     trailerContent.put(MovieContract.TrailerEntry.COLUMN_TYPE,trailer.getType());
-                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_MOVIE_TYPE, Utility.getPreferredMovieType(getApplicationContext())); //blank if not favorite
+                    trailerContent.put(MovieContract.TrailerEntry.COLUMN_MOVIE_TYPE, Utility.getPreferredMovieType(getApplicationContext()));
 
                     // Add trailer details to the ContentValue array
                     bulkMovieTrailer[i] = trailerContent;

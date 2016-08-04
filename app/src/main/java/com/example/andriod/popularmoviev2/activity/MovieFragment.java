@@ -22,7 +22,7 @@ import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.other.Constants;
-import com.example.andriod.popularmoviev2.other.LastActivity;
+import com.example.andriod.popularmoviev2.other.LastSelectedMovieType;
 import com.example.andriod.popularmoviev2.other.Utility;
 import com.example.andriod.popularmoviev2.service.ReviewInfoService;
 import com.example.andriod.popularmoviev2.service.TrailerInfoService;
@@ -71,11 +71,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     /**
      * OnCreate I will use the saveInstanceState to check
      * if saveInstanceState already has something or if we are starting anew
+     *
      * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.v("Create ","MovieFragment");
 
         if(savedInstanceState == null || !savedInstanceState.containsKey("movies")){
             movieList = new ArrayList<>(new ArrayList<Movie>());
@@ -83,16 +86,16 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         else {
             movieList = savedInstanceState.getParcelableArrayList("movies");
         }
-
-        Log.v("Create ","MovieFragment");
     }
 
     /**
      * Sets the onSaveInstanceState with the movieList
+     *
      * @param outState  - outState Bundle that live for the lifetime of activity
      */
     @Override
     public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
         Log.v("Create ","MovieFragment - onSaveInstanceState");
 
         // When tablets rotate, the currently selected list item needs to be saved.
@@ -106,24 +109,24 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // Add the movieList Array to the outState Bundle
         outState.putParcelableArrayList("movies",movieList);
 
-        // Check if LastActivity is SettingActivity then restartLoader then change LastActivity
-        if(LastActivity.getInstance().getStringKey().equals("SettingActivity")){
-            // Set the LastActivity String
-            LastActivity.getInstance().setStringKey("MovieFragment");
+        Log.v("Create ","MovieFragment - onSaveInstanceState Utility " + Utility.getPreferredMovieType(getContext()));
+        Log.v("Create ","MovieFragment - onSaveInstanceState instance " + LastSelectedMovieType.getInstance().getStringKey());
+        // Check if LastActivity is SettingActivity then refreshContent
+        if(!LastSelectedMovieType.getInstance().getStringKey().equals(Utility.getPreferredMovieType(getContext()))){
+
+            // Set the LastMovieType String
+            LastSelectedMovieType.getInstance().setStringKey(Utility.getPreferredMovieType(getContext()));
+
             // Refresh using the SwipeRefreshLayout
             refreshContent();
-            // Restart the loader
-            //getLoaderManager().restartLoader(Constants.MOVIE_LOADER, null, this);
         }
-
-        // Pass the outState Bundle to the original OnSaveInstanceState
-        super.onSaveInstanceState(outState);
     }
 
     /**
-     * Initiaze the gridView with the movieAdapter then update column number based on
-     * size of the screen, and finally add onClickListner for individual gridView.
+     * Initial the gridView with the movieAdapter then update column number based on
+     * size of the screen, and finally add onClickListener for individual gridView.
      * Also inflated main fragment layout
+     *
      * @param inflater - flater the declare layout elements
      * @param container - Get the container for the inflater
      * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
@@ -139,6 +142,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         // Inflate all the items on the fragment_main layout
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // Find the SwipeRefreshLayout and associate to local one
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
 
         // Find the GridView on the fragment_main layout and set it to the
@@ -152,6 +157,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l){
+                Log.v("Create"," OnItemClick");
                 // Set the local movie object to the item that was
                 // selected on the GridView screen
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(pos);
@@ -175,6 +181,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                     ((Callback) getActivity())
                             .onItemSelected(MovieContract.MovieEntry.buildMovieIDUri(cursor.getInt(COL_MOVIE_ID)));
                 }
+
+                // Set the position of the gridView
                 mPosition = pos;
             }
         });
@@ -201,6 +209,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
+        // Return the view with the update stuff on it
         return  rootView;
     }
 
@@ -211,18 +220,23 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      *
      * https://www.bignerdranch.com/blog/implementing-swipe-to-refresh/
      */
-    private void refreshContent(){
+    public void refreshContent(){
+        // The refresh handler for the SwipeRefreshLayout
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                // Reset the gridView location
+                mPosition = 0;
+
                 // Sync the Content Provide data with internal SQL db's
                 onMovieChanged();
+
                 // re-connect the adapter to the gridView
                 setupAdapter();
+
                 // Show the progress of the refresh per the color scheme above
                 mSwipeRefreshLayout.setRefreshing(false);
             }
-
         },250);// wait 25 seconds
     }
 
@@ -253,33 +267,32 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.v("Create","MovieFragment - onActivityCreated");
-
-        getLoaderManager().initLoader(Constants.MOVIE_LOADER, null, this);
-        Log.v("MovieType","getLoaderManager InitLoader");
-
         super.onActivityCreated(savedInstanceState);
+
+        // Initials the loader
+        getLoaderManager().initLoader(Constants.MOVIE_LOADER, null, this);
     }
 
     /**
      * On Movie change run the syncAdapter immediately
      */
     public void onMovieChanged(){
+        // Add the adapter to the gridView and set-up the column depending on screen orientation
         setupAdapter();
-        Log.v("Create ","MovieFragment - onMovieChanged");
+
+        // Restart the loader
         getLoaderManager().restartLoader(Constants.MOVIE_LOADER, null, this);
     }
 
     /**
      * Get the Cursor from the loader
+     *
      * @param i -
      * @param bundle - Bundle for fragment
      * @return - Return a loader specific cursor
      */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.v("Create ","MovieFragment - onCreateLoader " + Utility.getPreferredMovieType(getContext()));
-
         // Initials the Uri & selection
         Uri uri;
         String selection = null;
@@ -308,14 +321,33 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     /**
      * When the retrieving of the movie is finished updating
      * the XML layout with the information
+     *
      * @param loader - The loader the queries the movie content resolver
      * @param data - The cursor that is return from the loader and content resolver
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.v("Create ","MovieFragment - onLoadFinished " + Utility.getPreferredMovieType(getContext()));
+        Log.v("Create ","onLoadFinished");
+        Log.v("Create ","onLoadFinished - Utility " + Utility.getPreferredMovieType(getContext()));
+        Log.v("Create ","onLoadFinished - instance " + LastSelectedMovieType.getInstance().getStringKey());
+        // Check if we selected another movie type by checking our current preference against the
+        // LastSelectedMovieType singleton string value while the LastSelectedMovieType is not empty
+        if(!LastSelectedMovieType.getInstance().getStringKey().equals(Utility.getPreferredMovieType(getContext())) &&
+                !LastSelectedMovieType.getInstance().getStringKey().isEmpty()){
+            // setAdapter again & restart the loader for current preference
+            onMovieChanged();
 
+            // Reset the gridView location
+            // mPosition = 0;
+
+            // Set the LastSelectedMovieType after move to the new movie type
+            LastSelectedMovieType.getInstance().setStringKey(Utility.getPreferredMovieType(getContext()));
+        }
+
+        // Add data to the adapter
         movieAdapter.swapCursor(data);
+
+        // Notify the adapter about Data set change
         movieAdapter.notifyDataSetChanged();
 
         if (mPosition != GridView.INVALID_POSITION) {
@@ -327,17 +359,17 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     /**
      * When the Loader is reset the movieAdapter with populate null
+     *
      * @param loader - the Cursor specific loader
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.v("Create ","MovieFragment - onLoaderReset " + Utility.getPreferredMovieType(getContext()));
         movieAdapter.swapCursor(null);
     }
 
     /**
-     * Set the layout for the gridView
-     * True - for tablet and false - for phone
+     * Set the layout for the gridView True - for tablet and false - for phone
+     *
      * @param layout - the layout of the gridView
      */
     public void setLayout(boolean layout){

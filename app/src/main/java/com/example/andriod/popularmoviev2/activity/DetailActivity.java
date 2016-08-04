@@ -8,12 +8,15 @@ import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.other.Constants;
 
 /**
- * DetailActivity that holds the tablayout for the three detail
- *
- * fragement
+ * DetailActivity that associated to DetailMovieFragment
  */
 public class DetailActivity extends AppCompatActivity{
 
+    /**
+     * On the creation of DetailActivity
+     *
+     * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,12 +32,17 @@ public class DetailActivity extends AppCompatActivity{
             Bundle arguments = new Bundle();
             arguments.putParcelable(Constants.MOVIE_DETAIL_URI,getIntent().getData());
 
+            // Create a new instance of the DetailMovieFragment and set the Bundle value
             DetailMovieFragment fragment = new DetailMovieFragment();
             fragment.setArguments(arguments);
 
+            // Get the current fragment and add the layout and fragment to it and commit it
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.movie_detail_container,fragment)
                     .commit();
         }
+
+        // Set Constants.cContext from applicationContext
+        Constants.cConetext = getApplicationContext();
     }
 }

@@ -60,6 +60,7 @@ public class PopularMovieService extends IntentService{
 
     /**
      * Populate SQLiteDatabase through contentResolver with the Movie DB API for popular movies
+     *
      * @param pMovieIntent - Service intent that passes service necessary information
      */
     @Override
@@ -111,13 +112,13 @@ public class PopularMovieService extends IntentService{
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO, movie.getVideo());
                     popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
-                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, "movie/popular"); //blank if not favorite
+                    popularMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, "movie/popular");
 
                     // Insert single movie records into SQLiteDatabase using contentResolver
                     mContentResolver.insert(MovieContract.MovieEntry.CONTENT_URI,popularMovieContenter);
 
                     // Changes Genre id -> Genre Name by passing genre id list and movie id
-                    // right after inserting the movie record
+                    // right after inserting the movie record update the movie's genre list
                     startService(new Intent(getApplicationContext(), GenreDecodeService.class).
                             putExtra(Constants.GENRE_ID, new String[] {movie.getGenreIds().toString(),movie.getId().toString()}));
                 }

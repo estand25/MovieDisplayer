@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_trailer_web"
+        android:orderInCategory="100"
+        android:title="@string/action_trailer_launch_web"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_trailer_youtube"
+        android:orderInCategory="101"
+        android:title="@string/action_trailer_launch_youtube"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_trailer_share"
+        android:orderInCategory="102"
+        android:title="@string/action_trailer_share"
+        app:showAsAction="never" />
+</menu>

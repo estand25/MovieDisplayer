@@ -23,7 +23,8 @@
             android:id="@+id/gridView"
             android:layout_gravity="fill"
             android:scaleType="fitXY"
-            android:numColumns="auto_fit"/>
-
+            android:numColumns="auto_fit"
+            android:clickable="true"
+            android:focusable="true"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 </FrameLayout>

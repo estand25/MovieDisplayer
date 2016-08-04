@@ -59,6 +59,7 @@ public class GenreInfoService extends IntentService{
 
     /**
      *  Populate through contentResolver the movie specific genre (decode from id -> name)
+     *
      * @param movieIntent - Service intent that passes service necessary information
      */
     @Override
@@ -99,7 +100,7 @@ public class GenreInfoService extends IntentService{
                     // retrieved from the Movie DB API
                     ContentValues genreContent = new ContentValues();
 
-                    // Set the value of each column and inserts the genre property
+                    // Set the value of each column and insert the genre properties
                     genreContent.put(MovieContract.GenreEntry.COLUMN_GENRE_ID,genre.getId());
                     genreContent.put(MovieContract.GenreEntry.COLUMN_NAME,genre.getName());
 
@@ -109,6 +110,8 @@ public class GenreInfoService extends IntentService{
                     // Increment index
                     i++;
                 }
+
+                // Insert the content array to our local DB
                 mContentResolver.bulkInsert(MovieContract.GenreEntry.CONTENT_URI,bulkMovieGenre);
             }
 

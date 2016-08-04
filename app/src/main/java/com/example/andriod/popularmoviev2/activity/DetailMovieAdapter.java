@@ -7,12 +7,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
@@ -21,7 +23,6 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.data.MovieTableSync;
 import com.example.andriod.popularmoviev2.other.Constants;
 import com.example.andriod.popularmoviev2.other.Utility;
-import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -367,6 +368,7 @@ public class DetailMovieAdapter extends CursorAdapter {
         @BindView(R.id.review_author) TextView mReview_Author;
         @BindView(R.id.review_content) TextView mReview_Content;
         @BindView(R.id.reviewCard) android.support.v7.widget.CardView mReviewCard;
+        @BindView(R.id.review_option) ImageView mReview_Option;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -384,20 +386,77 @@ public class DetailMovieAdapter extends CursorAdapter {
         public void bindViews(final Context context,Cursor cursor) {
             // Create local string variable
             String author ="Review Author: " + cursor.getString(COL_REVIEW_AUTHOR);
-            String content = cursor.getString(COL_REVIEW_CONTENT);
+            final String content = cursor.getString(COL_REVIEW_CONTENT);
+            final String textReview = author + "\n" + content;
             final String reviewUri = cursor.getString(COL_REVIEW_URL);
 
             // Set review card elements text
             mReview_Author.setText(author);
             mReview_Content.setText(content);
 
-            // onClickListener for the review card
-            mReviewCard.setOnClickListener(new View.OnClickListener() {
+            // I wanted the ImageButton to appear with a PopUpMenu when click
+            // displaying the (Read on Internet) & (Share) I got this working,
+            // I want to find a better solution below:
+            // http://www.javatpoint.com/android-popup-menu-example
+            mReview_Option.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse(reviewUri));
-                    context.startActivity(intent);
+                    Log.v("Create", "bindView - onClick");
+
+                    // Set the PopupMenu with the current context and the
+                    // ImageButton to associate itself with
+                    PopupMenu puMenu = new PopupMenu(context,mReview_Option);
+
+                    // Inflate the menu review XML and associate it to the PopupMen
+                    puMenu.getMenuInflater().inflate(R.menu.menu_review,puMenu.getMenu());
+
+                    // Registering PopupMenu with onMenuItemClickListener
+                    puMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            // Doesn't get this far ---
+                            Log.v("Create", "bindView - onMenuItemClick");
+
+                            // Set the local menuItem to id
+                            int id = menuItem.getItemId();
+
+                            // Check if I click on the web review option
+                            if(id == R.id.action_review_web){
+                                Log.v("Create","bindViews - action_review_web");
+
+                                // Create an Intent that launches the review
+                                // from the internet
+                                Intent intent = new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse(reviewUri));
+                                context.startActivity(intent);
+
+                                // Return true to let the menu know
+                                // I found something
+                                return true;
+                            }
+
+                            // Check if I click on the share option
+                            if(id == R.id.action_review_share){
+                                Log.v("Create","bindViews - action_review_share");
+
+                                // Create an Intent that launches the review
+                                // from the share option
+                                Intent intent = new Intent(Intent.ACTION_SEND);
+                                intent.putExtra(Intent.EXTRA_TEXT,textReview);
+                                intent.setType("text/plain");
+
+                                // Check if that intent has resolved
+                                if(intent.resolveActivity(context.getPackageManager()) != null){
+                                    context.startActivity(intent);
+                                }
+
+                                // Return true to let the menu know
+                                // I found something
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
                 }
             });
         }

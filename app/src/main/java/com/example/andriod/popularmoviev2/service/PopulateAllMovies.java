@@ -5,17 +5,19 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.andriod.popularmoviev2.other.Constants;
-
 /**
  * IntentService that populates both types of movies Popular Movie & Top Rate Movie
  * plus Genre information
+ *
+ * Using Android Develop web/app to make this scheduled
+ * https://developer.android.com/training/scheduling/alarms.html#type
  *
  * Created by StandleyEugene on 8/1/2016.
  */
 public class PopulateAllMovies extends IntentService {
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
+
     // Protected string for class simple
     protected final String TAG = getClass().getSimpleName();
 

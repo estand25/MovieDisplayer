@@ -59,6 +59,7 @@ public class ReviewInfoService extends IntentService{
 
     /**
      * Populate through contentResolver the review table for the movie
+     *
      * @param movieIdIntent - Service intent that passes service necessary information
      */
     @Override
@@ -108,7 +109,7 @@ public class ReviewInfoService extends IntentService{
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,review.getAuthor());
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_CONTENT,review.getContent());
                     reviewContent.put(MovieContract.ReviewEntry.COLUMN_URL,review.getUrl());
-                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_MOVIE_TYPE, Utility.getPreferredMovieType(getApplicationContext())); //blank if not favorite
+                    reviewContent.put(MovieContract.ReviewEntry.COLUMN_MOVIE_TYPE, Utility.getPreferredMovieType(getApplicationContext()));
 
                     // Add review detail to the ContentValue array
                     bulkMovieReview[i] = reviewContent;

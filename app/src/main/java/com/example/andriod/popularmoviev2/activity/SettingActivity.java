@@ -1,7 +1,5 @@
 package com.example.andriod.popularmoviev2.activity;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -10,12 +8,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.andriod.popularmoviev2.R;
-import com.example.andriod.popularmoviev2.StarterReceiver;
-import com.example.andriod.popularmoviev2.other.Constants;
-import com.example.andriod.popularmoviev2.other.LastActivity;
-import com.example.andriod.popularmoviev2.service.FavoriteMovieService;
-import com.example.andriod.popularmoviev2.service.PopularMovieService;
-import com.example.andriod.popularmoviev2.service.TopRatedMovieService;
+import com.example.andriod.popularmoviev2.other.LastSelectedMovieType;
+import com.example.andriod.popularmoviev2.other.Utility;
 
 /**
  * Setting activity option screen
@@ -60,7 +54,8 @@ public class SettingActivity extends PreferenceActivity
     }
 
     /**
-     * Taken from Sun-shine app (SetttingsActivity.java file)
+     * Taken from Sun-shine app (SettingsActivity.java file)
+     *
      * @param preference
      * @param value
      * @return
@@ -93,7 +88,7 @@ public class SettingActivity extends PreferenceActivity
         //SharedPreferences.Editor editor = prefs.edit();
         //editor.putString("lastActivity", getClass().getName());
         //editor.commit();
-        LastActivity.getInstance().setStringKey("SettingActivity");
+        //LastSelectedMovieType.getInstance().setStringKey(Utility.getPreferredMovieType(getApplicationContext()));
     }
 
     /**
@@ -105,12 +100,7 @@ public class SettingActivity extends PreferenceActivity
         super.onStop();
         Log.v("Create", "SettingActivity - onStop");
         // Set the LastActivity value for the app
-        LastActivity.getInstance().setStringKey("SettingActivity");
-
-        // Popular Movie Service from The Movie DB API
-        getApplicationContext().startService(new Intent(getApplicationContext(),PopularMovieService.class));
-
-        // Top Rated Movie Service from The Movie DB API
-        getApplicationContext().startService(new Intent(getApplicationContext(), TopRatedMovieService.class));
+        //LastSelectedMovieType.getInstance().setStringKey(Utility.getPreferredMovieType(getApplicationContext()));
+        Log.v("Create", "SettingActivity - onStop " + LastSelectedMovieType.getInstance().getStringKey());
     }
 }

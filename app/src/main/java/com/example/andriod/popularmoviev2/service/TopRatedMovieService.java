@@ -11,7 +11,6 @@ import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.model.MovieColl;
 import com.example.andriod.popularmoviev2.other.Constants;
-import com.example.andriod.popularmoviev2.other.Utility;
 
 import java.util.List;
 
@@ -59,6 +58,7 @@ public class TopRatedMovieService extends IntentService {
 
     /**
      * Populate SQLiteDatabase through contentResolver with the Movie DB API for top rated movies
+     *
      * @param topRatedIntent - Service intent that passes service necessary information
      */
     @Override
@@ -110,13 +110,13 @@ public class TopRatedMovieService extends IntentService {
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VIDEO, movie.getVideo());
                     topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
-                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, "movie/top_rated"); //blank if not favorite
+                    topRatedMovieContenter.put(MovieContract.MovieEntry.COLUMN_MOVIE_TYPE, "movie/top_rated");
 
                     // Insert single movie records into SQLiteDatabase contentResolver
                     mContentResolver.insert(MovieContract.MovieEntry.CONTENT_URI,topRatedMovieContenter);
 
                     // Changes Genre id -> Genre Name by passing genre id list and movie id
-                    // right after inserting the movie record
+                    // right after inserting the movie record update the movie's genre list
                     startService(new Intent(getApplicationContext(), GenreDecodeService.class).
                             putExtra(Constants.GENRE_ID, new String[] {movie.getGenreIds().toString(),movie.getId().toString()}));
                 }

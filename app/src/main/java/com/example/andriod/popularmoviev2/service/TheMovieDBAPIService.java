@@ -28,13 +28,13 @@ public interface TheMovieDBAPIService {
             @Query("api_key") String api_key
     );
 
-    // List of Movie Genre
+    // List of movie Genres
     @GET("genre/movie/list")
     Call<Genres> getMovieGenres(
             @Query("api_key") String api_key
     );
 
-    // List of Specified movie Trailer
+    // List of Specified movie Trailers
     @GET("movie/{id}/videos")
     Call<TrailerColl> getMovieTrailer(
             @Path("id") Integer id,

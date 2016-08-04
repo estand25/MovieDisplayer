@@ -10,20 +10,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.andriod.popularmoviev2.R;
-import com.example.andriod.popularmoviev2.StarterReceiver;
+import com.example.andriod.popularmoviev2.other.LastSelectedMovieType;
+import com.example.andriod.popularmoviev2.sync.StarterReceiver;
 import com.example.andriod.popularmoviev2.other.Constants;
-import com.example.andriod.popularmoviev2.other.LastActivity;
 import com.example.andriod.popularmoviev2.other.Utility;
-import com.example.andriod.popularmoviev2.sync.MovieSyncAdapter;
 
 public class MainActivity extends AppCompatActivity implements MovieFragment.Callback{
     private static final String MOVIEDETAILFRAGMENT_TAG = "DFTAG";
     public boolean mTwoPane;
     private String mMovieType;
     private MovieFragment movieFragment;
+    StarterReceiver starter = new StarterReceiver();
 
     /**
      * On Create set-up the Toolbar and determine if we using 1 or 2 pane for the app
+     *
      * @param savedInstanceState - saveInstanceState Bundle that live for the lifetime of activity
      */
     @Override
@@ -64,11 +65,20 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             movieFragment = ((MovieFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.fragment));
         }
+
+        // Send Broadcast to start the populating of all movies
         sendBroadcast(new Intent(this, StarterReceiver.class));
+
+        // Start the alarm to pull all the movie data
+        starter.setAlarm(this);
+
+        // Set Constants.cContext from applicationContext
+        Constants.cConetext = getApplicationContext();
     }
 
     /**
      * Inflates the menu options and return if that happens
+     *
      * @param menu - menu object
      * @return - Returns boolean if menu was created
      */
@@ -81,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
 
     /**
      * Does something when the associated menu option is selected
+     *
      * @param item - The selected menu item
      * @return - Returns boolean if menu item is selected
      */
@@ -100,13 +111,13 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * When the Activity is onResume after onStop
+     */
     @Override
     protected void onResume(){
         Log.v("Create ","MainActivity - onResume");
         super.onResume();
-
-        // Set the LastActivity value for the app
-        LastActivity.getInstance().setStringKey("MainActivity");
 
         String movieT = Utility.getPreferredMovieType(this);
         if(movieT != null && !movieT.equals(mMovieType)){
@@ -133,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
 
     /**
      * OnItemSelected is what happens after an movie poster is selected
+     *
      * @param contentUri - The Uri used by the app to query/insert/delete table data
      */
     @Override
@@ -155,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             Intent intent = new Intent(this, DetailActivity.class)
                         .setData(contentUri);
             startActivity(intent);
-
         }
     }
 }
