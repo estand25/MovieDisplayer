@@ -10,5 +10,5 @@
         android:id="@+id/action_review_share"
         android:orderInCategory="102"
         android:title="@string/action_review_share"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 </menu>

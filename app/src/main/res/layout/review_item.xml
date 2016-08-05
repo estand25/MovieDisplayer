@@ -25,7 +25,7 @@
             android:id="@+id/review_content"
             android:layout_below="@+id/review_author"
             android:padding="10dp"/>
-        <ImageView
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/review_option"

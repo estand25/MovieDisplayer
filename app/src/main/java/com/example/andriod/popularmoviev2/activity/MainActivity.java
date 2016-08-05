@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             args.putParcelable(Constants.MOVIE_DETAIL_URI,contentUri);
 
             DetailMovieFragment fragment = new DetailMovieFragment();
-                fragment.setArguments(args);
+            fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_detail_container, fragment)

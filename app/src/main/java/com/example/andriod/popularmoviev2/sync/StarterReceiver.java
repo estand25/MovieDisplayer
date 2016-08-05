@@ -51,7 +51,7 @@ public class StarterReceiver extends WakefulBroadcastReceiver {
         // Create a PendingIntent for the broadcast and intent
         alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
-        // Wake up the device to fire the alarm in 30-60 minutes
+        // Wake up the device to fire the alarm ever 30-60 minutes
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 AlarmManager.INTERVAL_HALF_HOUR,
                 AlarmManager.INTERVAL_HOUR,

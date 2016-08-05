@@ -78,29 +78,4 @@ public class SettingActivity extends PreferenceActivity
         }
         return true;
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        Log.v("Create", "SettingActivity - onPause");
-        //SharedPreferences prefs = getSharedPreferences("X", MODE_PRIVATE);
-        //SharedPreferences.Editor editor = prefs.edit();
-        //editor.putString("lastActivity", getClass().getName());
-        //editor.commit();
-        //LastSelectedMovieType.getInstance().setStringKey(Utility.getPreferredMovieType(getApplicationContext()));
-    }
-
-    /**
-     * What happens when the SettingActivity stop we deleted all the tables
-     * and Sync with the database
-     */
-    @Override
-    protected void onStop(){
-        super.onStop();
-        Log.v("Create", "SettingActivity - onStop");
-        // Set the LastActivity value for the app
-        //LastSelectedMovieType.getInstance().setStringKey(Utility.getPreferredMovieType(getApplicationContext()));
-        Log.v("Create", "SettingActivity - onStop " + LastSelectedMovieType.getInstance().getStringKey());
-    }
 }

@@ -16,6 +16,7 @@ import android.widget.ListView;
 import com.example.andriod.popularmoviev2.R;
 import com.example.andriod.popularmoviev2.data.MovieContract;
 import com.example.andriod.popularmoviev2.other.Constants;
+import com.example.andriod.popularmoviev2.other.LastSelectedMovieType;
 import com.example.andriod.popularmoviev2.other.Utility;
 
 /**
@@ -47,6 +48,7 @@ public class DetailMovieFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        Log.v("Create ","DetailMovieFragment - onCreate");
 
         // Create new variable holder for bundle
         // set the new bundle to the current arguments
@@ -73,6 +75,7 @@ public class DetailMovieFragment extends Fragment
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v("Create ","DetailMovieFragment - onCreateView");
         // Initializing the custom movie adapter with (detail, review, and trailer section layout)
         mDetailMovieAdapter = new DetailMovieAdapter(getActivity(),null,0);
 
@@ -81,20 +84,12 @@ public class DetailMovieFragment extends Fragment
 
         // Find the ListViews on the fragment_detail layout
         movieListView = (ListView) rootView.findViewById(R.id.detail_MovieDetaiListView);
-        //movieListView.setDescendantFocusability(ListView.FOCUS_AFTER_DESCENDANTS);
-        // Set the adapter and ListView
-        setupAdapter();
+
+        // Set the ListView to the specific adapter
+        movieListView.setAdapter(mDetailMovieAdapter);
 
         // Returns the view with all the information
         return rootView;
-    }
-
-    /**
-     * Set-up Adapter to GridView and set-up column number based on device rotation
-     */
-    private void setupAdapter(){
-        // Set the ListView to the specific adapter
-        movieListView.setAdapter(mDetailMovieAdapter);
     }
 
     /**
@@ -104,9 +99,11 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.v("Create ","DetailMovieFragment - onActivityCreated");
+
         // Get the loader manager start for this calls
         getLoaderManager().initLoader(Constants.DETAIL_MOVIE_LOADER, null, this);
-        super.onActivityCreated(savedInstanceState);
     }
 
     /**
@@ -124,6 +121,8 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.v("Create ","DetailMovieFragment - onCreateLoader");
+
         if (null != mUri) {
             // Initials Uri for Cursor Loader
             Uri allDetail;
@@ -143,12 +142,12 @@ public class DetailMovieFragment extends Fragment
             }
 
             return new CursorLoader(
-                                getActivity(),
-                                allDetail,
-                                null,
-                                null,
-                                null,
-                                null);
+                    getActivity(),
+                    allDetail,
+                    null,
+                    null,
+                    null,
+                    null);
         }
 
         // Return null if bundle argument has not been populated
@@ -159,12 +158,15 @@ public class DetailMovieFragment extends Fragment
      * Populates the individual movie adapter (movie details, trailer, and review)
      *  from the table cursor data
      *
-     * @param loader - Current crsor loader
+     * @param loader - Current cursor loader
      * @param data - Retrieved table data in the cursor
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v("Create ","DetailMovieFragment - onLoadFinished");
+
         if (data != null) {
+            Log.v("Create ","DetailMovieFragment - onLoadFinished - data");
             // Add the new cursor data to the adapter
             mDetailMovieAdapter.swapCursor(data);
             mDetailMovieAdapter.notifyDataSetChanged();
@@ -178,6 +180,7 @@ public class DetailMovieFragment extends Fragment
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.v("Create ","DetailMovieFragment - onLoaderReset");
         mDetailMovieAdapter.swapCursor(null);
     }
 }

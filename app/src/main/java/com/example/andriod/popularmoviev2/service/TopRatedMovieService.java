@@ -13,6 +13,7 @@ import com.example.andriod.popularmoviev2.model.MovieColl;
 import com.example.andriod.popularmoviev2.other.Constants;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,6 +64,14 @@ public class TopRatedMovieService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent topRatedIntent){
+        // Do not want to over use the Movie DB API so I wait 5 second before I start anything
+        try {
+            Log.v("Create","Sleep for 5 second...");
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            Log.v("Create","Can't sleep for 10 second because " + e.getMessage());
+        }
+
         // Delete all the other tables associated to the correct GridView display
         mContentResolver.delete(
                 MovieContract.MovieEntry.CONTENT_URI,"movie.movie_type = ?",

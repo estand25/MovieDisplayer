@@ -8,29 +8,4 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-
-    <item android:id="@+id/sortOrder"
-        android:title="@string/pref_sort_option_label"
-        android:orderInCategory="101">
-        <!-- android:showAsAction="never"
-        android:showAsAction="never" -->
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/popular_movie"
-                    android:orderInCategory="101"
-                    android:title="@string/pref_sort_option_mPopular_label"/>
-
-                <item
-                    android:id="@+id/top_rated_movie"
-                    android:orderInCategory="101"
-                    android:title="@string/pref_sort_option_mTopRate_label"/>
-
-                <item
-                    android:id="@+id/favorite_movie"
-                    android:orderInCategory="101"
-                    android:title="@string/pref_sort_option_mFavorite_movie_label"/>
-            </group>
-        </menu>
-    </item>
 </menu>

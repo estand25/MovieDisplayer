@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.example.andriod.popularmoviev2.BuildConfig;
@@ -64,11 +65,30 @@ public class ReviewInfoService extends IntentService{
      */
     @Override
     protected void onHandleIntent(Intent movieIdIntent){
-        // Set the current context content Resolver
-        mContentResolver.delete(MovieContract.ReviewEntry.CONTENT_URI,"", new String[]{});
-
         // Get the data from the movieIdIntent
         final int movie_id = movieIdIntent.getIntExtra(Constants.REVIEW,0);
+
+        // Get a cursor with all the reviews for this movie_id
+        Cursor reviewCursor =  getApplicationContext().getContentResolver().query(
+                MovieContract.ReviewEntry.buildReviewMovieIDUri(movie_id),
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Move to position 0
+        reviewCursor.moveToPosition(0);
+
+        // Check if movie already exit in review table if so return otherwise query
+        // the Movie DB API
+        if(reviewCursor.getCount() >= 1){
+            // close review close
+            reviewCursor.close();
+            return;
+        }
+        // close review close
+        reviewCursor.close();
 
         // Create an instance of the framework that create the Uri and converter the json to gson
         final Retrofit retrofit = new Retrofit.Builder()

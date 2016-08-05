@@ -15,7 +15,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.example.andriod.popularmoviev2.R;
@@ -355,7 +357,7 @@ public class DetailMovieAdapter extends CursorAdapter {
                     }
                 }
             });
-            // Close favorite cursor after using
+            // Close cursors after using
             favoriteCursor.close();
         }
     }
@@ -367,8 +369,7 @@ public class DetailMovieAdapter extends CursorAdapter {
         // Set the static local Review elements
         @BindView(R.id.review_author) TextView mReview_Author;
         @BindView(R.id.review_content) TextView mReview_Content;
-        @BindView(R.id.reviewCard) android.support.v7.widget.CardView mReviewCard;
-        @BindView(R.id.review_option) ImageView mReview_Option;
+        @BindView(R.id.review_option) ImageButton mReview_Option;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -405,25 +406,22 @@ public class DetailMovieAdapter extends CursorAdapter {
 
                     // Set the PopupMenu with the current context and the
                     // ImageButton to associate itself with
-                    PopupMenu puMenu = new PopupMenu(context,mReview_Option);
+                    PopupMenu reviewPopupMenu = new PopupMenu(context,mReview_Option);
 
                     // Inflate the menu review XML and associate it to the PopupMen
-                    puMenu.getMenuInflater().inflate(R.menu.menu_review,puMenu.getMenu());
+                    reviewPopupMenu.getMenuInflater().
+                            inflate(R.menu.menu_review, reviewPopupMenu.getMenu());
 
                     // Registering PopupMenu with onMenuItemClickListener
-                    puMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    reviewPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
-                            // Doesn't get this far ---
-                            Log.v("Create", "bindView - onMenuItemClick");
 
                             // Set the local menuItem to id
                             int id = menuItem.getItemId();
 
                             // Check if I click on the web review option
                             if(id == R.id.action_review_web){
-                                Log.v("Create","bindViews - action_review_web");
-
                                 // Create an Intent that launches the review
                                 // from the internet
                                 Intent intent = new Intent(Intent.ACTION_VIEW,
@@ -437,18 +435,14 @@ public class DetailMovieAdapter extends CursorAdapter {
 
                             // Check if I click on the share option
                             if(id == R.id.action_review_share){
-                                Log.v("Create","bindViews - action_review_share");
-
                                 // Create an Intent that launches the review
                                 // from the share option
-                                Intent intent = new Intent(Intent.ACTION_SEND);
-                                intent.putExtra(Intent.EXTRA_TEXT,textReview);
+                                Intent intent = new Intent(Intent.ACTION_CHOOSER);
                                 intent.setType("text/plain");
+                                intent.putExtra(Intent.EXTRA_TEXT,textReview);
 
                                 // Check if that intent has resolved
-                                if(intent.resolveActivity(context.getPackageManager()) != null){
-                                    context.startActivity(intent);
-                                }
+                                context.startActivity(Intent.createChooser(intent,"Pick display app"));
 
                                 // Return true to let the menu know
                                 // I found something
@@ -457,6 +451,9 @@ public class DetailMovieAdapter extends CursorAdapter {
                             return false;
                         }
                     });
+
+                    // After my selection show the PopupMenu
+                    reviewPopupMenu.show();
                 }
             });
         }
@@ -472,7 +469,7 @@ public class DetailMovieAdapter extends CursorAdapter {
         @BindView(R.id.trailer_site) TextView mTrailerSite;
         @BindView(R.id.trailer_type) TextView mTrailerType;
         @BindView(R.id.trailer_size) TextView mTrailerSize;
-        @BindView(R.id.trailerCard) android.support.v7.widget.CardView mTrailerCard;
+        @BindView(R.id.trailer_option) ImageButton mTrailerOption;
 
         /**
          * ViewHolder Constructor the binds the public layout elements to the ViewHolder object
@@ -493,13 +490,9 @@ public class DetailMovieAdapter extends CursorAdapter {
 
             // Add thumbnail image for specific trailer on youtube
             // Determine what type of screen is being used got it from this post
-            //  (http://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet)
-            String poster;
-            if (Utility.isTablet(context)) {
-                poster = "http://i3.ytimg.com/vi/"+video_id+"/default.jpg";
-            } else {
-                poster = "http://i3.ytimg.com/vi/"+video_id+"/hqdefault.jpg";
-            }
+            // (http://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet)
+            String poster = "http://i3.ytimg.com/vi/"+video_id+"/hqdefault.jpg";
+
             AQuery aq = new AQuery(mTrailerIcon);
             aq.id(mTrailerIcon).image(poster).visible();
 
@@ -515,23 +508,96 @@ public class DetailMovieAdapter extends CursorAdapter {
             mTrailerSize.setText(trailerSize);
             mTrailerType.setText(trailerType);
 
-            // onClickListener for the trailer card
-            mTrailerCard.setOnClickListener(new View.OnClickListener() {
+            // I wanted the ImageButton to appear with a PopUpMenu when click
+            // displaying the (Watch trailer on internet), (Watch trailer on YouTube)
+            // & (Share) I got this working,I want to find a better solution below:
+            // http://www.javatpoint.com/android-popup-menu-example
+            mTrailerOption.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Try to open up youtube with trailer video directly, but if not able
-                    // I open an internet browser
-                    // Note: I embedded this code section based on the stackoverflow post
-                    // it was a lot better then what I was thinking of doing
-                    // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video_id));
-                        context.startActivity(intent);
-                    } catch (ActivityNotFoundException ex) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://www.youtube.com/watch?v=" + video_id));
-                        context.startActivity(intent);
-                    }
+                    Log.v("Create","onClick");
+                    // Set the PopupMenu with the current context and the
+                    // ImageButton to associate itself with
+                    PopupMenu trailerPopupMenu = new PopupMenu(context,mTrailerOption);
+
+                    // Inflate the menu trailer XML and associate it to the PopupMenu
+                    trailerPopupMenu.getMenuInflater().
+                            inflate(R.menu.menu_trailer, trailerPopupMenu.getMenu());
+
+                    // Registering PopupMenu with onMenuItemClickListener
+                    trailerPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            Log.v("Create","onMenuItemClick");
+
+                            // Set the local menuItem to id
+                            int id = menuItem.getItemId();
+
+                            // Check if I click on the Watch trailer on Internet
+                            if(id == R.id.action_trailer_web){
+                                Log.v("Create","onMenuItemClick - action_review_web");
+                                // Create an Intent that launches the trailer to the internet
+                                Intent intent = new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse("http://www.youtube.com/watch?v=" + video_id));
+                                context.startActivity(intent);
+
+                                // Return true to let the menu know
+                                // I found something
+                                return true;
+                            }
+
+                            // Check if I click on the Watch trailer on youtube
+                            if(id == R.id.action_trailer_youtube){
+                                Log.v("Create","onMenuItemClick - action_trailer_youtube");
+                                // Try to open up youtube with trailer video directly, but if not able
+                                // I open an internet browser
+                                // Note: I embedded this code section based on the stackoverflow post
+                                // it was a lot better then what I was thinking of doing plus I have a
+                                // back-up for if not YouTube app is present I do something
+                                // http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
+                                try {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                                            Uri.parse("vnd.youtube:" + video_id));
+                                    context.startActivity(intent);
+                                } catch (ActivityNotFoundException ex) {
+                                    // Output Toast to let the user know what is going on
+                                    Toast.makeText(context,"Not YouTube so going to Internet instead",Toast.LENGTH_LONG).show();
+
+                                    // Launch the YouTube video to the internet
+                                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                                            Uri.parse("http://www.youtube.com/watch?v=" + video_id));
+                                    context.startActivity(intent);
+                                }
+
+                                // Return true to let the menu know
+                                // I found something
+                                return true;
+                            }
+
+                            // Check if I click on the share option
+                            if(id == R.id.action_trailer_share){
+                                Log.v("Create","onMenuItemClick - action_trailer_share");
+                                // Create an Intent that launches the review
+                                // from the share option
+                                Intent intent = new Intent(Intent.ACTION_CHOOSER);
+                                intent.setType("text/*");
+                                intent.putExtra(Intent.EXTRA_TEXT,
+                                        "Click on http://www.youtube.com/watch?v=" + video_id);
+
+                                // Check if that intent has resolved
+                                context.startActivity(Intent.createChooser(intent,"Pick display app"));
+
+                                // Return true to let the menu know
+                                // I found something
+                                return true;
+                            }
+
+                            return false;
+                        }
+                    });
+
+                    // After my selection show the PopupMenu
+                    trailerPopupMenu.show();
                 }
             });
         }

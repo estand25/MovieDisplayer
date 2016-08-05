@@ -337,9 +337,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             // setAdapter again & restart the loader for current preference
             onMovieChanged();
 
-            // Reset the gridView location
-            // mPosition = 0;
-
             // Set the LastSelectedMovieType after move to the new movie type
             LastSelectedMovieType.getInstance().setStringKey(Utility.getPreferredMovieType(getContext()));
         }
