@@ -209,7 +209,7 @@ public class MovieProvider extends ContentProvider {
     }
 
     /**
-     * Rri Matcher that determine how the Uri is handling inputs
+     * Uri Matcher that determine how the Uri is handling inputs
      * @return - Returns a UriMatcher
      */
     static UriMatcher buildUriMatcher(){
