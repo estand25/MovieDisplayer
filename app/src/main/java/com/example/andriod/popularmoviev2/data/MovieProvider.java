@@ -9,10 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.example.andriod.popularmoviev2.activity.DetailMovieFragment;
-import com.example.andriod.popularmoviev2.model.Movie;
 import com.example.andriod.popularmoviev2.other.Constants;
 
 /**

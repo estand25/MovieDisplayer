@@ -16,6 +16,9 @@ public final class Constants {
     // Set the movie root
     public static final String movieRoot = "http://api.themoviedb.org/3/";
 
+    // String constant for the MovieDetailFragment
+    public static final String MOVIE_DETAIL_URI = "URI";
+
     // Set-up constant for Genre id information
     public static final String GENRE_ID = "GENRE_DECODING";
 
@@ -24,9 +27,6 @@ public final class Constants {
 
     // Set-up constant for Trailer Information
     public static final String TRAILER = "TRAILER";
-
-    // String constant for the MovieDetailFragment
-    public static final String MOVIE_DETAIL_URI = "URI";
 
     // String constant for the MovieDetailFragment
     public static final String MOVIE_DETAIL = "MOVIE_DETAIL";

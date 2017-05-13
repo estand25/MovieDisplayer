@@ -285,7 +285,6 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_TYPE = "movie_type";
     }
 
-
     // Class that creates the Favorite Trailer table
     public static final class FavoriteTrailerEntry implements BaseColumns{
         // Location for the specific table (used to access table data)
